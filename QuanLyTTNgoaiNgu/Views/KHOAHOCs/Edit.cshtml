@@ -1,0 +1,44 @@
+﻿@model QuanLyTTNgoaiNgu.Models.KHOAHOC
+
+@{
+    ViewData["Title"] = "Edit";
+}
+
+<h1>Edit</h1>
+
+<h4>KHOAHOC</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Edit">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="MaKhoaHoc" />
+            <div class="form-group">
+                <label asp-for="TenKhoaHoc" class="control-label"></label>
+                <input asp-for="TenKhoaHoc" class="form-control" />
+                <span asp-validation-for="TenKhoaHoc" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="MoTa" class="control-label"></label>
+                <input asp-for="MoTa" class="form-control" />
+                <span asp-validation-for="MoTa" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="MucHocPhi" class="control-label"></label>
+                <input asp-for="MucHocPhi" class="form-control" />
+                <span asp-validation-for="MucHocPhi" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

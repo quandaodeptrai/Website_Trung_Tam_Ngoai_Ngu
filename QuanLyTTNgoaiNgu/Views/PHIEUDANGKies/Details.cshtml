@@ -1,0 +1,36 @@
+﻿@model QuanLyTTNgoaiNgu.Models.PHIEUDANGKY
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h1>Details</h1>
+
+<div>
+    <h4>PHIEUDANGKY</h4>
+    <hr />
+    <dl class="row">
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.NgayDangKy)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.NgayDangKy)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.HOCVIEN)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.HOCVIEN.MaHocVien)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.LOPHOC)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.LOPHOC.TenLopHoc)
+        </dd>
+    </dl>
+</div>
+<div>
+    <a asp-action="Edit" asp-route-id="@Model?.MaPhieu">Edit</a> |
+    <a asp-action="Index">Back to List</a>
+</div>

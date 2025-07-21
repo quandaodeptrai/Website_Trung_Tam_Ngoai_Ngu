@@ -1,0 +1,41 @@
+﻿@model IEnumerable<QuanLyTTNgoaiNgu.Models.QUANTRIVIEN>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.TenQuanTriVien)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.TaiKhoan)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.TenQuanTriVien)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.TaiKhoan.MatKhau)
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.MaQuanTriVien">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.MaQuanTriVien">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.MaQuanTriVien">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
