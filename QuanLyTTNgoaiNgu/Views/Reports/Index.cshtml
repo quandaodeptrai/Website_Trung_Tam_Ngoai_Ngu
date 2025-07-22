@@ -1,0 +1,71 @@
+﻿@model QuanLyTTNgoaiNgu.Models.ReportViewModel
+@{
+    ViewData["Title"] = "Báo cáo – Thống kê";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<h4>Tổng quan</h4>
+<ul>
+    <li>Học viên: @Model.TotalStudents</li>
+    <li>Giảng viên: @Model.TotalTeachers</li>
+    <li>Lớp học: @Model.TotalClasses</li>
+    <li>HV chưa đăng ký lớp: @Model.UnenrolledStudents</li>
+</ul>
+
+<h4>Số HV theo lớp</h4>
+<table class="table table-sm">
+    <thead><tr><th>Lớp</th><th>Số HV</th></tr></thead>
+    <tbody>
+        @foreach (var c in Model.StudentsPerClass)
+        {
+            <tr><td>@c.ClassName</td><td>@c.Count</td></tr>
+        }
+    </tbody>
+</table>
+
+<h4>Số lớp theo khóa</h4>
+<table class="table table-sm">
+    <thead><tr><th>Khóa</th><th>Số lớp</th></tr></thead>
+    <tbody>
+        @foreach (var c in Model.ClassesPerCourse)
+        {
+            <tr><td>@c.CourseName</td><td>@c.Count</td></tr>
+        }
+    </tbody>
+</table>
+
+<h4>Số HV theo khóa</h4>
+<table class="table table-sm">
+    <thead><tr><th>Khóa</th><th>Số HV</th></tr></thead>
+    <tbody>
+        @foreach (var c in Model.StudentsPerCourse)
+        {
+            <tr><td>@c.CourseName</td><td>@c.Count</td></tr>
+        }
+    </tbody>
+</table>
+
+<h4>Tổng doanh thu</h4>
+<h5>Theo lớp</h5>
+<table class="table table-sm">
+    <thead><tr><th>Lớp</th><th>Doanh thu</th></tr></thead>
+    <tbody>
+        @foreach (var r in Model.RevenuePerClass)
+        {
+            <tr><td>@r.Key</td>
+                    <td>@($"{r.Amount:N0} VND")</td></tr>
+        }
+    </tbody>
+</table>
+
+<h5>Theo khóa</h5>
+<table class="table table-sm">
+    <thead><tr><th>Khóa</th><th>Doanh thu</th></tr></thead>
+    <tbody>
+        @foreach (var r in Model.RevenuePerCourse)
+        {
+                <tr><td>@r.Key</td><td>@($"{r.Amount:N0} VND")</td></tr>
+        }
+    </tbody>
+</table>
