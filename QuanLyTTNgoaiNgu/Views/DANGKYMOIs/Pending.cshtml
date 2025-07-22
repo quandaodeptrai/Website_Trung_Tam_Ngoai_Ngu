@@ -1,0 +1,31 @@
+﻿@model IEnumerable<QuanLyTTNgoaiNgu.Models.DANGKYMOI>
+@{
+    ViewData["Title"] = "Đăng ký chưa duyệt";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>#</th><th>Họ tên</th><th>Ngày sinh</th>
+            <th>ĐT</th><th>Địa chỉ</th><th>Email</th><th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var d in Model)
+        {
+            <tr>
+                <td>@d.MaDangKy</td>
+                <td>@d.HoTen</td>
+                <td>@d.NgaySinh?.ToString("dd/MM/yyyy")</td>
+                <td>@d.SoDienThoai</td>
+                <td>@d.DiaChi</td>
+                <td>@d.Email</td>
+                <td>
+                    <a asp-action="Approve" asp-route-id="@d.MaDangKy" class="btn btn-sm btn-success">Duyệt</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

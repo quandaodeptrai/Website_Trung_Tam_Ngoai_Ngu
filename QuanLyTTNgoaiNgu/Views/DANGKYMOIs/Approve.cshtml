@@ -1,0 +1,28 @@
+﻿@model QuanLyTTNgoaiNgu.Models.ApproveViewModel
+@{
+    ViewData["Title"] = "Duyệt đăng ký";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<div class="card mb-4">
+    <div class="card-body">
+        <p><strong>Họ tên:</strong> @Model.HoTen</p>
+        <p><strong>Ngày sinh:</strong> @Model.NgaySinh?.ToString("dd/MM/yyyy")</p>
+        <p><strong>ĐT:</strong> @Model.SoDienThoai</p>
+        <p><strong>Địa chỉ:</strong> @Model.DiaChi</p>
+        <p><strong>Email:</strong> @Model.Email</p>
+    </div>
+</div>
+
+<form asp-action="Approve" method="post">
+    <input type="hidden" name="MaDangKy" value="@Model.MaDangKy" />
+
+    <div class="mb-3">
+        <label class="form-label">Tên đăng nhập được sinh</label>
+        <input class="form-control" value="@Model.GeneratedUsername" disabled />
+    </div>
+
+    <button type="submit" class="btn btn-primary">Xác nhận duyệt</button>
+    <a asp-action="Pending" class="btn btn-secondary ms-2">Quay lại</a>
+</form>

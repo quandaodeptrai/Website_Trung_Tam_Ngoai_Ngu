@@ -1,12 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using QuanLyTTNgoaiNgu.Data;
 using QuanLyTTNgoaiNgu.Models;
+using System.Text;
+using System.Text.RegularExpressions;
+using System.Globalization;
+
 
 namespace QuanLyTTNgoaiNgu.Controllers
 {
@@ -22,25 +23,121 @@ namespace QuanLyTTNgoaiNgu.Controllers
         // GET: DANGKYMOIs
         public async Task<IActionResult> Index()
         {
-            return View(await _context.DANGKYMOI.ToListAsync());
+            var list = await _context.DANGKYMOI.ToListAsync();
+            return View(list);
         }
+        // GET: Pending
+        public async Task<IActionResult> Pending()
+        {
+            var list = await _context.DANGKYMOI
+                                     .Include(d => d.HOCVIEN)
+                                     .Where(d => d.HOCVIEN == null)
+                                     .ToListAsync();
+            return View(list);
+        }
+
+        // GET: Approve
+        public async Task<IActionResult> Approve(int? id)
+        {
+            if (id == null) return NotFound();
+            var dky = await _context.DANGKYMOI.FindAsync(id);
+            if (dky == null) return NotFound();
+
+            var vm = new ApproveViewModel
+            {
+                MaDangKy = dky.MaDangKy,
+                HoTen = dky.HoTen,
+                NgaySinh = dky.NgaySinh,
+                SoDienThoai = dky.SoDienThoai,
+                DiaChi = dky.DiaChi,
+                Email = dky.Email,
+                GeneratedUsername = GenerateUsername(dky.HoTen)
+            };
+            return View(vm);
+        }
+
+        // POST: Approve
+        [HttpPost, ValidateAntiForgeryToken]
+        public async Task<IActionResult> Approve(int MaDangKy)
+        {
+            var dky = await _context.DANGKYMOI.FindAsync(MaDangKy);
+            if (dky == null) return NotFound();
+
+            // Sinh username mới
+            var username = GenerateUsername(dky.HoTen);
+
+            // 1) Tạo tài khoản mới
+            var newTk = new TAIKHOAN
+            {
+                TenDangNhap = username,
+                MatKhau = dky.SoDienThoai,
+                VaiTro = "HocVien"
+            };
+            _context.TAIKHOAN.Add(newTk);
+            await _context.SaveChangesAsync();
+
+            // 2) Tạo HOCVIEN liên kết
+            _context.HOCVIEN.Add(new HOCVIEN
+            {
+                MaDangKy = dky.MaDangKy,
+                MaTaiKhoan = newTk.MaTaiKhoan
+            });
+
+            // 3) Cập nhật MaQuanTriVien theo admin hiện tại
+            var adminUser = User.Identity.Name;
+            var adminTk = await _context.TAIKHOAN
+                                 .FirstOrDefaultAsync(t => t.TenDangNhap == adminUser);
+            if (adminTk != null)
+            {
+                var qtv = await _context.QUANTRIVIEN
+                              .FirstOrDefaultAsync(q => q.MaTaiKhoan == adminTk.MaTaiKhoan);
+                if (qtv != null)
+                    dky.MaQuanTriVien = qtv.MaQuanTriVien;
+            }
+
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Pending));
+        }
+
+        // Helpers
+
+        private string RemoveDiacritics(string text)
+        {
+            var normalized = text.Normalize(NormalizationForm.FormD);
+            var sb = new StringBuilder();
+            foreach (var ch in normalized)
+            {
+                if (CharUnicodeInfo.GetUnicodeCategory(ch) != UnicodeCategory.NonSpacingMark)
+                    sb.Append(ch);
+            }
+            return sb.ToString().Normalize(NormalizationForm.FormC);
+        }
+
+        private string GenerateUsername(string hoTen)
+        {
+            var baseName = RemoveDiacritics(hoTen).ToLowerInvariant();
+            baseName = Regex.Replace(baseName, @"\s+", ".");
+            var username = baseName;
+            int suffix = 1;
+            while (_context.TAIKHOAN.Any(u => u.TenDangNhap == username))
+            {
+                username = $"{baseName}{suffix}";
+                suffix++;
+            }
+            return username;
+        }
+        
 
         // GET: DANGKYMOIs/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            if (id == null) return NotFound();
 
-            var dANGKYMOI = await _context.DANGKYMOI
+            var item = await _context.DANGKYMOI
                 .FirstOrDefaultAsync(m => m.MaDangKy == id);
-            if (dANGKYMOI == null)
-            {
-                return NotFound();
-            }
+            if (item == null) return NotFound();
 
-            return View(dANGKYMOI);
+            return View(item);
         }
 
         // GET: DANGKYMOIs/Create
@@ -50,88 +147,72 @@ namespace QuanLyTTNgoaiNgu.Controllers
         }
 
         // POST: DANGKYMOIs/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("MaDangKy,HoTen,NgaySinh,SoDienThoai,DiaChi,Email,MaQuanTriVien")] DANGKYMOI dANGKYMOI)
+        public async Task<IActionResult> Create([Bind("HoTen,NgaySinh,SoDienThoai,DiaChi,Email")] DANGKYMOI dky)
         {
-            if (ModelState.IsValid)
-            {
-                _context.Add(dANGKYMOI);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
-            }
-            return View(dANGKYMOI);
+            if (!ModelState.IsValid)
+                return View(dky);
+
+            // Gán tạm MaQuanTriVien = 1 (Admin đầu tiên) để chờ xét duyệt
+            dky.MaQuanTriVien = 1;
+
+            _context.Add(dky);
+            await _context.SaveChangesAsync();
+
+            // Redirect sang trang thông báo
+            return RedirectToAction(nameof(Submitted));
+        }
+
+        // GET: DANGKYMOIs/Submitted
+        public IActionResult Submitted()
+        {
+            return View();
         }
 
         // GET: DANGKYMOIs/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            if (id == null) return NotFound();
 
-            var dANGKYMOI = await _context.DANGKYMOI.FindAsync(id);
-            if (dANGKYMOI == null)
-            {
-                return NotFound();
-            }
-            return View(dANGKYMOI);
+            var item = await _context.DANGKYMOI.FindAsync(id);
+            if (item == null) return NotFound();
+            return View(item);
         }
 
         // POST: DANGKYMOIs/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("MaDangKy,HoTen,NgaySinh,SoDienThoai,DiaChi,Email,MaQuanTriVien")] DANGKYMOI dANGKYMOI)
+        public async Task<IActionResult> Edit(int id, [Bind("MaDangKy,HoTen,NgaySinh,SoDienThoai,DiaChi,Email,MaQuanTriVien")] DANGKYMOI dky)
         {
-            if (id != dANGKYMOI.MaDangKy)
+            if (id != dky.MaDangKy) return NotFound();
+            if (!ModelState.IsValid) return View(dky);
+
+            try
             {
-                return NotFound();
+                _context.Update(dky);
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!_context.DANGKYMOI.Any(e => e.MaDangKy == id))
+                    return NotFound();
+                throw;
             }
 
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    _context.Update(dANGKYMOI);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!DANGKYMOIExists(dANGKYMOI.MaDangKy))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
-            }
-            return View(dANGKYMOI);
+            return RedirectToAction(nameof(Index));
         }
 
         // GET: DANGKYMOIs/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            if (id == null) return NotFound();
 
-            var dANGKYMOI = await _context.DANGKYMOI
+            var item = await _context.DANGKYMOI
                 .FirstOrDefaultAsync(m => m.MaDangKy == id);
-            if (dANGKYMOI == null)
-            {
-                return NotFound();
-            }
+            if (item == null) return NotFound();
 
-            return View(dANGKYMOI);
+            return View(item);
         }
 
         // POST: DANGKYMOIs/Delete/5
@@ -139,19 +220,18 @@ namespace QuanLyTTNgoaiNgu.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var dANGKYMOI = await _context.DANGKYMOI.FindAsync(id);
-            if (dANGKYMOI != null)
+            var item = await _context.DANGKYMOI.FindAsync(id);
+            if (item != null)
             {
-                _context.DANGKYMOI.Remove(dANGKYMOI);
+                _context.DANGKYMOI.Remove(item);
+                await _context.SaveChangesAsync();
             }
-
-            await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
         private bool DANGKYMOIExists(int id)
-        {
-            return _context.DANGKYMOI.Any(e => e.MaDangKy == id);
-        }
+            => _context.DANGKYMOI.Any(e => e.MaDangKy == id);
+
+
     }
 }

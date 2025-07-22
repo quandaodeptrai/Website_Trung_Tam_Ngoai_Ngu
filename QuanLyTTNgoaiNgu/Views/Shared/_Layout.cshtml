@@ -8,53 +8,51 @@
     <link rel="stylesheet" href="~/css/site.css" />
 </head>
 <body>
-    <header>
-        <nav class="navbar navbar-expand-lg navbar-light bg-light">
-            <div class="container">
-                @{
-                    // Xác định action Home tùy theo vai trò
-                    var homeAction = "Index";
-                    if (User.Identity.IsAuthenticated)
-                    {
-                        if (User.IsInRole("Admin")) homeAction = "AdminHome";
-                        else if (User.IsInRole("GiangVien")) homeAction = "GiangVienHome";
-                        else if (User.IsInRole("HocVien")) homeAction = "HocVienHome";
-                    }
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container">
+            @{ 
+                // Xác định action Home tùy theo vai trò
+                var homeAction = "Index";
+                if (User.Identity.IsAuthenticated)
+                {
+                    if (User.IsInRole("Admin")) homeAction = "AdminHome";
+                    else if (User.IsInRole("GiangVien")) homeAction = "GiangVienHome";
+                    else if (User.IsInRole("HocVien")) homeAction = "HocVienHome";
                 }
-                <a class="navbar-brand" asp-controller="Home" asp-action="@homeAction">TT Ngoại ngữ</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="collapse navbar-collapse" id="navbarNav">
-                    <ul class="navbar-nav me-auto">
-                        <li class="nav-item">
-                            <a class="nav-link" asp-controller="Home" asp-action="@homeAction">Home</a>
-                        </li>
-                    </ul>
-                    <ul class="navbar-nav">
-                        @if (User.Identity.IsAuthenticated)
-                        {
-                                <li class="nav-item">
-                                    <span class="navbar-text me-3">Xin chào, @User.Identity.Name!</span>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link text-danger" asp-controller="Account" asp-action="Logout">Đăng xuất</a>
-                                </li>
-                        }
-                        else
-                        {
-                                <li class="nav-item">
-                                    <a class="nav-link" asp-controller="Account" asp-action="Login">Đăng nhập</a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link" asp-controller="Account" asp-action="Register">Đăng ký</a>
-                                </li>
-                        }
-                    </ul>
-                </div>
+            }
+            <a class="navbar-brand" asp-controller="Home" asp-action="@homeAction">TT Ngoại ngữ</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" asp-controller="Home" asp-action="@homeAction">Home</a>
+                    </li>
+                </ul>
+                <ul class="navbar-nav">
+                    @if (User.Identity.IsAuthenticated)
+                    {
+                            <li class="nav-item">
+                                <span class="navbar-text me-3">Xin chào, @User.Identity.Name</span>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-danger" asp-controller="Account" asp-action="Logout">Đăng xuất</a>
+                            </li>
+                    }
+                    else
+                    {
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="Account" asp-action="Login">Đăng nhập</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="DANGKYMOIs" asp-action="Create">Đăng ký</a>
+                            </li>
+                    }
+                </ul>
             </div>
-        </nav>
-    </header>
+        </div>
+    </nav>
 
     <div class="container mt-4">
         @RenderBody()
@@ -69,5 +67,6 @@
     <script src="~/lib/jquery/jquery.min.js"></script>
     <script src="~/lib/bootstrap/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js"></script>
+    @RenderSection("Scripts", required: false)
 </body>
 </html>
