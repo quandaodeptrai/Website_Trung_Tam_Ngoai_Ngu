@@ -1,8 +1,18 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
+﻿@model IEnumerable<QuanLyTTNgoaiNgu.Models.KHOAHOC>
+
+@{
+    ViewData["Title"] = "Trang chủ";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+<h1>Danh sách khóa học</h1>
+
+<ul>
+    @foreach (var khoahoc in Model)
+    {
+        <li>
+            <strong>@khoahoc.TenKhoaHoc</strong><br />
+            @khoahoc.MoTa<br />
+            Học phí: @String.Format("{0:N0}", khoahoc.MucHocPhi) VNĐ
+        </li>
+    }
+</ul>

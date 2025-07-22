@@ -1,82 +1,73 @@
 ﻿<!DOCTYPE html>
-<html lang="en">
+<html lang="vi">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - QuanLyTTNgoaiNgu</title>
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/QuanLyTTNgoaiNgu.styles.css" asp-append-version="true" />
+    <title>@ViewData["Title"] - Trung tâm Ngoại ngữ</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" />
 </head>
 <body>
     <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">QuanLyTTNgoaiNgu</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
+        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+            <div class="container">
+                @{
+                    // Xác định action Home tùy theo vai trò
+                    var homeAction = "Index";
+                    if (User.Identity.IsAuthenticated)
+                    {
+                        if (User.IsInRole("Admin")) homeAction = "AdminHome";
+                        else if (User.IsInRole("GiangVien")) homeAction = "GiangVienHome";
+                        else if (User.IsInRole("HocVien")) homeAction = "HocVienHome";
+                    }
+                }
+                <a class="navbar-brand" asp-controller="Home" asp-action="@homeAction">TT Ngoại ngữ</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                     <span class="navbar-toggler-icon"></span>
                 </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav me-auto">
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+                            <a class="nav-link" asp-controller="Home" asp-action="@homeAction">Home</a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-light" asp-controller="HOCVIENs" asp-action="Index">Học viên</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-light" asp-controller="GIANGVIENs" asp-action="Index">Giảng viên</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-light" asp-controller="KHOAHOCs" asp-action="Index">Khóa học</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-light" asp-controller="LOPHOCs" asp-action="Index">Lớp học</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-light" asp-controller="TAIKHOANs" asp-action="Index">Tài khoản</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-light" asp-controller="PHIEUDANGKies" asp-action="Index">Đăng ký lớp</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-light" asp-controller="HOCPHIs" asp-action="Index">Học phí</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-light" asp-controller="KETQUAHOCTAPs" asp-action="Index">Kết quả học tập</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-light" asp-controller="THOIKHOABIEUx" asp-action="Index">Thời khóa biểu</a>
-                        </li>
-                        
-                        <li class="nav-item">
-                            <a class="nav-link text-light" asp-controller="DANGKYMOIs" asp-action="Index">Đăng ký mới</a>
-                        </li>
-                        
-
+                    </ul>
+                    <ul class="navbar-nav">
+                        @if (User.Identity.IsAuthenticated)
+                        {
+                                <li class="nav-item">
+                                    <span class="navbar-text me-3">Xin chào, @User.Identity.Name!</span>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link text-danger" asp-controller="Account" asp-action="Logout">Đăng xuất</a>
+                                </li>
+                        }
+                        else
+                        {
+                                <li class="nav-item">
+                                    <a class="nav-link" asp-controller="Account" asp-action="Login">Đăng nhập</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" asp-controller="Account" asp-action="Register">Đăng ký</a>
+                                </li>
+                        }
                     </ul>
                 </div>
             </div>
         </nav>
     </header>
-    <div class="container">
-        <main role="main" class="pb-3">
-            @RenderBody()
-        </main>
+
+    <div class="container mt-4">
+        @RenderBody()
     </div>
 
-    <footer class="border-top footer text-muted">
+    <footer class="border-top footer text-muted mt-4">
         <div class="container">
-            &copy; 2025 - QuanLyTTNgoaiNgu - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+            &copy; 2025 - Trung tâm Ngoại ngữ
         </div>
     </footer>
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="~/js/site.js" asp-append-version="true"></script>
-    @await RenderSectionAsync("Scripts", required: false)
+
+    <script src="~/lib/jquery/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js"></script>
 </body>
 </html>

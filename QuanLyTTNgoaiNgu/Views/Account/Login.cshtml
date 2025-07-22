@@ -1,0 +1,36 @@
+﻿@{
+    ViewData["Title"] = "Đăng nhập";
+}
+<h2>Đăng nhập</h2>
+
+<form method="post" asp-action="Login">
+    <input type="hidden" name="returnUrl" value="@ViewBag.ReturnUrl" />
+
+    <div class="form-group">
+        <label for="username">Tên đăng nhập</label>
+        <input type="text" class="form-control" id="username" name="username" required />
+    </div>
+
+    <div class="form-group mt-2">
+        <label for="password">Mật khẩu</label>
+        <input type="password" class="form-control" id="password" name="password" required />
+    </div>
+    <!--
+    <div class="form-check mt-3">
+        <input type="checkbox" class="form-check-input" id="rememberMe" name="rememberMe" />
+        <label class="form-check-label" for="rememberMe">Lưu tài khoản</label>
+    </div>
+	-->
+
+    <button type="submit" class="btn btn-primary mt-3">Đăng nhập</button>
+</form>
+
+@if (!ViewData.ModelState.IsValid)
+{
+        <div class="text-danger mt-2">
+        @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+        {
+                    <p>@error.ErrorMessage</p>
+        }
+        </div>
+}

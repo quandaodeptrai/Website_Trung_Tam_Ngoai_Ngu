@@ -1,0 +1,22 @@
+﻿@{
+    ViewData["Title"] = "Admin Dashboard";
+}
+<h2>Trang Admin</h2>
+<p>Chào mừng @User.Identity.Name!.</p>
+
+<div class="btn-group">
+    <td><a asp-controller="DANGKYMOIs"   asp-action="Index"        class="btn btn-warning">Quản lý Đăng ký mới</a></td><br />
+    <td><a asp-controller="HOCVIENs"   asp-action="Index"        class="btn btn-warning">Quản lý Học viên</a></td><br />
+    <td><a asp-controller="GIANGVIENs"   asp-action="Index"        class="btn btn-warning">Quản lý Giảng viên</a></td><br />
+    <td><a asp-controller="HOCPHIs"   asp-action="Index"        class="btn btn-warning">Quản lý Học phí</a></td><br />
+    <td><a asp-controller="KETQUAHOCTAPs"   asp-action="Index"        class="btn btn-warning">Quản lý Kết quả học tập</a></td><br />
+    <td><a asp-controller="KHOAHOCs"   asp-action="Index"        class="btn btn-warning">Quản lý Khóa học</a></td><br />
+    <td><a asp-controller="LOPHOCs"   asp-action="Index"        class="btn btn-warning">Quản lý Lớp học</a></td><br />
+    <td><a asp-controller="PHIEUDANGKies"   asp-action="Index"        class="btn btn-warning">Quản lý Phiếu đăng ký</a></td><br />
+    <td><a asp-controller="QUANTRIVIENs"   asp-action="Index"        class="btn btn-warning">Quản lý Quản trị viên</a></td><br />
+    <td><a asp-controller="TAIKHOANs"   asp-action="Index"        class="btn btn-warning">Quản lý Tài khoản</a></td><br />
+    <td><a asp-controller="THOIKHOABIEUx"   asp-action="Index"        class="btn btn-warning">Quản lý Thời khóa biểu</a></td><br />
+    <td><a asp-controller="THONGBAOs"   asp-action="Index"        class="btn btn-warning">Quản lý Thông báo</a></td><br />
+   
+</div>
+

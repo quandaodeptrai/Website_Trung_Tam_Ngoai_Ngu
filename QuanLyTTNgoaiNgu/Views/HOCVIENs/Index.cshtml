@@ -1,41 +1,57 @@
 ﻿@model IEnumerable<QuanLyTTNgoaiNgu.Models.HOCVIEN>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Danh sách Học viên";
 }
 
-<h1>Index</h1>
+<h1>@ViewData["Title"]</h1>
 
 <p>
-    <a asp-action="Create">Create New</a>
+    <a class="btn btn-primary" asp-action="Create">Tạo mới học viên</a>
 </p>
-<table class="table">
+
+<table class="table table-striped">
     <thead>
         <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.DANGKYMOI)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.TAIKHOAN)
-            </th>
+            <th>Mã học viên</th>
+            <th>Họ tên</th>
+            <th>Ngày sinh</th>
+            <th>Điện thoại</th>
+            <th>Địa chỉ</th>
+            <th>Email</th>
+            <th>Mã Tài khoản</th>
+            <th>Mã QTV duyệt</th>
+            
             <th></th>
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.DANGKYMOI.DiaChi)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.TAIKHOAN.MatKhau)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.MaHocVien">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.MaHocVien">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.MaHocVien">Delete</a>
-            </td>
-        </tr>
-}
+        @foreach (var item in Model)
+        {
+            <tr>
+					<td>@item.MaHocVien</td>
+                <td>@item.DANGKYMOI?.HoTen</td>
+                <td>
+                    @{
+                        // Nếu NgaySinh có giá trị thì format, không thì để trống
+                        var ngay = item.DANGKYMOI?.NgaySinh;
+                    }
+                    @(ngay.HasValue ? ngay.Value.ToString("dd/MM/yyyy") : "")
+                </td>
+                <td>@item.DANGKYMOI?.SoDienThoai</td>
+                <td>@item.DANGKYMOI?.DiaChi</td>
+                <td>@item.DANGKYMOI?.Email</td>
+                <td>@item.TAIKHOAN?.MaTaiKhoan</td>
+                <td>@item.DANGKYMOI?.MaQuanTriVien</td>
+                
+                    <td>
+              <a asp-action="Details"      asp-route-id="@item.MaHocVien" class="btn btn-sm btn-info">Xem thông tin</a>
+              <a asp-action="History"      asp-route-id="@item.MaHocVien" class="btn btn-sm btn-secondary">Lịch sử đăng ký</a>
+              <a asp-action="AssignClass"  asp-route-id="@item.MaHocVien" class="btn btn-sm btn-warning">Phân lớp</a>
+              <a asp-action="Edit"         asp-route-id="@item.MaHocVien" class="btn btn-sm btn-primary">Sửa</a>
+              <a asp-action="Delete"       asp-route-id="@item.MaHocVien" class="btn btn-sm btn-danger">Xóa</a>
+           </td>
+            </tr>
+        }
     </tbody>
 </table>

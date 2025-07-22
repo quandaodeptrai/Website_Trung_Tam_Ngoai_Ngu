@@ -8,6 +8,8 @@ namespace QuanLyTTNgoaiNgu.Models
         [Key]
         public int MaPhieu { get; set; }
         [Required]
+        [Display(Name = "Ngày đăng ký")]
+        [DisplayFormat(DataFormatString = "{0:dd/MM/yyyy}", ApplyFormatInEditMode = true, NullDisplayText = "")]
         public DateTime? NgayDangKy { get; set; }
         [ForeignKey("HOCVIEN")]
         [Required]

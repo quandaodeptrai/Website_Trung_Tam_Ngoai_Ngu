@@ -1,0 +1,12 @@
+﻿@{
+    ViewData["Title"] = "Học viên Dashboard";
+}
+<h2>Trang Học Viên</h2>
+<p>Chào mừng @User.Identity.Name! Bạn đang ở <strong>Học viên Dashboard</strong>.</p>
+
+<div class="btn-group">
+    <a asp-controller="HocVien" asp-action="MyEnrollments" class="btn btn-primary">Khóa đã đăng ký</a>
+    <a asp-controller="HocVien" asp-action="Payment"       class="btn btn-secondary">Thanh toán</a>
+    <a asp-controller="HocVien" asp-action="Index"         class="btn btn-info">Dashboard chính</a>
+</div>
+

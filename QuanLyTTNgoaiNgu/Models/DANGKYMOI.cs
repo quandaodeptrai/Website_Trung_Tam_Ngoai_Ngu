@@ -12,6 +12,10 @@ namespace QuanLyTTNgoaiNgu.Models
         [StringLength(50, ErrorMessage = "Họ tên không được vượt quá 50 ký tự.")]
         public string HoTen { get; set; }
         [Required]
+        //them phan nay de Ngay 
+        [Display(Name = "Ngày sinh")]
+        [DataType(DataType.Date)]
+        [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
         public DateTime? NgaySinh { get; set; }
         [Required]
         [StringLength(15, ErrorMessage = "Số điện thoại không được vượt quá 15 ký tự.")]
