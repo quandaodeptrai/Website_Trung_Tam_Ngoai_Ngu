@@ -117,7 +117,13 @@ else
                             <td>@l.NgayBatDau.ToString("dd/MM/yyyy")</td>
                             <td>@l.NgayKetThuc.ToString("dd/MM/yyyy")</td>
                             <td>
-                                <a asp-action="Schedule" asp-route-classId="@l.MaLopHoc" class="btn btn-sm">Lịch học</a>
+                                <a asp-action="Schedule" asp-route-classId="@l.MaLopHoc" class="btn btn-sm">Lịch dạy</a>
+                                                <a asp-controller="GIANGVIENs"
+           asp-action="EnterScores"
+           asp-route-classId="@l.MaLopHoc"
+           class="btn btn-sm btn-primary ms-1">
+           Nhập điểm
+        </a>
                             </td>
                         </tr>
             }
@@ -157,7 +163,7 @@ else
                             <td>@l.NgayBatDau.ToString("dd/MM/yyyy")</td>
                             <td>@l.NgayKetThuc.ToString("dd/MM/yyyy")</td>
                             <td>
-                                <a asp-action="Schedule" asp-route-classId="@l.MaLopHoc" class="btn btn-sm">Lịch học</a>
+                                <a asp-action="Schedule" asp-route-classId="@l.MaLopHoc" class="btn btn-sm">Lịch dạy</a>
                             </td>
                         </tr>
             }

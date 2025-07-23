@@ -265,9 +265,44 @@ namespace QuanLyTTNgoaiNgu.Controllers
             return View(list);
         }
 
+        // GET: GIANGVIENs/EnterScores/5
+        public async Task<IActionResult> EnterScores(int classId)
+        {
+            // Xác định giảng viên hiện tại
+            var username = User.FindFirstValue(ClaimTypes.Name);
+            var gv = await _context.GIANGVIEN
+                         .Include(g => g.TAIKHOAN)
+                         .FirstOrDefaultAsync(g => g.TAIKHOAN.TenDangNhap == username);
+            if (gv == null) return RedirectToAction("Index", "Home");
+
+            // Kiểm tra lớp có của mình hay không
+            var lop = await _context.LOPHOC
+                         .FirstOrDefaultAsync(l => l.MaLopHoc == classId && l.MaGiangVien == gv.MaGiangVien);
+            if (lop == null) return Forbid();
+
+            // Lấy danh sách PHIEUDANGKY của lớp kèm KETQUAHOCTAP và DANGKYMOI.HoTen
+            var list = await _context.PHIEUDANGKY
+                .Where(p => p.MaLopHoc == classId)
+                .Include(p => p.HOCVIEN).ThenInclude(h => h.DANGKYMOI)
+                .Include(p => p.KETQUAHOCTAP)
+                .ToListAsync();
+
+            var vm = list.Select(p => new ScoreEntryViewModel
+            {
+                MaPhieu = p.MaPhieu,
+                TenHocVien = p.HOCVIEN?.DANGKYMOI?.HoTen ?? "(Không tên)",
+                Diem = p.KETQUAHOCTAP?.Diem ?? 0
+            }).ToList();
+
+            ViewBag.ClassId = classId;
+            return View(vm);
+        }
+
+        // POST: GIANGVIENs/EnterScores/5
         [HttpPost, ValidateAntiForgeryToken]
         public async Task<IActionResult> EnterScores(int classId, List<ScoreEntryViewModel> model)
         {
+            // Xác thực tương tự GET
             var username = User.FindFirstValue(ClaimTypes.Name);
             var gv = await _context.GIANGVIEN
                          .Include(g => g.TAIKHOAN)
@@ -281,10 +316,10 @@ namespace QuanLyTTNgoaiNgu.Controllers
             if (!ModelState.IsValid)
             {
                 ViewBag.TenLop = lop.TenLopHoc;
-                ViewBag.MaLopHoc = classId; // thêm ở đây
                 return View(model);
             }
 
+            // Với mỗi entry, cập nhật hoặc tạo mới KETQUAHOCTAP
             foreach (var entry in model)
             {
                 var existing = await _context.KETQUAHOCTAP
@@ -303,11 +338,13 @@ namespace QuanLyTTNgoaiNgu.Controllers
                     });
                 }
             }
+
             await _context.SaveChangesAsync();
             TempData["Success"] = "Lưu điểm thành công!";
             return RedirectToAction(nameof(EnterScores), new { classId });
         }
+
     }
 
-    
+
 }
