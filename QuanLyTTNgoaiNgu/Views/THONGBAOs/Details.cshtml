@@ -1,42 +1,95 @@
 ﻿@model QuanLyTTNgoaiNgu.Models.THONGBAO
 
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = "Chi tiết Thông báo";
+    Layout = "_LayoutAdmin";
 }
 
-<h1>Details</h1>
+@section Styles {
+    <style>
+        h1 {
+            font-size: 28px;
+            text-align: center;
+            color: #1d3557;
+            margin-bottom: 30px;
+        }
 
-<div>
-    <h4>THONGBAO</h4>
-    <hr />
+        .details-container {
+            max-width: 700px;
+            margin: auto;
+            background: #ffffff;
+            padding: 40px;
+            border-radius: 16px;
+            box-shadow: 0 0 12px rgba(0, 0, 0, 0.1);
+        }
+
+        dt {
+            font-weight: bold;
+            color: #1d3557;
+        }
+
+        dd {
+            margin-bottom: 15px;
+        }
+
+        .btn-group {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .btn-custom {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: background-color 0.3s ease;
+        }
+
+        .btn-edit {
+            background-color: #007bff;
+            color: white;
+        }
+
+            .btn-edit:hover {
+                background-color: #0056b3;
+            }
+
+        .btn-back {
+            background-color: #6c757d;
+            color: white;
+        }
+
+            .btn-back:hover {
+                background-color: #4e555b;
+            }
+    </style>
+}
+
+<div class="details-container">
+    <h1>Chi tiết Thông báo</h1>
+
     <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.TieuDe)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.TieuDe)
+        <dt class="col-sm-4">Tiêu đề</dt>
+        <dd class="col-sm-8">@Model.TieuDe</dd>
+
+        <dt class="col-sm-4">Nội dung</dt>
+        <dd class="col-sm-8">@Model.NoiDung</dd>
+
+        <dt class="col-sm-4">Ngày thông báo</dt>
+        <dd class="col-sm-8">
+            @(Model.NgayThongBao.HasValue ? Model.NgayThongBao.Value.ToString("dd/MM/yyyy") : "")
         </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.NoiDung)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.NoiDung)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.NgayThongBao)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.NgayThongBao)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.MaTaiKhoan)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.MaTaiKhoan)
-        </dd>
+
+
+        <dt class="col-sm-4">Tài khoản tạo</dt>
+        <dd class="col-sm-8">@Model.MaTaiKhoan</dd>
     </dl>
-</div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model?.MaThongBao">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+
+    <div class="btn-group">
+        <a asp-action="Edit" asp-route-id="@Model?.MaThongBao" class="btn-custom btn-edit">Chỉnh sửa</a>
+        <a asp-action="Index" class="btn-custom btn-back">Quay lại danh sách</a>
+    </div>
 </div>

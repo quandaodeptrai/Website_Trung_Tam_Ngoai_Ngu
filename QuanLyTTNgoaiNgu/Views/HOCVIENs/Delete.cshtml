@@ -1,40 +1,111 @@
 ﻿@model QuanLyTTNgoaiNgu.Models.HOCVIEN
 @{
     ViewData["Title"] = "Xóa Học viên";
+    Layout = "_LayoutAdmin";
 }
+
+@section Styles {
+    <style>
+        h1 {
+            font-size: 28px;
+            margin-bottom: 20px;
+            color: #1d3557;
+        }
+
+        .card {
+            background-color: #fff;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+            max-width: 800px;
+        }
+
+        dt {
+            font-weight: 600;
+            color: #333;
+        }
+
+        dd {
+            margin-bottom: 15px;
+            color: #555;
+        }
+
+        .warning-text {
+            font-size: 18px;
+            color: #e63946;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+
+        .form-actions {
+            margin-top: 20px;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 10px 20px;
+            font-weight: 600;
+            text-decoration: none;
+            border-radius: 6px;
+            transition: background-color 0.3s;
+            margin-right: 12px;
+        }
+
+        .btn-danger {
+            background-color: #e63946;
+            color: white;
+        }
+
+            .btn-danger:hover {
+                background-color: #c1272d;
+            }
+
+        .btn-secondary {
+            background-color: #6c757d;
+            color: white;
+        }
+
+            .btn-secondary:hover {
+                background-color: #5a6268;
+            }
+    </style>
+}
+
 <h1>@ViewData["Title"]</h1>
 
-<div class="card mb-3">
-    <div class="card-body">
-        <h5 class="card-title">Thông tin Học viên</h5>
-        <dl class="row">
-            <dt class="col-sm-3">Mã Học viên</dt>
-            <dd class="col-sm-9">@Model.MaHocVien</dd>
+<div class="card">
+    <h4>Thông tin Học viên</h4>
+    <dl class="row">
+        <dt class="col-sm-4">Mã Học viên</dt>
+        <dd class="col-sm-8">@Model.MaHocVien</dd>
 
-            <dt class="col-sm-3">Họ tên</dt>
-            <dd class="col-sm-9">@Model.DANGKYMOI?.HoTen</dd>
+        <dt class="col-sm-4">Họ tên</dt>
+        <dd class="col-sm-8">@Model.DANGKYMOI?.HoTen</dd>
 
-            <dt class="col-sm-3">Ngày sinh</dt>
-            <dd class="col-sm-9">@(Model.DANGKYMOI?.NgaySinh?.ToString("dd/MM/yyyy") ?? "")</dd>
+        <dt class="col-sm-4">Ngày sinh</dt>
+        <dd class="col-sm-8">@(Model.DANGKYMOI?.NgaySinh?.ToString("dd/MM/yyyy") ?? "")</dd>
 
-            <dt class="col-sm-3">Điện thoại</dt>
-            <dd class="col-sm-9">@Model.DANGKYMOI?.SoDienThoai</dd>
+        <dt class="col-sm-4">Điện thoại</dt>
+        <dd class="col-sm-8">@Model.DANGKYMOI?.SoDienThoai</dd>
 
-            <dt class="col-sm-3">Địa chỉ</dt>
-            <dd class="col-sm-9">@Model.DANGKYMOI?.DiaChi</dd>
+        <dt class="col-sm-4">Địa chỉ</dt>
+        <dd class="col-sm-8">@Model.DANGKYMOI?.DiaChi</dd>
 
-            <dt class="col-sm-3">Email</dt>
-            <dd class="col-sm-9">@Model.DANGKYMOI?.Email</dd>
+        <dt class="col-sm-4">Email</dt>
+        <dd class="col-sm-8">@Model.DANGKYMOI?.Email</dd>
 
-            <dt class="col-sm-3">Mã Tài khoản</dt>
-            <dd class="col-sm-9">@Model.MaTaiKhoan</dd>
-        </dl>
-    </div>
+        <dt class="col-sm-4">Mã Tài khoản</dt>
+        <dd class="col-sm-8">@Model.MaTaiKhoan</dd>
+    </dl>
 </div>
 
-<h4 class="text-danger">Bạn có chắc chắn muốn xóa Học viên này?</h4>
-<form asp-action="Delete">
+<p class="warning-text">⚠️ Bạn có chắc chắn muốn xóa học viên này?</p>
+
+<form asp-action="Delete" method="post">
     <input type="hidden" asp-for="MaHocVien" />
-    <button type="submit" class="btn btn-danger">Xóa</button>
-    <a asp-action="Index" class="btn btn-secondary">Hủy</a>
+    <div class="form-actions">
+        <button type="submit" class="btn btn-danger">Xóa</button>
+        <a asp-action="Index" class="btn btn-secondary">Hủy</a>
+    </div>
 </form>

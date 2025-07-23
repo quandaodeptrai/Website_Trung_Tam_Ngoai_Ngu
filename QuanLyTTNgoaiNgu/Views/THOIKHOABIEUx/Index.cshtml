@@ -1,47 +1,125 @@
 ﻿@model IEnumerable<QuanLyTTNgoaiNgu.Models.THOIKHOABIEU>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Quản lý Thời khóa biểu";
+    Layout = "_LayoutAdmin";
 }
 
-<h1>Index</h1>
+@section Styles {
+    <style>
+        h1 {
+            font-size: 28px;
+            margin-bottom: 25px;
+            color: #1d3557;
+            text-align: left;
+        }
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.CaHoc)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.NgayHoc)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.LOPHOC)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.CaHoc)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.NgayHoc)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.LOPHOC.TenLopHoc)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.MaLichHoc">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.MaLichHoc">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.MaLichHoc">Delete</a>
-            </td>
-        </tr>
+        .table-container {
+            background-color: #fff;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            margin-top: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #eee;
+            text-align: left;
+        }
+
+        th {
+            background-color: #1d3557;
+            color: white;
+            font-weight: bold;
+        }
+
+        tr:hover {
+            background-color: #f8f9fa;
+        }
+
+        .action-buttons a {
+            margin-right: 8px;
+            padding: 6px 12px;
+            font-size: 14px;
+            border-radius: 5px;
+            text-decoration: none;
+            color: white;
+        }
+
+        .btn-edit {
+            background-color: #3a86ff;
+        }
+
+            .btn-edit:hover {
+                background-color: #2b6ed3;
+            }
+
+        .btn-details {
+            background-color: #43aa8b;
+        }
+
+            .btn-details:hover {
+                background-color: #2f8f72;
+            }
+
+        .btn-delete {
+            background-color: #f94144;
+        }
+
+            .btn-delete:hover {
+                background-color: #d62828;
+            }
+
+        .btn-create {
+            display: inline-block;
+            margin-bottom: 15px;
+            background-color: #1d3557;
+            color: white;
+            padding: 10px 18px;
+            border-radius: 6px;
+            text-decoration: none;
+        }
+
+            .btn-create:hover {
+                background-color: #16395e;
+            }
+    </style>
 }
-    </tbody>
-</table>
+
+<div class="table-container">
+    <h1>Quản lý Thời khóa biểu</h1>
+
+    <a class="btn-create" asp-action="Create">Thêm mới lịch học</a>
+
+    <table>
+        <thead>
+            <tr>
+                <th>@Html.DisplayNameFor(model => model.FirstOrDefault().CaHoc)</th>
+                <th>@Html.DisplayNameFor(model => model.FirstOrDefault().NgayHoc)</th>
+                <th>@Html.DisplayNameFor(model => model.FirstOrDefault().LOPHOC.TenLopHoc)</th>
+                <th>Thao tác</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.CaHoc</td>
+                    <td>@(item.NgayHoc.HasValue ? item.NgayHoc.Value.ToString("dd/MM/yyyy") : "")</td>
+                    <td>@item.LOPHOC?.TenLopHoc</td>
+                    <td class="action-buttons">
+                        <a asp-action="Edit" asp-route-id="@item.MaLichHoc" class="btn-edit">Sửa</a>
+                        <a asp-action="Details" asp-route-id="@item.MaLichHoc" class="btn-details">Chi tiết</a>
+                        <a asp-action="Delete" asp-route-id="@item.MaLichHoc" class="btn-delete">Xóa</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

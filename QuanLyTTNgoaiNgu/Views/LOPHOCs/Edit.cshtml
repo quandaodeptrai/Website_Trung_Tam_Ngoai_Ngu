@@ -1,6 +1,62 @@
 ﻿@model QuanLyTTNgoaiNgu.Models.LOPHOC
 @{
     ViewData["Title"] = "Sửa lớp học";
+    Layout = "_LayoutAdmin";
+}
+
+@section Styles {
+    <style>
+        h2 {
+            font-size: 28px;
+            margin-bottom: 25px;
+            color: #1d3557;
+        }
+
+        form {
+            background-color: #ffffff;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+            max-width: 700px;
+        }
+
+        .mb-3 {
+            margin-bottom: 20px;
+        }
+
+        label {
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: #1d3557;
+        }
+
+        input, select {
+            font-size: 16px;
+            border-radius: 8px;
+        }
+
+        .btn-success {
+            background-color: #2a9d8f;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-weight: bold;
+        }
+
+            .btn-success:hover {
+                background-color: #21867a;
+            }
+
+        .btn-secondary {
+            background-color: #6c757d;
+            color: white;
+            padding: 10px 20px;
+        }
+
+            .btn-secondary:hover {
+                background-color: #5a6268;
+            }
+    </style>
 }
 
 <h2>@ViewData["Title"]</h2>
@@ -10,23 +66,47 @@
 <form asp-action="Edit" method="post">
     @Html.AntiForgeryToken()
     <input type="hidden" asp-for="MaLopHoc" />
-    <!-- Các trường giống Create -->
+
     <div class="mb-3">
         <label asp-for="TenLopHoc" class="form-label"></label>
         <input asp-for="TenLopHoc" class="form-control" />
         <span asp-validation-for="TenLopHoc" class="text-danger"></span>
     </div>
-    <!-- ... SLHocVienToiDa, NgayBatDau, NgayKetThuc như trên ... -->
+
+    <div class="mb-3">
+        <label asp-for="SLHocVienToiDa" class="form-label"></label>
+        <input asp-for="SLHocVienToiDa" type="number" class="form-control" />
+        <span asp-validation-for="SLHocVienToiDa" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="NgayBatDau" class="form-label"></label>
+        <input asp-for="NgayBatDau" type="date" class="form-control" />
+        <span asp-validation-for="NgayBatDau" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="NgayKetThuc" class="form-label"></label>
+        <input asp-for="NgayKetThuc" type="date" class="form-control" />
+        <span asp-validation-for="NgayKetThuc" class="text-danger"></span>
+    </div>
+
     <div class="mb-3">
         <label asp-for="MaKhoaHoc" class="form-label">Khóa học</label>
-        <select asp-for="MaKhoaHoc" class="form-select" asp-items="ViewBag.MaKhoaHoc"></select>
+        <select asp-for="MaKhoaHoc" class="form-select" asp-items="ViewBag.MaKhoaHoc">
+            <option value="">-- Chọn khóa học --</option>
+        </select>
         <span asp-validation-for="MaKhoaHoc" class="text-danger"></span>
     </div>
+
     <div class="mb-3">
         <label asp-for="MaGiangVien" class="form-label">Giảng viên</label>
-        <select asp-for="MaGiangVien" class="form-select" asp-items="ViewBag.MaGiangVien"></select>
+        <select asp-for="MaGiangVien" class="form-select" asp-items="ViewBag.MaGiangVien">
+            <option value="">-- Chọn giảng viên --</option>
+        </select>
         <span asp-validation-for="MaGiangVien" class="text-danger"></span>
     </div>
+
     <button type="submit" class="btn btn-success">Lưu</button>
     <a asp-action="Index" class="btn btn-secondary ms-2">Hủy</a>
 </form>

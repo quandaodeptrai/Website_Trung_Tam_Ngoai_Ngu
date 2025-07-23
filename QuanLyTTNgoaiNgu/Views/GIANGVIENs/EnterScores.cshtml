@@ -1,0 +1,96 @@
+﻿@model List<QuanLyTTNgoaiNgu.Models.ScoreEntryViewModel>
+
+@{
+    Layout = "~/Views/Shared/_LayoutGiangVien.cshtml";
+    ViewData["Title"] = "Nhập điểm lớp " + (ViewBag.TenLop ?? "");
+}
+
+@section Styles {
+        <style>
+            .score-form-container {
+                max-width: 800px;
+                margin: 40px auto;
+                background: #ffffff;
+                padding: 30px;
+                border-radius: 16px;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            }
+
+            h2 {
+                text-align: center;
+                color: #1d3557;
+                margin-bottom: 30px;
+            }
+
+            .table th, .table td {
+                vertical-align: middle;
+            }
+
+            .btn-primary {
+                background-color: #1d3557;
+                border: none;
+            }
+
+                .btn-primary:hover {
+                    background-color: #0c2742;
+                }
+
+            .btn-secondary {
+                background-color: #a8dadc;
+                border: none;
+                color: #1d3557;
+            }
+
+                .btn-secondary:hover {
+                    background-color: #7ecfcf;
+                }
+        </style>
+}
+
+<div class="score-form-container">
+    <h2>@ViewData["Title"]</h2>
+
+    @if (TempData["Success"] != null)
+    {
+            <div class="alert alert-success text-center">@TempData["Success"]</div>
+    }
+
+    <form asp-action="EnterScores" asp-route-classId="@ViewBag.ClassId" method="post">
+        @Html.AntiForgeryToken()
+        @Html.ValidationSummary(true, "", new { @class = "alert alert-danger" })
+
+        <table class="table table-striped table-hover">
+            <thead class="table-light">
+                <tr>
+                    <th>Họ tên học viên</th>
+                    <th style="width: 150px;">Điểm (0–10)</th>
+                </tr>
+            </thead>
+            <tbody>
+                @for (int i = 0; i < Model.Count; i++)
+                {
+                        <tr>
+                            <td>
+                            @Model[i].TenHocVien
+                                <input type="hidden" asp-for="@Model[i].MaPhieu" />
+                            </td>
+                            <td>
+                                <input asp-for="@Model[i].Diem" class="form-control text-center" />
+                                <span asp-validation-for="@Model[i].Diem" class="text-danger small"></span>
+                            </td>
+                        </tr>
+                }
+            </tbody>
+        </table>
+
+        <div class="d-flex justify-content-between mt-4">
+            <button type="submit" class="btn btn-primary">Lưu điểm</button>
+            <a asp-controller="GIANGVIENs" asp-action="MyClasses" class="btn btn-secondary">Quay lại</a>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    @await Html.PartialAsync("_ValidationScriptsPartial")
+}
+

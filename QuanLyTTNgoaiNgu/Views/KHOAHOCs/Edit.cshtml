@@ -1,44 +1,111 @@
 ﻿@model QuanLyTTNgoaiNgu.Models.KHOAHOC
 
 @{
-    ViewData["Title"] = "Edit";
+    ViewData["Title"] = "Chỉnh sửa Khóa học";
+    Layout = "_LayoutAdmin";
 }
 
-<h1>Edit</h1>
+@section Styles {
+    <style>
+        h1 {
+            font-size: 28px;
+            margin-bottom: 25px;
+            color: #1d3557;
+        }
 
-<h4>KHOAHOC</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Edit">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="MaKhoaHoc" />
-            <div class="form-group">
-                <label asp-for="TenKhoaHoc" class="control-label"></label>
-                <input asp-for="TenKhoaHoc" class="form-control" />
-                <span asp-validation-for="TenKhoaHoc" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="MoTa" class="control-label"></label>
-                <input asp-for="MoTa" class="form-control" />
-                <span asp-validation-for="MoTa" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="MucHocPhi" class="control-label"></label>
-                <input asp-for="MucHocPhi" class="form-control" />
-                <span asp-validation-for="MucHocPhi" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
-            </div>
-        </form>
+        form {
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 12px;
+            max-width: 700px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            font-weight: bold;
+            display: block;
+            margin-bottom: 6px;
+            color: #1d3557;
+        }
+
+        input[type="text"],
+        input[type="number"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+
+        .text-danger {
+            color: #e63946;
+            font-size: 14px;
+        }
+
+        button,
+        .btn {
+            display: inline-block;
+            padding: 10px 18px;
+            text-decoration: none;
+            font-weight: 600;
+            border-radius: 6px;
+            transition: background-color 0.3s ease;
+        }
+
+        .btn-primary {
+            background-color: #3a86ff;
+            color: white;
+            border: none;
+        }
+
+            .btn-primary:hover {
+                background-color: #2b6ed3;
+            }
+
+        .btn-secondary {
+            background-color: #6c757d;
+            color: white;
+        }
+
+            .btn-secondary:hover {
+                background-color: #5a6268;
+            }
+    </style>
+}
+
+<h1>@ViewData["Title"]</h1>
+
+<form asp-action="Edit" method="post">
+    <input type="hidden" asp-for="MaKhoaHoc" />
+
+    <div class="form-group">
+        <label asp-for="TenKhoaHoc"></label>
+        <input asp-for="TenKhoaHoc" class="form-control" />
+        <span asp-validation-for="TenKhoaHoc" class="text-danger"></span>
     </div>
-</div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
+    <div class="form-group">
+        <label asp-for="MoTa"></label>
+        <input asp-for="MoTa" class="form-control" />
+        <span asp-validation-for="MoTa" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="MucHocPhi"></label>
+        <input asp-for="MucHocPhi" class="form-control" type="number" min="0" step="10000" />
+        <span asp-validation-for="MucHocPhi" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Lưu</button>
+    <a asp-action="Index" class="btn btn-secondary">Quay lại</a>
+</form>
 
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 }

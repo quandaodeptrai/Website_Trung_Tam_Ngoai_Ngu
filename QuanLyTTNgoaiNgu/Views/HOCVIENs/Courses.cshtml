@@ -1,39 +1,122 @@
 ﻿@model IEnumerable<QuanLyTTNgoaiNgu.Models.CourseViewModel>
+
 @{
     ViewData["Title"] = "Danh sách Khóa học";
     var currentFilter = (string)ViewData["CurrentFilter"];
+    Layout = "_LayoutHocVien";
+}
+
+@section Styles {
+    <style>
+        h2 {
+            text-align: center;
+            color: #1d3557;
+            margin-top: 30px;
+            margin-bottom: 30px;
+        }
+
+        .search-form {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 30px;
+            gap: 10px;
+        }
+
+            .search-form input[type="text"] {
+                padding: 10px 14px;
+                font-size: 16px;
+                border: 1px solid #ccc;
+                border-radius: 8px;
+                width: 300px;
+            }
+
+            .search-form button {
+                padding: 10px 20px;
+                background-color: #1d3557;
+                color: white;
+                border: none;
+                border-radius: 8px;
+                cursor: pointer;
+                font-weight: bold;
+                transition: background-color 0.3s ease;
+            }
+
+                .search-form button:hover {
+                    background-color: #0b2a4a;
+                }
+
+        .course-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .card {
+            background-color: #ffffff;
+            border-radius: 16px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+            .card:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+            }
+
+        .card-title {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            color: #1d3557;
+        }
+
+        .card p {
+            flex-grow: 1;
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        .card a {
+            margin-top: auto;
+            align-self: flex-start;
+            padding: 8px 16px;
+            background-color: #2a9d8f;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: background-color 0.3s ease;
+        }
+
+            .card a:hover {
+                background-color: #21867a;
+            }
+    </style>
 }
 
 <h2>@ViewData["Title"]</h2>
 
-<form asp-action="Courses" method="get" class="row g-2 mb-4">
-    <div class="col-auto">
-        <input
-            type="text"
-            name="searchString"
-            value="@currentFilter"
-            class="form-control"
-            placeholder="Tìm theo tên khóa học..." />
-    </div>
-    <div class="col-auto">
-        <button type="submit" class="btn btn-primary">Tìm</button>
-    </div>
+<form asp-action="Courses" method="get" class="search-form">
+    <input type="text" name="searchString" value="@currentFilter" placeholder="Tìm theo tên khóa học..." />
+    <button type="submit">Tìm</button>
 </form>
 
-<div class="row">
+<div class="course-grid">
     @foreach (var c in Model)
     {
-            <div class="col-md-4 mb-3">
-                <div class="card h-100">
-                    <div class="card-body d-flex flex-column">
-                        <h5 class="card-title">@c.TenKhoaHoc</h5>
-                        <p class="flex-grow-1">@c.MoTa</p>
-                        <p><strong>Học phí:</strong> @($"{c.MucHocPhi:N0} VND")</p>
-                        <a asp-action="Classes" asp-route-courseId="@c.MaKhoaHoc" class="btn btn-primary mt-auto">
-                            Xem lớp
-                        </a>
-                    </div>
-                </div>
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">@c.TenKhoaHoc</h5>
+                <p>@c.MoTa</p>
+                <p><strong>Học phí:</strong> @($"{c.MucHocPhi:N0} VND")</p>
+                <a asp-action="Classes" asp-route-courseId="@c.MaKhoaHoc">Xem lớp</a>
             </div>
+        </div>
     }
 </div>

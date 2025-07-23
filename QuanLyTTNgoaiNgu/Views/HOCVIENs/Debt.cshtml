@@ -1,92 +1,185 @@
 ﻿@model QuanLyTTNgoaiNgu.Models.DebtViewModel
 @{
     ViewData["Title"] = "Kiểm tra công nợ";
+    Layout = "_LayoutHocVien";
+}
+
+@section Styles {
+    <style>
+        h2 {
+            text-align: center;
+            margin: 30px 0;
+            color: #1d3557;
+        }
+
+        .alert {
+            max-width: 800px;
+            margin: 0 auto 20px;
+            padding: 12px;
+            border-radius: 6px;
+            font-weight: bold;
+        }
+
+        .alert-danger {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+
+        .alert-success {
+            background-color: #d4edda;
+            color: #155724;
+        }
+
+        table {
+            width: 100%;
+            max-width: 1000px;
+            margin: 0 auto 20px;
+            border-collapse: collapse;
+            background: #fff;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 0 12px rgba(0, 0, 0, 0.05);
+        }
+
+        thead {
+            background-color: #1d3557;
+            color: white;
+        }
+
+        th, td {
+            padding: 12px 14px;
+            text-align: center;
+            border-bottom: 1px solid #dee2e6;
+        }
+
+        .amount {
+            font-weight: bold;
+            color: #2a9d8f;
+        }
+
+        .form-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        #totalAmount {
+            font-weight: bold;
+            color: #e76f51;
+            font-size: 18px;
+        }
+
+        .btn-success {
+            background-color: #2a9d8f;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            font-weight: 600;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+            .btn-success:disabled {
+                background-color: #ccc;
+                cursor: not-allowed;
+            }
+
+            .btn-success:hover:enabled {
+                background-color: #21867a;
+            }
+
+        .mb-3 {
+            text-align: right;
+            margin: 20px 0;
+        }
+    </style>
 }
 
 <h2>@ViewData["Title"]</h2>
 
 @if (TempData["DebtError"] != null)
 {
-        <div class="alert alert-danger">@TempData["DebtError"]</div>
+    <div class="alert alert-danger">@TempData["DebtError"]</div>
 }
 @if (TempData["DebtSuccess"] != null)
 {
-        <div class="alert alert-success">@TempData["DebtSuccess"]</div>
+    <div class="alert alert-success">@TempData["DebtSuccess"]</div>
 }
 
-<form asp-action="PayDebt" method="post">
-    @Html.AntiForgeryToken()
-    <table class="table table-bordered">
-        <thead>
-            <tr>
-                <th>Chọn</th>
-                <th>Khóa học</th>
-                <th>Lớp học</th>
-                <th>Số tiền (VND)</th>
-                <th>Trạng thái</th>
-                <th>Ngày nộp</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var item in Model.Items)
-            {
+<div class="form-container">
+    <form asp-action="PayDebt" method="post">
+        @Html.AntiForgeryToken()
+        <table>
+            <thead>
                 <tr>
-                    <td>
-                        @if (!item.TrangThai)
-                        {
-                                <input type="checkbox" class="debt-check" 
-                                       name="selectedIds" value="@item.MaHocPhi" />
-                        }
-                    </td>
-                    <td>@item.TenKhoaHoc</td>
-                    <td>@item.TenLopHoc</td>
-                    <td class="amount">
-                        @String.Format("{0:N0} VND", item.MucHocPhi)
-                    </td>
-                    <td>
-                        @(item.TrangThai ? "Đã nộp" : "Chưa nộp")
-                    </td>
-                    <td>
-                        @(item.NgayNop?.ToString("dd/MM/yyyy") ?? "-")
-                    </td>
+                    <th>Chọn</th>
+                    <th>Khóa học</th>
+                    <th>Lớp học</th>
+                    <th>Số tiền (VND)</th>
+                    <th>Trạng thái</th>
+                    <th>Ngày nộp</th>
                 </tr>
-            }
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.Items)
+                {
+                    <tr>
+                        <td>
+                            @if (!item.TrangThai)
+                            {
+                                <input type="checkbox" class="debt-check" name="selectedIds" value="@item.MaHocPhi" />
+                            }
+                        </td>
+                        <td>@item.TenKhoaHoc</td>
+                        <td>@item.TenLopHoc</td>
+                        <td class="amount">
+                            @String.Format("{0:N0} VND", item.MucHocPhi)
+                        </td>
+                        <td>
+                            @(item.TrangThai ? "Đã nộp" : "Chưa nộp")
+                        </td>
+                        <td>
+                            @(item.NgayNop?.ToString("dd/MM/yyyy") ?? "-")
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
 
-    <div class="mb-3">
-        <strong>Tổng phải nộp:</strong>
-        <span id="totalAmount">0 VND</span>
-    </div>
+        <div class="mb-3">
+            <strong>Tổng phải nộp:</strong> <span id="totalAmount">0 VND</span>
+        </div>
 
-    <button type="submit" class="btn btn-success" id="payBtn" disabled>
-        Nộp
-    </button>
-</form>
+        <div style="text-align: right;">
+            <button type="submit" class="btn-success" id="payBtn" disabled>
+                Nộp
+            </button>
+        </div>
+    </form>
+</div>
 
 @section Scripts {
-        <script>
-            // Khi checkbox thay đổi, tính lại tổng
-            const checks = document.querySelectorAll('.debt-check');
-            const totalSpan = document.getElementById('totalAmount');
-            const payBtn = document.getElementById('payBtn');
+    <script>
+        const checks = document.querySelectorAll('.debt-check');
+        const totalSpan = document.getElementById('totalAmount');
+        const payBtn = document.getElementById('payBtn');
 
-            function updateTotal() {
-                let sum = 0;
-                checks.forEach(cb => {
-                    if (cb.checked) {
-                        // tìm thẻ <td class="amount"> cùng hàng
-                        const row = cb.closest('tr');
-                        const txt = row.querySelector('.amount').innerText;
-                        // "2.000.000 VND" -> parse number
-                        const num = Number(txt.replace(/[^0-9]/g, ''));
-                        sum += num;
-                    }
-                });
-                totalSpan.innerText = sum.toLocaleString() + ' VND';
-                payBtn.disabled = sum === 0;
-            }
+        function updateTotal() {
+            let sum = 0;
+            checks.forEach(cb => {
+                if (cb.checked) {
+                    const row = cb.closest('tr');
+                    const txt = row.querySelector('.amount').innerText;
+                    const num = Number(txt.replace(/[^0-9]/g, ''));
+                    sum += num;
+                }
+            });
+            totalSpan.innerText = sum.toLocaleString() + ' VND';
+            payBtn.disabled = sum === 0;
+        }
 
-            checks.forEach(cb => cb.addEventListener('change', updateTotal));
-        </script>
+        checks.forEach(cb => cb.addEventListener('change', updateTotal));
+    </script>
 }

@@ -1,47 +1,95 @@
 ﻿@model IEnumerable<QuanLyTTNgoaiNgu.Models.PHIEUDANGKY>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Lịch sử đăng ký lớp học";
+    Layout = "_LayoutAdmin";
 }
 
-<h1>Index</h1>
+@section Styles {
+    <style>
+        .container {
+            max-width: 950px;
+            margin: 40px auto;
+            padding: 30px;
+            background-color: #ffffff;
+            border-radius: 16px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.NgayDangKy)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.HOCVIEN)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.LOPHOC)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.NgayDangKy)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.HOCVIEN.MaHocVien)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.LOPHOC.TenLopHoc)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.MaPhieu">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.MaPhieu">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.MaPhieu">Delete</a>
-            </td>
-        </tr>
+        h1 {
+            text-align: center;
+            color: #1d3557;
+            margin-bottom: 32px;
+            font-size: 28px;
+            font-weight: 600;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: #ffffff;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        th, td {
+            padding: 14px 18px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #1d3557;
+            color: white;
+            font-weight: 600;
+        }
+
+        tr:hover {
+            background-color: #f0f8ff;
+        }
+
+        .actions a {
+            display: inline-block;
+            padding: 6px 14px;
+            background-color: #2a9d8f;
+            color: white;
+            border-radius: 6px;
+            font-weight: 500;
+            text-decoration: none;
+            transition: background-color 0.3s ease;
+        }
+
+            .actions a:hover {
+                background-color: #21867a;
+            }
+    </style>
 }
-    </tbody>
-</table>
+
+<div class="container">
+    <h1>@ViewData["Title"]</h1>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Ngày đăng ký</th>
+                <th>Mã học viên</th>
+                <th>Lớp học</th>
+                <th>Thao tác</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@(item.NgayDangKy.HasValue ? item.NgayDangKy.Value.ToString("dd/MM/yyyy") : "")</td>
+                    <td>@item.HOCVIEN?.MaHocVien</td>
+                    <td>@item.LOPHOC?.TenLopHoc</td>
+                    <td class="actions">
+                        <a asp-action="Details" asp-route-id="@item.MaPhieu">Chi tiết</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

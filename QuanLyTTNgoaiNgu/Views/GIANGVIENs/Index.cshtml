@@ -1,59 +1,124 @@
 ﻿@model IEnumerable<QuanLyTTNgoaiNgu.Models.GIANGVIEN>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Danh sách Giảng viên";
+    Layout = "_LayoutAdmin";
 }
 
-<h1>Index</h1>
+@section Styles {
+    <style>
+        h1 {
+            font-size: 28px;
+            margin-bottom: 20px;
+            color: #1d3557;
+        }
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
+        .btn-add {
+            display: inline-block;
+            background-color: #2a9d8f;
+            color: white;
+            padding: 10px 18px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+
+            .btn-add:hover {
+                background-color: #21867a;
+            }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: white;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+
+        th {
+            background-color: #1d3557;
+            color: white;
+            font-weight: 600;
+        }
+
+        tr:hover {
+            background-color: #f8f9fa;
+        }
+
+        .action-buttons a {
+            margin-right: 8px;
+            display: inline-block;
+            padding: 6px 12px;
+            font-size: 14px;
+            border-radius: 5px;
+            text-decoration: none;
+            color: white;
+        }
+
+        .btn-edit {
+            background-color: #3a86ff;
+        }
+
+        .btn-details {
+            background-color: #43aa8b;
+        }
+
+        .btn-delete {
+            background-color: #e63946;
+        }
+
+        .btn-edit:hover {
+            background-color: #2b6ed3;
+        }
+
+        .btn-details:hover {
+            background-color: #2f8f72;
+        }
+
+        .btn-delete:hover {
+            background-color: #c1272d;
+        }
+    </style>
+}
+
+<h1>@ViewData["Title"]</h1>
+
+<a asp-action="Create" class="btn-add">Thêm Giảng viên</a>
+
+<table>
     <thead>
         <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.HoTen)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.ChuyenMon)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Email)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.SoDienThoai)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.TAIKHOAN)
-            </th>
-            <th></th>
+            <th>Họ tên</th>
+            <th>Chuyên môn</th>
+            <th>Email</th>
+            <th>Điện thoại</th>
+            <th>Tài khoản</th>
+            <th>Thao tác</th>
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.HoTen)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.ChuyenMon)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Email)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.SoDienThoai)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.TAIKHOAN.MatKhau)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.MaGiangVien">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.MaGiangVien">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.MaGiangVien">Delete</a>
-            </td>
-        </tr>
-}
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.HoTen</td>
+                <td>@item.ChuyenMon</td>
+                <td>@item.Email</td>
+                <td>@item.SoDienThoai</td>
+                <td>@item.TAIKHOAN?.TenDangNhap</td>
+                <td class="action-buttons">
+                    <a asp-action="Details" asp-route-id="@item.MaGiangVien" class="btn-details">Chi tiết</a>
+                    <a asp-action="Edit" asp-route-id="@item.MaGiangVien" class="btn-edit">Sửa</a>
+                    <a asp-action="Delete" asp-route-id="@item.MaGiangVien" class="btn-delete">Xóa</a>
+                </td>
+            </tr>
+        }
     </tbody>
 </table>

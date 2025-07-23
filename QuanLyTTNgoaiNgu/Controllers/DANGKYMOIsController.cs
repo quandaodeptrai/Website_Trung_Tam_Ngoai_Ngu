@@ -128,17 +128,6 @@ namespace QuanLyTTNgoaiNgu.Controllers
         }
         
 
-        // GET: DANGKYMOIs/Details/5
-        public async Task<IActionResult> Details(int? id)
-        {
-            if (id == null) return NotFound();
-
-            var item = await _context.DANGKYMOI
-                .FirstOrDefaultAsync(m => m.MaDangKy == id);
-            if (item == null) return NotFound();
-
-            return View(item);
-        }
 
         // GET: DANGKYMOIs/Create
         public IActionResult Create()
@@ -170,38 +159,7 @@ namespace QuanLyTTNgoaiNgu.Controllers
             return View();
         }
 
-        // GET: DANGKYMOIs/Edit/5
-        public async Task<IActionResult> Edit(int? id)
-        {
-            if (id == null) return NotFound();
 
-            var item = await _context.DANGKYMOI.FindAsync(id);
-            if (item == null) return NotFound();
-            return View(item);
-        }
-
-        // POST: DANGKYMOIs/Edit/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("MaDangKy,HoTen,NgaySinh,SoDienThoai,DiaChi,Email,MaQuanTriVien")] DANGKYMOI dky)
-        {
-            if (id != dky.MaDangKy) return NotFound();
-            if (!ModelState.IsValid) return View(dky);
-
-            try
-            {
-                _context.Update(dky);
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!_context.DANGKYMOI.Any(e => e.MaDangKy == id))
-                    return NotFound();
-                throw;
-            }
-
-            return RedirectToAction(nameof(Index));
-        }
 
         // GET: DANGKYMOIs/Delete/5
         public async Task<IActionResult> Delete(int? id)

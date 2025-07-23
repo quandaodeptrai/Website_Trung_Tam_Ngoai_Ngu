@@ -1,9 +1,88 @@
 ﻿@model IEnumerable<QuanLyTTNgoaiNgu.Models.ScheduleItemViewModel>
 @{
     ViewData["Title"] = "Lịch học của bạn";
+    Layout = "_LayoutHocVien";
 }
 
 <h2>@ViewData["Title"]</h2>
+<style>
+    h2 {
+        text-align: center;
+        font-size: 28px;
+        margin-bottom: 30px;
+        color: #2c3e50;
+        font-weight: bold;
+    }
+
+    .table {
+        width: 100%;
+        border-collapse: collapse;
+        background-color: #fff;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        border-radius: 10px;
+        overflow: hidden;
+        margin-bottom: 30px;
+    }
+
+        .table thead {
+            background-color: #2980b9;
+            color: #ffffff;
+        }
+
+        .table th, .table td {
+            padding: 16px;
+            text-align: center;
+            border-bottom: 1px solid #ddd;
+            font-size: 15px;
+        }
+
+        .table tbody tr:hover {
+            background-color: #f5f8fa;
+        }
+
+    .text-danger {
+        color: #e74c3c;
+        font-weight: bold;
+    }
+
+    .btn-action {
+        display: inline-block;
+        padding: 8px 14px;
+        border: none;
+        border-radius: 6px;
+        font-size: 14px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+        color: white;
+        margin: 0 5px;
+        text-decoration: none;
+    }
+
+    .btn-view {
+        background-color: #28a745;
+    }
+
+        .btn-view:hover {
+            background-color: #218838;
+        }
+
+    .btn-edit {
+        background-color: #ffc107;
+        color: #212529;
+    }
+
+        .btn-edit:hover {
+            background-color: #e0a800;
+        }
+
+    .btn-cancel {
+        background-color: #dc3545;
+    }
+
+        .btn-cancel:hover {
+            background-color: #c82333;
+        }
+</style>
 
 <table class="table table-bordered">
     <thead>
@@ -26,4 +105,5 @@
         }
     </tbody>
 </table>
+
 

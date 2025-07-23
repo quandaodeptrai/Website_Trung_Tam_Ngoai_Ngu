@@ -1,42 +1,108 @@
 ﻿@model QuanLyTTNgoaiNgu.Models.THOIKHOABIEU
 
 @{
-    ViewData["Title"] = "Create";
+    ViewData["Title"] = "Thêm thời khóa biểu";
+    Layout = "_LayoutAdmin";
 }
 
-<h1>Create</h1>
+@section Styles {
+    <style>
+        h1 {
+            text-align: center;
+            font-size: 28px;
+            margin-top: 30px;
+            color: #1d3557;
+        }
 
-<h4>THOIKHOABIEU</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Create">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="CaHoc" class="control-label"></label>
-                <input asp-for="CaHoc" class="form-control" />
-                <span asp-validation-for="CaHoc" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="NgayHoc" class="control-label"></label>
-                <input asp-for="NgayHoc" class="form-control" />
-                <span asp-validation-for="NgayHoc" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="MaLopHoc" class="control-label"></label>
-                <select asp-for="MaLopHoc" class ="form-control" asp-items="ViewBag.MaLopHoc"></select>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
-            </div>
-        </form>
+        .form-container {
+            max-width: 500px;
+            margin: 40px auto;
+            padding: 30px;
+            background: #f8f9fa;
+            border-radius: 15px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+
+        label {
+            font-weight: 600;
+            color: #333;
+        }
+
+        .btn-primary {
+            width: 100%;
+            background-color: #1d3557;
+            border: none;
+            padding: 10px 0;
+            font-size: 16px;
+            border-radius: 8px;
+        }
+
+            .btn-primary:hover {
+                background-color: #457b9d;
+            }
+
+        .back-button {
+            display: inline-block;
+            margin-top: 20px;
+            text-align: center;
+            background-color: #e9ecef;
+            color: #1d3557;
+            padding: 10px 20px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: background-color 0.3s ease;
+        }
+
+            .back-button:hover {
+                background-color: #d1dce5;
+            }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .text-danger {
+            font-size: 14px;
+        }
+    </style>
+}
+
+<h1>Thêm thời khóa biểu</h1>
+
+<div class="form-container">
+    <form asp-action="Create">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+        <div class="form-group">
+            <label asp-for="CaHoc" class="control-label"></label>
+            <input asp-for="CaHoc" class="form-control" />
+            <span asp-validation-for="CaHoc" class="text-danger"></span>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="NgayHoc" class="control-label"></label>
+            <input asp-for="NgayHoc" type="date" class="form-control" />
+            <span asp-validation-for="NgayHoc" class="text-danger"></span>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="MaLopHoc" class="control-label"></label>
+            <select asp-for="MaLopHoc" class="form-control" asp-items="ViewBag.MaLopHoc"></select>
+        </div>
+
+        <div class="form-group">
+            <input type="submit" value="Tạo mới" class="btn btn-primary" />
+        </div>
+    </form>
+
+    <div class="text-center">
+        <a asp-action="Index" class="back-button">← Quay lại danh sách</a>
     </div>
 </div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
-
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 }

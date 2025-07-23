@@ -32,31 +32,50 @@ namespace QuanLyTTNgoaiNgu.Controllers
         // GET: LOPHOCs/Create
         public IActionResult Create()
         {
-            ViewData["MaKhoaHoc"] = new SelectList(_context.KHOAHOC, "MaKhoaHoc", "TenKhoaHoc");
-            ViewData["MaGiangVien"] = new SelectList(_context.GIANGVIEN, "MaGiangVien", "HoTen");
+            if (!_context.KHOAHOC.Any() || !_context.GIANGVIEN.Any())
+            {
+                ViewBag.Error = "⚠️ Vui lòng thêm dữ liệu cho bảng Khóa học và Giảng viên trước khi tạo lớp học.";
+                return View();
+            }
+
+            ViewBag.MaKhoaHoc = new SelectList(_context.KHOAHOC, "MaKhoaHoc", "TenKhoaHoc");
+            ViewBag.MaGiangVien = new SelectList(_context.GIANGVIEN, "MaGiangVien", "HoTen");
             return View();
         }
 
-        // POST: LOPHOCs/Create
-        [HttpPost, ValidateAntiForgeryToken]
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(
-            [Bind("TenLopHoc,SLHocVienToiDa,NgayBatDau,NgayKetThuc,MaKhoaHoc,MaGiangVien")]
-            LOPHOC model)
+     [Bind("TenLopHoc,SLHocVienToiDa,NgayBatDau,NgayKetThuc,MaKhoaHoc,MaGiangVien")] LOPHOC model)
         {
-            // Xem log ModelState
+            if (model.NgayKetThuc <= model.NgayBatDau)
+            {
+                ModelState.AddModelError("", "❌ Ngày kết thúc phải sau ngày bắt đầu.");
+            }
+
             if (!ModelState.IsValid)
             {
-                // Build lại dropdown để view có thể render
-                ViewData["MaKhoaHoc"] = new SelectList(_context.KHOAHOC, "MaKhoaHoc", "TenKhoaHoc", model.MaKhoaHoc);
-                ViewData["MaGiangVien"] = new SelectList(_context.GIANGVIEN, "MaGiangVien", "HoTen", model.MaGiangVien);
+                ViewBag.MaKhoaHoc = new SelectList(_context.KHOAHOC, "MaKhoaHoc", "TenKhoaHoc", model.MaKhoaHoc);
+                ViewBag.MaGiangVien = new SelectList(_context.GIANGVIEN, "MaGiangVien", "HoTen", model.MaGiangVien);
                 return View(model);
             }
 
-            _context.Add(model);
-            await _context.SaveChangesAsync();
-            // Đảm bảo redirect đúng controller/action
-            return RedirectToAction(nameof(Index), "LOPHOCs");
+            try
+            {
+                _context.Add(model);
+                await _context.SaveChangesAsync();
+                return RedirectToAction(nameof(Index));
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("", "❌ Lỗi lưu dữ liệu: " + ex.Message);
+                ViewBag.MaKhoaHoc = new SelectList(_context.KHOAHOC, "MaKhoaHoc", "TenKhoaHoc", model.MaKhoaHoc);
+                ViewBag.MaGiangVien = new SelectList(_context.GIANGVIEN, "MaGiangVien", "HoTen", model.MaGiangVien);
+                return View(model);
+            }
         }
+
 
 
         // GET: LOPHOCs/Edit/5

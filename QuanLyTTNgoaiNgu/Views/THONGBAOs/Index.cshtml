@@ -1,53 +1,137 @@
 ﻿@model IEnumerable<QuanLyTTNgoaiNgu.Models.THONGBAO>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Danh sách Thông báo";
+    Layout = "_LayoutAdmin";
 }
 
-<h1>Index</h1>
+@section Styles {
+    <style>
+        h1 {
+            font-size: 28px;
+            margin-bottom: 25px;
+            color: #1d3557;
+            text-align: left;
+        }
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.TieuDe)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.NoiDung)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.NgayThongBao)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.MaTaiKhoan)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.TieuDe)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.NoiDung)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.NgayThongBao)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.MaTaiKhoan)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.MaThongBao">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.MaThongBao">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.MaThongBao">Delete</a>
-            </td>
-        </tr>
+        .table-container {
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.07);
+            margin-top: 30px;
+        }
+
+        .btn-create {
+            background-color: #1d3557;
+            color: white;
+            padding: 10px 18px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-size: 15px;
+        }
+
+            .btn-create:hover {
+                background-color: #16395e;
+                text-decoration: none;
+            }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 14px 18px;
+            border-bottom: 1px solid #eee;
+            text-align: left;
+            vertical-align: middle;
+        }
+
+        th {
+            background-color: #1d3557;
+            color: white;
+        }
+
+        tr:hover {
+            background-color: #f9f9f9;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+            .action-buttons a {
+                padding: 6px 12px;
+                font-size: 14px;
+                border-radius: 5px;
+                color: white;
+                text-decoration: none;
+            }
+
+        .btn-edit {
+            background-color: #3a86ff;
+        }
+
+            .btn-edit:hover {
+                background-color: #2b6ed3;
+            }
+
+        .btn-details {
+            background-color: #43aa8b;
+        }
+
+            .btn-details:hover {
+                background-color: #2f8f72;
+            }
+
+        .btn-delete {
+            background-color: #f94144;
+        }
+
+            .btn-delete:hover {
+                background-color: #d62828;
+            }
+    </style>
 }
-    </tbody>
-</table>
+
+<div class="container-center">
+    <h1>Quản lý Thông báo</h1>
+
+    <div class="text-right mb-3">
+        <a asp-action="Create" class="btn-create">Thêm Thông báo</a>
+    </div>
+
+    <div class="table-container">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Tiêu đề</th>
+                    <th>Nội dung</th>
+                    <th>Ngày thông báo</th>
+                    <th>Tài khoản</th>
+                    <th>Thao tác</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@item.TieuDe</td>
+                        <td>@item.NoiDung</td>
+                        <td>@(item.NgayThongBao?.ToString("dd/MM/yyyy"))</td>
+                        <td>@item.MaTaiKhoan</td>
+                        <td>
+                            <div class="action-buttons">
+                                <a asp-action="Edit" asp-route-id="@item.MaThongBao" class="btn-edit">Sửa</a>
+                                <a asp-action="Details" asp-route-id="@item.MaThongBao" class="btn-details">Chi tiết</a>
+                                <a asp-action="Delete" asp-route-id="@item.MaThongBao" class="btn-delete">Xóa</a>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

@@ -45,32 +45,42 @@ namespace QuanLyTTNgoaiNgu.Controllers
 
             return View(hocvien);
         }
-
-        // GET: HOCVIENs/Create
-        public IActionResult Create()
+        // GET: HOCVIENs/Delete/5
+        public async Task<IActionResult> Delete(int? id)
         {
-            ViewData["MaDangKy"] = new SelectList(_context.DANGKYMOI, "MaDangKy", "DiaChi");
-            ViewData["MaTaiKhoan"] = new SelectList(_context.Set<TAIKHOAN>(), "MaTaiKhoan", "MatKhau");
-            return View();
+            if (id == null) return NotFound();
+            var hv = await _context.HOCVIEN
+                .Include(h => h.TAIKHOAN)
+                .Include(h => h.DANGKYMOI)
+                .FirstOrDefaultAsync(h => h.MaHocVien == id);
+            if (hv == null) return NotFound();
+            return View(hv);
         }
 
-        // POST: HOCVIENs/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("MaHocVien,MaDangKy,MaTaiKhoan")] HOCVIEN hOCVIEN)
+        // POST: HOCVIENs/Delete/5
+        [HttpPost, ActionName("Delete"), ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            if (ModelState.IsValid)
+            // 1) Load học viên cùng navigation tài khoản
+            var hocvien = await _context.HOCVIEN
+                .Include(h => h.TAIKHOAN)
+                .FirstOrDefaultAsync(h => h.MaHocVien == id);
+
+            if (hocvien != null)
             {
-                _context.Add(hOCVIEN);
+                // 2) Xóa tài khoản trước nếu có
+                if (hocvien.TAIKHOAN != null)
+                {
+                    _context.TAIKHOAN.Remove(hocvien.TAIKHOAN);
+                }
+                // 3) Xóa học viên
+                _context.HOCVIEN.Remove(hocvien);
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
             }
-            ViewData["MaDangKy"] = new SelectList(_context.DANGKYMOI, "MaDangKy", "DiaChi", hOCVIEN.MaDangKy);
-            ViewData["MaTaiKhoan"] = new SelectList(_context.Set<TAIKHOAN>(), "MaTaiKhoan", "MatKhau", hOCVIEN.MaTaiKhoan);
-            return View(hOCVIEN);
+            return RedirectToAction(nameof(Index));
         }
+
+
 
         // GET: HOCVIENs/Edit/5
         public async Task<IActionResult> Edit(int? id)
@@ -140,38 +150,7 @@ namespace QuanLyTTNgoaiNgu.Controllers
         }
 
 
-        // GET: HOCVIENs/Delete/5
-        public async Task<IActionResult> Delete(int? id)
-        {
-            if (id == null) return NotFound();
 
-            var hocvien = await _context.HOCVIEN
-                .Include(h => h.DANGKYMOI)
-                .Include(h => h.TAIKHOAN)
-                .FirstOrDefaultAsync(m => m.MaHocVien == id);
-            if (hocvien == null) return NotFound();
-
-            return View(hocvien);
-        }
-
-        // POST: HOCVIENs/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
-        {
-            var hOCVIEN = await _context.HOCVIEN.FindAsync(id);
-            if (hOCVIEN != null)
-            {
-                _context.HOCVIEN.Remove(hOCVIEN);
-                await _context.SaveChangesAsync();
-            }
-            return RedirectToAction(nameof(Index));
-        }
-
-        private bool HOCVIENExists(int id)
-        {
-            return _context.HOCVIEN.Any(e => e.MaHocVien == id);
-        }
 
 
         // GET: HOCVIENs/History/5
@@ -181,69 +160,17 @@ namespace QuanLyTTNgoaiNgu.Controllers
             var hv = await _context.HOCVIEN
                 .Include(h => h.PHIEUDANGKies)
                     .ThenInclude(p => p.LOPHOC)
-                .Include(h => h.PHIEUDANGKies)
-                    .ThenInclude(p => p.KETQUAHOCTAP)
+                        .ThenInclude(l => l.KHOAHOC)
                 .Include(h => h.PHIEUDANGKies)
                     .ThenInclude(p => p.HOCPHI)
+                .Include(h => h.PHIEUDANGKies)
+                    .ThenInclude(p => p.KETQUAHOCTAP)
                 .FirstOrDefaultAsync(h => h.MaHocVien == id);
             if (hv == null) return NotFound();
             return View(hv);
         }
 
-        // GET: HOCVIENs/AssignClass/5
-        public async Task<IActionResult> AssignClass(int? id)
-        {
-            if (id == null) return NotFound();
-            var hocvien = await _context.HOCVIEN
-                .Include(h => h.DANGKYMOI)
-                .FirstOrDefaultAsync(h => h.MaHocVien == id);
-            if (hocvien == null) return NotFound();
 
-            ViewBag.AvailableClasses = new SelectList(
-                _context.LOPHOC.ToList(),
-                "MaLopHoc",
-                "TenLopHoc"
-            );
-            return View(hocvien);
-        }
-
-        // POST: HOCVIENs/AssignClass/5
-        [HttpPost, ValidateAntiForgeryToken]
-        public async Task<IActionResult> AssignClass(int id, int selectedLopHoc)
-        {
-            // 1. Tạo phiếu đăng ký
-            var phieu = new PHIEUDANGKY
-            {
-                MaHocVien = id,
-                MaLopHoc = selectedLopHoc,
-                NgayDangKy = DateTime.Now
-            };
-            _context.PHIEUDANGKY.Add(phieu);
-            await _context.SaveChangesAsync(); // EF gán phieu.MaPhieu
-
-            // 2. Tạo học phí mặc định (chưa nộp)
-            var hocPhi = new HOCPHI
-            {
-                MaPhieu = phieu.MaPhieu,
-                TrangThai = false,
-                NgayNop = null
-            };
-            _context.HOCPHI.Add(hocPhi);
-
-            // 3. Tạo kết quả học tập mặc định (điểm 0)
-            var ketQua = new KETQUAHOCTAP
-            {
-                MaPhieu = phieu.MaPhieu,
-                Diem = 0.0
-            };
-            _context.KETQUAHOCTAP.Add(ketQua);
-
-            // 4. Lưu mọi thay đổi
-            await _context.SaveChangesAsync();
-
-            // 5. Quay lại lịch sử để xem ngay
-            return RedirectToAction(nameof(History), new { id });
-        }
 
         // GET: ChangePassword
         [HttpGet]
@@ -555,7 +482,79 @@ namespace QuanLyTTNgoaiNgu.Controllers
                 .ToList();
 
             return View(list);
+        }// GET: lấy thông báo
+        public async Task<IActionResult> Notifications()
+        {
+            // 1) Lấy tài khoản hiện tại
+            var username = User.Identity.Name;
+            var acc = await _context.TAIKHOAN
+                .FirstOrDefaultAsync(t => t.TenDangNhap == username);
+            if (acc == null) return RedirectToAction("Index", "Home");
+
+            // 2) Lấy danh sách thông báo
+            var list = await _context.THONGBAO
+                .Where(tb => tb.MaTaiKhoan == acc.MaTaiKhoan)
+                .OrderByDescending(tb => tb.NgayThongBao)
+                .ToListAsync();
+
+            return View(list);
         }
 
+        // GET: HOCVIENs/ChangeInfor
+        public async Task<IActionResult> ChangeInfor()
+        {
+            // 1. Lấy username
+            var username = User.Identity?.Name;
+            if (username == null)
+                return Challenge();
+
+            // 2. Tìm HOCVIEN kèm bản ghi DangKyMoi
+            var hocVien = await _context.HOCVIEN
+                .Include(h => h.DANGKYMOI)
+                .FirstOrDefaultAsync(h => h.TAIKHOAN.TenDangNhap == username);
+
+            if (hocVien == null || hocVien.DANGKYMOI == null)
+                return NotFound();
+
+            // 3. Trả về model là DANGKYMOI để edit
+            return View(hocVien.DANGKYMOI);
+        }
+
+        // POST: HOCVIENs/ChangeInfor
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ChangeInfor(int MaDangKy, [Bind("MaDangKy,HoTen,NgaySinh,SoDienThoai,DiaChi,Email")] DANGKYMOI model)
+        {
+            if (MaDangKy != model.MaDangKy)
+                return BadRequest();
+
+            if (!ModelState.IsValid)
+                return View(model);
+
+            // Tìm lại bản ghi
+            var dk = await _context.DANGKYMOI.FindAsync(MaDangKy);
+            if (dk == null)
+                return NotFound();
+
+            // Cập nhật
+            dk.HoTen = model.HoTen;
+            dk.NgaySinh = model.NgaySinh;
+            dk.SoDienThoai = model.SoDienThoai;
+            dk.DiaChi = model.DiaChi;
+            dk.Email = model.Email;
+
+            try
+            {
+                _context.Update(dk);
+                await _context.SaveChangesAsync();
+                TempData["Success"] = "Cập nhật thông tin thành công!";
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                ModelState.AddModelError("", "Lỗi khi lưu dữ liệu. Vui lòng thử lại.");
+                return View(model);
+            }
+            return RedirectToAction(nameof(ChangeInfor));
+        }
     }
 }

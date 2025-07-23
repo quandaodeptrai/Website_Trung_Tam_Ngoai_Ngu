@@ -1,63 +1,181 @@
 ﻿@model IEnumerable<QuanLyTTNgoaiNgu.Models.ClassInfoViewModel>
+
 @{
     ViewData["Title"] = "Danh sách Lớp học";
     var courseId = (int)ViewBag.CourseId;
-}
-<h2>@ViewData["Title"]</h2>
-
-@if (TempData["Error"] != null)
-{
-        <div class="alert alert-danger">
-        @TempData["Error"]
-        </div>
-}
-@if (TempData["Success"] != null)
-{
-        <div class="alert alert-success">
-        @TempData["Success"]
-        </div>
+    Layout = "_LayoutHocVien";
 }
 
-<table class="table table-striped">
-    <thead>
-        <tr>
-            <th>Lớp</th><th>SL tối đa</th><th>SL hiện tại</th>
-            <th>Ngày bắt đầu</th><th>Thời khóa biểu</th><th></th>
-        </tr>
-    </thead>
-    <tbody>
-    @foreach(var l in Model) {
-        <tr>
-            <td>@l.TenLopHoc</td>
-            <td>@l.SLHocVienToiDa</td>
-            <td>@l.SLHocVienHienTai</td>
-                <td>@l.NgayBatDau.ToString("dd/MM/yyyy")</td>
-            <td>
-                <ul class="mb-0">
-                        @foreach (var tkb in l.Schedules)
-                        {
-                          <li>
-                            @tkb.CaHoc — @tkb.NgayHoc?.ToString("dd/MM/yyyy")
-                          </li>
-                         }
-                
-                </ul>
-            </td>
-            <td>
-                @if (l.CanRegister)
-                {
-                    <form asp-action="RegisterClass" method="post">
-                        <input type="hidden" name="classId" value="@l.MaLopHoc" />
-                        <button type="submit" class="btn btn-sm btn-success">Đăng ký</button>
-                    </form>
-                }
-                else
-                {
-                    <span class="text-muted">Không thể đăng ký</span>
-                }
-            </td>
-        </tr>
+@section Styles {
+    <style>
+        .table-container {
+            max-width: 1000px;
+            margin: 40px auto;
+            background: #ffffff;
+            padding: 20px;
+            border-radius: 16px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.08);
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 25px;
+            color: #1d3557;
+        }
+
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+            .table th,
+            .table td {
+                padding: 12px 15px;
+                text-align: center;
+                border-bottom: 1px solid #dee2e6;
+            }
+
+            .table thead {
+                background-color: #1d3557;
+                color: #fff;
+            }
+
+        .table-striped tbody tr:nth-child(odd) {
+            background-color: #f8f9fa;
+        }
+
+        ul {
+            padding-left: 20px;
+            margin: 0;
+            text-align: left;
+        }
+
+        .alert {
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+        }
+
+        .alert-danger {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+
+        .alert-success {
+            background-color: #d4edda;
+            color: #155724;
+        }
+
+        .btn {
+            padding: 6px 12px;
+            font-size: 14px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        .btn-success {
+            background-color: #2a9d8f;
+            color: #fff;
+        }
+
+            .btn-success:hover {
+                background-color: #21867a;
+            }
+
+        .text-muted {
+            color: #6c757d;
+        }
+
+        .back-button-container {
+            text-align: left;
+            margin-bottom: 20px;
+        }
+
+        .btn-back {
+            display: inline-block;
+            padding: 10px 20px;
+            background: linear-gradient(135deg, #6c5ce7, #0984e3);
+            color: #fff;
+            border: none;
+            border-radius: 30px;
+            font-size: 15px;
+            font-weight: 500;
+            text-decoration: none;
+            transition: background 0.3s ease, transform 0.2s ease;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+            .btn-back:hover {
+                background: linear-gradient(135deg, #5f27cd, #1e90ff);
+                transform: translateY(-2px);
+            }
+
+    </style>
+}
+
+<div class="table-container">
+    <h2>@ViewData["Title"]</h2>
+
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger">@TempData["Error"]</div>
     }
-    </tbody>
-</table>
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success">@TempData["Success"]</div>
+    }
 
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Lớp</th>
+                <th>SL tối đa</th>
+                <th>SL hiện tại</th>
+                <th>Ngày bắt đầu</th>
+                <th>Thời khóa biểu</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var l in Model)
+            {
+                <tr>
+                    <td>@l.TenLopHoc</td>
+                    <td>@l.SLHocVienToiDa</td>
+                    <td>@l.SLHocVienHienTai</td>
+                    <td>@l.NgayBatDau.ToString("dd/MM/yyyy")</td>
+                    <td>
+                        <ul>
+                            @foreach (var tkb in l.Schedules)
+                            {
+                                <li>@tkb.CaHoc — @tkb.NgayHoc?.ToString("dd/MM/yyyy")</li>
+                            }
+                        </ul>
+                    </td>
+                    <td>
+                        @if (l.CanRegister)
+                        {
+                            <form asp-action="RegisterClass" method="post">
+                                <input type="hidden" name="classId" value="@l.MaLopHoc" />
+                                <button type="submit" class="btn btn-success">Đăng ký</button>
+                            </form>
+                        }
+                        else
+                        {
+                            <span class="text-muted">Không thể đăng ký</span>
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    <div class="back-button-container">
+        <a asp-action="Index" asp-controller="KhoaHoc" class="btn-back">
+            ← Quay lại
+        </a>
+    </div>
+
+
+</div>

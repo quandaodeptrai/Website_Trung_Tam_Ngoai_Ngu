@@ -1,0 +1,110 @@
+﻿@model IEnumerable<QuanLyTTNgoaiNgu.Models.THOIKHOABIEU>
+@{
+    ViewData["Title"] = "Lịch dạy của tôi";
+    Layout = "_LayoutGiangVien";
+}
+
+@section Styles {
+    <style>
+        body {
+            background: #f0f4f8;
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 40px auto;
+            background: #fff;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h2 {
+            text-align: center;
+            color: #1d3557;
+            margin-bottom: 30px;
+        }
+
+        .alert {
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            background-color: #e0f7fa;
+            color: #006064;
+            text-align: center;
+            font-size: 16px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+            table thead {
+                background-color: #457b9d;
+                color: white;
+            }
+
+            table th, table td {
+                padding: 12px 15px;
+                text-align: center;
+                border-bottom: 1px solid #ddd;
+            }
+
+            table tr:hover {
+                background-color: #f1f1f1;
+            }
+
+        .back-btn {
+            display: inline-block;
+            margin-top: 30px;
+            padding: 10px 20px;
+            background: linear-gradient(to right, #457b9d, #1d3557);
+            color: white;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: background 0.3s;
+        }
+
+            .back-btn:hover {
+                background: linear-gradient(to right, #1d3557, #457b9d);
+            }
+    </style>
+}
+
+<div class="container">
+    <h2>@ViewData["Title"]</h2>
+
+    @if (!Model.Any())
+    {
+        <div class="alert">Bạn chưa được phân công lớp nào, hoặc chưa có lịch học.</div>
+    }
+    else
+    {
+        <table>
+            <thead>
+                <tr>
+                    <th>Ngày học</th>
+                    <th>Ca học</th>
+                    <th>Lớp học</th>
+                    <th>Khóa học</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var t in Model)
+                {
+                    <tr>
+                        <td>@t.NgayHoc?.ToString("dd/MM/yyyy")</td>
+                        <td>@t.CaHoc</td>
+                        <td>@t.LOPHOC?.TenLopHoc</td>
+                        <td>@t.LOPHOC?.KHOAHOC?.TenKhoaHoc</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+
+</div>

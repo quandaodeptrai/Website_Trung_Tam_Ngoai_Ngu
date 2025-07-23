@@ -1,0 +1,122 @@
+﻿.courses-section {
+    text-align: center;
+    padding: 40px 20px;
+}
+
+.section-title {
+    font-size: 36px;
+    margin-bottom: 30px;
+    color: #1d3557;
+}
+
+.course-grid {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 25px;
+}
+
+.course-card {
+    background: white;
+    width: 260px;
+    border-radius: 15px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+    .course-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 15px 25px rgba(0,0,0,0.2);
+    }
+
+    .course-card img {
+        width: 100%;
+        border-top-left-radius: 15px;
+        border-top-right-radius: 15px;
+    }
+
+.course-content {
+    padding: 20px;
+}
+
+    .course-content h3 {
+        font-size: 22px;
+        margin-bottom: 15px;
+        color: #1d3557;
+    }
+
+    .course-content a {
+        text-decoration: none;
+        color: white;
+        background-color: #1d3557;
+        padding: 10px 20px;
+        display: inline-block;
+        border-radius: 8px;
+        font-weight: bold;
+        transition: 0.3s;
+    }
+
+        .course-content a:hover {
+            background-color: #ffd166;
+            color: #1d3557;
+        }
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+}
+
+body {
+    background: linear-gradient(135deg, #f8f9fa, #c6e2ff);
+    min-height: 100vh;
+}
+
+header {
+    background-color: #1d3557;
+    color: white;
+    padding: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.navbar-brand {
+    font-size: 30px;
+    font-weight: bold;
+    text-decoration: none;
+    color: white;
+}
+
+.navbar-right {
+    display: flex;
+    gap: 20px;
+}
+
+    .navbar-right a, .navbar-text {
+        font-size: 22px;
+        font-weight: bold;
+        color: white;
+        text-decoration: none;
+        padding: 10px 20px;
+        border-radius: 10px;
+        transition: 0.3s;
+    }
+
+        .navbar-right a:hover {
+            background-color: #ffd166;
+            color: #1d3557;
+        }
+
+.container {
+    padding: 40px 20px;
+}
+
+footer {
+    background-color: #1d3557;
+    color: white;
+    text-align: center;
+    padding: 15px;
+    margin-top: 40px;
+}

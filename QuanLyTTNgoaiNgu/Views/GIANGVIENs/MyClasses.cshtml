@@ -1,0 +1,166 @@
+﻿@model QuanLyTTNgoaiNgu.Models.MyClassesViewModel
+@{
+    ViewData["Title"] = "Lớp của tôi";
+    Layout = "_LayoutGiangVien";
+}
+
+<style>
+    body {
+        font-family: 'Segoe UI', sans-serif;
+        background-color: #f4f6f9;
+        padding: 30px;
+    }
+
+    h2 {
+        text-align: center;
+        color: #2c3e50;
+        font-size: 28px;
+        margin-bottom: 30px;
+    }
+
+    h4 {
+        color: #2980b9;
+        font-size: 20px;
+        margin-top: 40px;
+        margin-bottom: 15px;
+    }
+
+    .alert {
+        padding: 15px;
+        background-color: #ecf0f1;
+        border-left: 6px solid #3498db;
+        margin-bottom: 20px;
+        font-size: 16px;
+        color: #2c3e50;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 40px;
+        background-color: #fff;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        border-radius: 10px;
+        overflow: hidden;
+    }
+
+    th, td {
+        padding: 12px 16px;
+        text-align: center;
+        border-bottom: 1px solid #eee;
+        font-size: 15px;
+    }
+
+    thead {
+        background-color: #3498db;
+        color: white;
+    }
+
+    tbody tr:hover {
+        background-color: #f0f8ff;
+    }
+
+    .btn {
+        padding: 8px 16px;
+        background: #3498db;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        text-decoration: none;
+        font-size: 14px;
+        cursor: pointer;
+        transition: 0.3s ease;
+        display: inline-block;
+    }
+
+    .btn:hover {
+        background: #2980b9;
+    }
+
+    .btn-sm {
+        font-size: 13px;
+        padding: 6px 12px;
+    }
+</style>
+
+<h2>@ViewData["Title"]</h2>
+
+<h4>Lớp sắp/đang dạy</h4>
+@if (!Model.UpcomingClasses.Any())
+{
+        <div class="alert">Không có lớp nào đang hoặc sắp dạy.</div>
+}
+else
+{
+        <table>
+            <thead>
+                <tr>
+                    <th>Mã lớp</th>
+                    <th>Tên lớp</th>
+                    <th>Khóa học</th>
+                    <th>SL tối đa</th>
+                    <th>SL hiện tại</th>
+                    <th>Ngày bắt đầu</th>
+                    <th>Ngày kết thúc</th>
+                    <th>Thao tác</th>
+                </tr>
+            </thead>
+            <tbody>
+            @foreach (var l in Model.UpcomingClasses)
+            {
+                        <tr>
+                            <td>@l.MaLopHoc</td>
+                            <td>@l.TenLopHoc</td>
+                            <td>@l.KHOAHOC?.TenKhoaHoc</td>
+                            <td>@l.SLHocVienToiDa</td>
+                            <td>@(l.PHIEUDANGKies?.Count() ?? 0)</td>
+                            <td>@l.NgayBatDau.ToString("dd/MM/yyyy")</td>
+                            <td>@l.NgayKetThuc.ToString("dd/MM/yyyy")</td>
+                            <td>
+                                <a asp-action="Schedule" asp-route-classId="@l.MaLopHoc" class="btn btn-sm">Lịch học</a>
+                            </td>
+                        </tr>
+            }
+            </tbody>
+        </table>
+}
+
+<h4>Lớp đã kết thúc</h4>
+@if (!Model.PastClasses.Any())
+{
+        <div class="alert">Chưa có lớp nào đã kết thúc.</div>
+}
+else
+{
+        <table>
+            <thead>
+                <tr>
+                    <th>Mã lớp</th>
+                    <th>Tên lớp</th>
+                    <th>Khóa học</th>
+                    <th>SL tối đa</th>
+                    <th>SL học viên</th>
+                    <th>Ngày bắt đầu</th>
+                    <th>Ngày kết thúc</th>
+                    <th>Thao tác</th>
+                </tr>
+            </thead>
+            <tbody>
+            @foreach (var l in Model.PastClasses)
+            {
+                        <tr>
+                            <td>@l.MaLopHoc</td>
+                            <td>@l.TenLopHoc</td>
+                            <td>@l.KHOAHOC?.TenKhoaHoc</td>
+                            <td>@l.SLHocVienToiDa</td>
+                            <td>@(l.PHIEUDANGKies?.Count() ?? 0)</td>
+                            <td>@l.NgayBatDau.ToString("dd/MM/yyyy")</td>
+                            <td>@l.NgayKetThuc.ToString("dd/MM/yyyy")</td>
+                            <td>
+                                <a asp-action="Schedule" asp-route-classId="@l.MaLopHoc" class="btn btn-sm">Lịch học</a>
+                            </td>
+                        </tr>
+            }
+            </tbody>
+        </table>
+}

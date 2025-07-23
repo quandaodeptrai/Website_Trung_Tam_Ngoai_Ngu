@@ -1,65 +1,98 @@
 ﻿@model IEnumerable<QuanLyTTNgoaiNgu.Models.DANGKYMOI>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Danh sách đăng ký";
+    Layout = "_LayoutAdmin";
 }
 
-<h1>Index</h1>
+<style>
+    h2 {
+        margin-bottom: 20px;
+        color: #1d3557;
+        font-weight: bold;
+        text-align: center;
+    }
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
+    .dk-table {
+        width: 100%;
+        border-collapse: collapse;
+        background-color: #fff;
+        box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+        border-radius: 8px;
+        overflow: hidden;
+    }
+
+        .dk-table th {
+            background-color: #1d3557;
+            color: #fff;
+            padding: 12px;
+            text-align: center;
+        }
+
+        .dk-table td {
+            padding: 10px;
+            text-align: center;
+            border-bottom: 1px solid #eee;
+        }
+
+        .dk-table tbody tr:hover {
+            background-color: #f8f8f8;
+        }
+
+    .action-button-container {
+        text-align: center;
+        margin-top: 30px;
+    }
+
+    .btn-duyet {
+        background-color: #1d3557;
+        color: white;
+        padding: 14px 28px;
+        font-size: 18px;
+        font-weight: bold;
+        border: none;
+        border-radius: 8px;
+        text-decoration: none;
+        transition: background-color 0.3s ease, transform 0.2s ease;
+        display: inline-block;
+    }
+
+        .btn-duyet:hover {
+            background-color: #457b9d;
+            transform: translateY(-2px);
+            text-decoration: none;
+        }
+
+</style>
+
+<h2>@ViewData["Title"]</h2>
+
+<table class="dk-table">
     <thead>
         <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.HoTen)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.NgaySinh)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.SoDienThoai)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.DiaChi)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Email)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.MaQuanTriVien)
-            </th>
-            <th></th>
+            <th>Họ tên</th>
+            <th>Ngày sinh</th>
+            <th>Điện thoại</th>
+            <th>Địa chỉ</th>
+            <th>Email</th>
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.HoTen)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.NgaySinh)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.SoDienThoai)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.DiaChi)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Email)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.MaQuanTriVien)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.MaDangKy">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.MaDangKy">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.MaDangKy">Delete</a>
-            </td>
-        </tr>
-}
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.HoTen</td>
+                <td>@item.NgaySinh?.ToString("dd/MM/yyyy")</td>
+                <td>@item.SoDienThoai</td>
+                <td>@item.DiaChi</td>
+                <td>@item.Email</td>
+            </tr>
+        }
     </tbody>
 </table>
+<div class="action-button-container">
+    <a asp-controller="DANGKYMOIs" asp-action="Pending" class="btn-duyet">
+        Duyệt đăng ký mới
+    </a>
+</div>
+

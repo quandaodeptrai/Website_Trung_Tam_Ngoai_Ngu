@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -160,5 +161,153 @@ namespace QuanLyTTNgoaiNgu.Controllers
         {
             return _context.GIANGVIEN.Any(e => e.MaGiangVien == id);
         }
+        // GET: Xem lop duoc phan cong
+        public async Task<IActionResult> MyClasses()
+        {
+            // 1) Lấy giảng viên hiện tại
+            var username = User.Identity.Name;
+            var gv = await _context.GIANGVIEN
+                .Include(g => g.TAIKHOAN)
+                .FirstOrDefaultAsync(g => g.TAIKHOAN.TenDangNhap == username);
+            if (gv == null) return RedirectToAction("Index", "Home");
+
+            // 2) Lấy tất cả lớp được phân công
+            var all = await _context.LOPHOC
+                .Where(l => l.MaGiangVien == gv.MaGiangVien)
+                .Include(l => l.KHOAHOC)
+                .Include(l => l.PHIEUDANGKies)
+                .ToListAsync();
+
+            var today = DateTime.Today;
+            var upcoming = all
+                .Where(l => l.NgayKetThuc >= today)
+                .OrderBy(l => l.NgayKetThuc)
+                .ToList();
+
+            var past = all
+                .Where(l => l.NgayKetThuc < today)
+                .OrderByDescending(l => l.NgayKetThuc)
+                .ToList();
+
+            var vm = new MyClassesViewModel
+            {
+                UpcomingClasses = upcoming,
+                PastClasses = past
+            };
+            return View(vm);
+        }
+
+        // GET: Xem thoi khoa bieu cua rieng tung lop
+        public async Task<IActionResult> Schedule(int classId)
+        {
+            // Xác thực: giảng viên chỉ xem lớp của mình
+            var username = User.Identity.Name;
+            var gv = await _context.GIANGVIEN
+                .Include(g => g.TAIKHOAN)
+                .FirstOrDefaultAsync(g => g.TAIKHOAN.TenDangNhap == username);
+            if (gv == null) return RedirectToAction("Index", "Home");
+
+            // Kiểm tra lớp có thuộc giảng viên hay không
+            var lop = await _context.LOPHOC
+                .FirstOrDefaultAsync(l => l.MaLopHoc == classId && l.MaGiangVien == gv.MaGiangVien);
+            if (lop == null) return Forbid();
+
+            // Lấy thời khóa biểu
+            var schedules = await _context.THOIKHOABIEU
+                .Where(t => t.MaLopHoc == classId)
+                .OrderBy(t => t.NgayHoc)
+                .ToListAsync();
+
+            ViewBag.ClassName = lop.TenLopHoc;
+            return View(schedules);
+        }
+
+        // GET: xem thoi khoa bieu cua ngay hom nay
+        public async Task<IActionResult> ScheduleAll()
+        {
+            // 1) Xác định giảng viên hiện tại
+            var username = User.Identity.Name;
+            var gv = await _context.GIANGVIEN
+                .Include(g => g.TAIKHOAN)
+                .FirstOrDefaultAsync(g => g.TAIKHOAN.TenDangNhap == username);
+            if (gv == null) return RedirectToAction("Index", "Home");
+
+            // 2) Lấy danh sách MaLopHoc của giảng viên
+            var classIds = await _context.LOPHOC
+                .Where(l => l.MaGiangVien == gv.MaGiangVien)
+                .Select(l => l.MaLopHoc)
+                .ToListAsync();
+
+            // 3) Lấy toàn bộ thời khóa biểu cho các lớp đó
+            var schedules = await _context.THOIKHOABIEU
+                .Where(t => classIds.Contains(t.MaLopHoc))
+                .Include(t => t.LOPHOC)
+                    .ThenInclude(l => l.KHOAHOC)
+                .OrderBy(t => t.NgayHoc)
+                .ThenBy(t => t.CaHoc)
+                .ToListAsync();
+
+            return View(schedules);
+        }
+        // GET: xem thông báo
+        public async Task<IActionResult> Notifications()
+        {
+            var username = User.Identity.Name;
+            var acc = await _context.TAIKHOAN
+                .FirstOrDefaultAsync(t => t.TenDangNhap == username);
+            if (acc == null) return RedirectToAction("Index", "Home");
+
+            var list = await _context.THONGBAO
+                .Where(tb => tb.MaTaiKhoan == acc.MaTaiKhoan)
+                .OrderByDescending(tb => tb.NgayThongBao)
+                .ToListAsync();
+
+            return View(list);
+        }
+
+        [HttpPost, ValidateAntiForgeryToken]
+        public async Task<IActionResult> EnterScores(int classId, List<ScoreEntryViewModel> model)
+        {
+            var username = User.FindFirstValue(ClaimTypes.Name);
+            var gv = await _context.GIANGVIEN
+                         .Include(g => g.TAIKHOAN)
+                         .FirstOrDefaultAsync(g => g.TAIKHOAN.TenDangNhap == username);
+            if (gv == null) return RedirectToAction("Index", "Home");
+
+            var lop = await _context.LOPHOC
+                         .FirstOrDefaultAsync(l => l.MaLopHoc == classId && l.MaGiangVien == gv.MaGiangVien);
+            if (lop == null) return Forbid();
+
+            if (!ModelState.IsValid)
+            {
+                ViewBag.TenLop = lop.TenLopHoc;
+                ViewBag.MaLopHoc = classId; // thêm ở đây
+                return View(model);
+            }
+
+            foreach (var entry in model)
+            {
+                var existing = await _context.KETQUAHOCTAP
+                    .FirstOrDefaultAsync(k => k.MaPhieu == entry.MaPhieu);
+                if (existing != null)
+                {
+                    existing.Diem = entry.Diem;
+                    _context.KETQUAHOCTAP.Update(existing);
+                }
+                else
+                {
+                    _context.KETQUAHOCTAP.Add(new KETQUAHOCTAP
+                    {
+                        MaPhieu = entry.MaPhieu,
+                        Diem = entry.Diem
+                    });
+                }
+            }
+            await _context.SaveChangesAsync();
+            TempData["Success"] = "Lưu điểm thành công!";
+            return RedirectToAction(nameof(EnterScores), new { classId });
+        }
     }
+
+    
 }

@@ -43,27 +43,53 @@ namespace QuanLyTTNgoaiNgu.Controllers
             return View(tHONGBAO);
         }
 
-        // GET: THONGBAOs/Create
+        // GET: ThongBao/Create
         public IActionResult Create()
         {
-            return View();
+            var vm = new NotificationViewModel
+            {
+                Accounts = _context.TAIKHOAN
+                    .Select(t => new AccountSelect
+                    {
+                        MaTaiKhoan = t.MaTaiKhoan,
+                        TenDangNhap = t.TenDangNhap,
+                        VaiTro = t.VaiTro
+                    })
+                    .ToList()
+            };
+            return View(vm);
         }
 
-        // POST: THONGBAOs/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("MaThongBao,TieuDe,NoiDung,NgayThongBao,MaTaiKhoan")] THONGBAO tHONGBAO)
+        // POST: ThongBao/Create
+        [HttpPost, ValidateAntiForgeryToken]
+        public async Task<IActionResult> Create(NotificationViewModel vm)
         {
-            if (ModelState.IsValid)
+            // Reload accounts always
+            vm.Accounts = _context.TAIKHOAN
+                .Select(t => new AccountSelect
+                {
+                    MaTaiKhoan = t.MaTaiKhoan,
+                    TenDangNhap = t.TenDangNhap,
+                    VaiTro = t.VaiTro
+                })
+                .ToList();
+
+            var now = DateTime.Now;
+            foreach (var accId in vm.SelectedAccounts)
             {
-                _context.Add(tHONGBAO);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                _context.THONGBAO.Add(new THONGBAO
+                {
+                    TieuDe = vm.TieuDe,
+                    NoiDung = vm.NoiDung,
+                    NgayThongBao = now,
+                    MaTaiKhoan = accId
+                });
             }
-            return View(tHONGBAO);
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction(nameof(Index));
         }
+
 
         // GET: THONGBAOs/Edit/5
         public async Task<IActionResult> Edit(int? id)

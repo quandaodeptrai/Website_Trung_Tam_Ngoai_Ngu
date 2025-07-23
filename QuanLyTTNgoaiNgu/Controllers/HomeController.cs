@@ -24,30 +24,54 @@ namespace QuanLyTTNgoaiNgu.Controllers
         public IActionResult Index()
         {
             var courses = _ctx.KHOAHOC.ToList();
-            return View("Index", courses);
+            var courseImages = new Dictionary<int, string>
+    {
+        { 1, "/images/anh.jpg" },
+        { 2, "/images/anh.jpg" },
+        { 3, "/images/trungquoc.jpg" },
+        { 4, "/images/han.jpg" },
+        { 5, "/images/nhat.jpg" },
+        { 6, "/images/duc.jpg" },
+        { 7, "/images/trungquoc.jpg" },
+    };
+
+            // Set FeaturedCourses
+            ViewBag.FeaturedCourses = courses.Select(c => new
+            {
+                c.MaKhoaHoc,
+                c.TenKhoaHoc,
+                c.MoTa,
+                Image = courseImages.ContainsKey(c.MaKhoaHoc) ? courseImages[c.MaKhoaHoc] : "/images/anh_trung_tam.jpg"
+            }).ToList();
+
+            // Set CarouselImages riÃªng
+            ViewBag.CarouselImages = new List<string> { "/images/anh_trung_tam.jpg" };
+
+
+            return View();
         }
 
-        // Home dành cho Admin
+        // Home dï¿½nh cho Admin
         [Authorize(Policy = "AdminOnly")]
         public IActionResult AdminHome()
         {
-            // b?n có th? load thêm data cho Admin dashboard ? ?ây
+            // b?n cï¿½ th? load thï¿½m data cho Admin dashboard ? ?ï¿½y
             return View("AdminHome");
         }
 
-        // Home dành cho Gi?ng viên
+        // Home dï¿½nh cho Gi?ng viï¿½n
         [Authorize(Policy = "GiangVienOnly")]
         public IActionResult GiangVienHome()
         {
-            // load data riêng cho Gi?ng viên
+            // load data riï¿½ng cho Gi?ng viï¿½n
             return View("GiangVienHome");
         }
 
-        // Home dành cho H?c viên
+        // Home dï¿½nh cho H?c viï¿½n
         [Authorize(Policy = "HocVienOnly")]
         public IActionResult HocVienHome()
         {
-            // load data riêng cho H?c viên
+            // load data riï¿½ng cho H?c viï¿½n
             return View("HocVienHome");
         }
 

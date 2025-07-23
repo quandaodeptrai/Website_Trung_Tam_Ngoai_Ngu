@@ -1,0 +1,49 @@
+﻿@{
+    Layout = null;
+    var fullName = User.FindFirst("FullName")?.Value ?? User.Identity.Name;
+}
+
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="utf-8" />
+    <title>@ViewData["Title"] - Quản trị | Trung tâm Ngoại ngữ 5AE</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="~/css/Home.css" />
+    @RenderSection("Styles", required: false)
+
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <h2 class="sidebar-title">Admin</h2>
+            <p class="sidebar-user">Xin chào, @fullName!</p>
+
+            <nav class="nav-links">
+                <a asp-controller="DANGKYMOIs" asp-action="Index">Quản lý Phiếu đăng ký</a>
+                <a asp-controller="HOCVIENs" asp-action="Index">Quản lý Học viên</a>
+                <a asp-controller="GIANGVIENs" asp-action="Index">Quản lý Giảng viên</a>
+                <a asp-controller="KHOAHOCs" asp-action="Index">Quản lý Khóa học</a>
+                <a asp-controller="LOPHOCs" asp-action="Index">Quản lý Lớp học</a>
+                <a asp-controller="KETQUAHOCTAPs" asp-action="Index">Kết quả học tập</a>
+                <a asp-controller="HOCPHIs" asp-action="Index">Quản lý Học phí</a>
+                <a asp-controller="PHIEUDANGKies" asp-action="Index">Quản lý Phiếu Đăng ký Lớp học</a>
+                <a asp-controller="TAIKHOANs" asp-action="Index">Quản lý Tài khoản</a>
+                <a asp-controller="THONGBAOs" asp-action="Index">Quản lý Thông báo</a>
+                <a asp-controller="THOIKHOABIEUx" asp-action="Index">Quản lý Thời khóa biểu</a>
+                <td> <a asp-controller="Reports" asp-action="Index">Báo cáo – Thống kê</a>
+                <a asp-controller="Account" asp-action="Logout" class="logout"
+                   onclick="return confirm('Bạn chắc chắn muốn đăng xuất?')">Đăng xuất</a>
+            </nav>
+        </aside>
+
+        <!-- Nội dung chính -->
+        <main class="main-content">
+            @RenderBody()
+        </main>
+    </div>
+
+    @RenderSection("Scripts", required: false)
+</body>
+</html>

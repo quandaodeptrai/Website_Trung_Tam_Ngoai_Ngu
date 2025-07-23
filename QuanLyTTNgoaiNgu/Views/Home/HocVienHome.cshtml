@@ -1,23 +1,11 @@
 ﻿@{
+    Layout = "_LayoutHocVien";
     ViewData["Title"] = "Học viên Dashboard";
+    var fullName = User.FindFirst("FullName")?.Value ?? User.Identity.Name;
 }
-<h2>Trang Học Viên</h2>
-<p>Chào mừng @User.Identity.Name! Bạn đang ở <strong>Học viên Dashboard</strong>.</p>
-
-<div class="btn-group">
-    
-    <a asp-controller="HOCVIENs" asp-action="ChangePassword" class="btn btn-warning">
-        Đổi mật khẩu
-    </a><br />
-    <a asp-controller="HOCVIENs" asp-action="Courses" class="btn btn-success">
-        Xem khóa học
-    </a><br />
-    <a asp-controller="HOCVIENs" asp-action="Schedule" class="btn btn-info">
-    Lịch học
-</a><br />
-    <a asp-controller="HOCVIENs" asp-action="Debt"           class="btn btn-danger">Kiểm tra công nợ</a><br />
-    <a asp-controller="HOCVIENs" asp-action="Results" class="btn btn-primary">
-        Xem kết quả thi
-    </a>
+    <link rel="stylesheet" href="~/css/Home.css" />
+<div class="welcome-card">
+    <h1>Trang Học viên</h1>
+    <p>Chào mừng bạn <strong>@fullName</strong> đến với hệ thống quản lý Trung tâm Ngoại ngữ 5AE.</p>
+    <p>Vui lòng chọn chức năng từ thanh menu bên trái để tiếp tục công việc quản lý.</p>
 </div>
-

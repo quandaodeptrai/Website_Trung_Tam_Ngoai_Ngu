@@ -1,39 +1,130 @@
 ﻿@model QuanLyTTNgoaiNgu.Models.THOIKHOABIEU
 
 @{
-    ViewData["Title"] = "Delete";
+    ViewData["Title"] = "Xóa lịch học";
+    Layout = "_LayoutAdmin";
 }
 
-<h1>Delete</h1>
+@section Styles {
+    <style>
+        .delete-container {
+            max-width: 600px;
+            margin: 40px auto;
+            background-color: #fff;
+            border-radius: 15px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            padding: 40px;
+            text-align: center;
+        }
 
-<h3>Are you sure you want to delete this?</h3>
-<div>
-    <h4>THOIKHOABIEU</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.CaHoc)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.CaHoc)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.NgayHoc)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.NgayHoc)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.LOPHOC)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.LOPHOC.TenLopHoc)
-        </dd>
-    </dl>
-    
+        h1 {
+            color: #e63946;
+            font-size: 28px;
+            margin-bottom: 20px;
+        }
+
+        .info-block {
+            text-align: left;
+            margin: 20px 0;
+        }
+
+            .info-block dt {
+                font-weight: 600;
+                color: #1d3557;
+                margin-top: 10px;
+            }
+
+            .info-block dd {
+                margin-bottom: 10px;
+            }
+
+        .btn-group {
+            margin-top: 30px;
+        }
+
+        .btn-danger {
+            background-color: #e63946;
+            border: none;
+        }
+
+            .btn-danger:hover {
+                background-color: #c5303a;
+            }
+
+        a.back-link {
+            color: #457b9d;
+            margin-left: 15px;
+            text-decoration: none;
+        }
+
+            a.back-link:hover {
+                text-decoration: underline;
+            }
+
+        .btn-group {
+            margin-top: 30px;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+        }
+
+        .btn-danger {
+            background-color: #e63946;
+            border: none;
+            padding: 10px 25px;
+            border-radius: 8px;
+            font-weight: 600;
+            color: white;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+
+            .btn-danger:hover {
+                background-color: #c5303a;
+                transform: translateY(-2px);
+            }
+
+        a.back-link {
+            background-color: #f1f1f1;
+            color: #1d3557;
+            padding: 10px 25px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+
+            a.back-link:hover {
+                background-color: #e0e0e0;
+                transform: translateY(-2px);
+            }
+
+    </style>
+}
+
+<div class="delete-container">
+    <h1>Xác nhận xóa lịch học</h1>
+    <p>Bạn có chắc chắn muốn xóa lịch học sau không?</p>
+
+    <div class="info-block">
+        <dl class="row">
+            <dt class="col-sm-4">Ca học:</dt>
+            <dd class="col-sm-8">@Html.DisplayFor(model => model.CaHoc)</dd>
+
+            <dt class="col-sm-4">Ngày học:</dt>
+            <dd class="col-sm-8">@Html.DisplayFor(model => model.NgayHoc)</dd>
+
+            <dt class="col-sm-4">Lớp học:</dt>
+            <dd class="col-sm-8">@Html.DisplayFor(model => model.LOPHOC.TenLopHoc)</dd>
+        </dl>
+    </div>
+
     <form asp-action="Delete">
         <input type="hidden" asp-for="MaLichHoc" />
-        <input type="submit" value="Delete" class="btn btn-danger" /> |
-        <a asp-action="Index">Back to List</a>
+        <div class="btn-group">
+            <input type="submit" value="Xóa" class="btn btn-danger" />
+            <a asp-action="Index" class="back-link">Quay lại danh sách</a>
+        </div>
     </form>
 </div>

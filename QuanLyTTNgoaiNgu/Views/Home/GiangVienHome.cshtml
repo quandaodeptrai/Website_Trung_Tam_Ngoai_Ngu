@@ -1,11 +1,11 @@
 ﻿@{
+    Layout = "_LayoutGiangVien";
     ViewData["Title"] = "Giảng viên Dashboard";
+    var fullName = User.FindFirst("FullName")?.Value ?? User.Identity.Name;
 }
-<h2>Trang Giảng Viên</h2>
-<p>Chào mừng @User.Identity.Name! Bạn đang ở <strong>Giảng viên Dashboard</strong>.</p>
-
-<div class="btn-group">
-    <a asp-controller="GiangVien" asp-action="MyClasses" class="btn btn-primary">Lớp của tôi</a>
-    <a asp-controller="GiangVien" asp-action="Calendar"  class="btn btn-secondary">Lịch dạy</a>
-    <a asp-controller="GiangVien" asp-action="Index"     class="btn btn-info">Dashboard chính</a>
+<link rel="stylesheet" href="~/css/Home.css" />
+<div class="welcome-card">
+    <h1>Trang quản lý của Giảng viên</h1>
+    <p>Chào mừng bạn <strong>@fullName</strong> đến với hệ thống quản lý Trung tâm Ngoại ngữ 5AE.</p>
+    <p>Vui lòng chọn chức năng từ thanh menu bên trái để tiếp tục công việc quản lý.</p>
 </div>

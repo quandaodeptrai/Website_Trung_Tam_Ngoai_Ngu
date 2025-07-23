@@ -1,0 +1,104 @@
+﻿@model IEnumerable<QuanLyTTNgoaiNgu.Models.THOIKHOABIEU>
+@{
+    ViewData["Title"] = "Thời khóa biểu";
+    Layout = "_LayoutGiangVien";
+}
+
+<style>
+    h2 {
+        text-align: center;
+        font-size: 28px;
+        color: #2c3e50;
+        margin-bottom: 30px;
+    }
+
+    .alert {
+        background-color: #e9f7ef;
+        border-left: 5px solid #28a745;
+        padding: 16px;
+        font-size: 16px;
+        color: #155724;
+        margin: 20px auto;
+        max-width: 800px;
+        border-radius: 8px;
+    }
+
+    .table {
+        width: 100%;
+        max-width: 900px;
+        margin: 0 auto 40px auto;
+        border-collapse: collapse;
+        background-color: #fff;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+        border-radius: 8px;
+        overflow: hidden;
+    }
+
+        .table thead {
+            background-color: #3498db;
+            color: white;
+        }
+
+        .table th, .table td {
+            padding: 14px 18px;
+            text-align: center;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .table tbody tr:hover {
+            background-color: #f2f2f2;
+        }
+
+    .btn-back {
+        display: inline-block;
+        background-color: #6c757d;
+        color: white;
+        text-decoration: none;
+        padding: 10px 20px;
+        font-size: 16px;
+        border-radius: 6px;
+        transition: background-color 0.3s ease;
+        margin-left: 20px;
+    }
+
+        .btn-back:hover {
+            background-color: #5a6268;
+        }
+
+    .btn-container {
+        text-align: left;
+        max-width: 900px;
+        margin: 0 auto 20px auto;
+    }
+</style>
+
+<h2>Thời khóa biểu: @ViewBag.ClassName</h2>
+
+@if (!Model.Any())
+{
+    <div class="alert">Chưa có thời khóa biểu cho lớp này.</div>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Ngày học</th>
+                <th>Ca học</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var t in Model)
+            {
+                <tr>
+                    <td>@t.NgayHoc?.ToString("dd/MM/yyyy")</td>
+                    <td>@t.CaHoc</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+<div class="btn-container">
+    <a asp-action="MyClasses" class="btn-back">← Quay lại lớp của tôi</a>
+</div>

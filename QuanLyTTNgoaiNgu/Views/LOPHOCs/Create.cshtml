@@ -1,15 +1,98 @@
 ﻿@model QuanLyTTNgoaiNgu.Models.LOPHOC
 @{
     ViewData["Title"] = "Tạo lớp học";
+    Layout = "_LayoutAdmin";
+}
+
+@section Styles {
+    <style>
+        h2 {
+            font-size: 28px;
+            margin-bottom: 25px;
+            color: #1d3557;
+        }
+
+        form {
+            background-color: #ffffff;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+            max-width: 700px;
+        }
+
+        .mb-3 {
+            margin-bottom: 20px;
+        }
+
+        label {
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: #1d3557;
+        }
+
+        input, select {
+            font-size: 16px;
+            border-radius: 8px;
+        }
+
+        .btn-success {
+            background-color: #2a9d8f;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-weight: bold;
+        }
+
+            .btn-success:hover {
+                background-color: #21867a;
+            }
+
+        .btn-secondary {
+            background-color: #6c757d;
+            color: white;
+            padding: 10px 20px;
+        }
+
+            .btn-secondary:hover {
+                background-color: #5a6268;
+            }
+    </style>
 }
 
 <h2>@ViewData["Title"]</h2>
+@if (ViewBag.Error != null)
+{
+    <div class="alert alert-warning">@ViewBag.Error</div>
+}
 
-@* Hiển thị toàn bộ lỗi validation phía trên form *@
+@if (!ViewData.ModelState.IsValid)
+{
+    <div class="alert alert-danger">
+        <ul>
+            @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+            {
+                <li>@error.ErrorMessage</li>
+            }
+        </ul>
+    </div>
+}
+
 @Html.ValidationSummary(true, "", new { @class = "alert alert-danger" })
 
-<form asp-action="Create" asp-controller="LOPHOCs" method="post">
+<form asp-action="Create" method="post">
     @Html.AntiForgeryToken()
+    @if (!ViewData.ModelState.IsValid)
+    {
+        <div class="alert alert-danger">
+            <ul>
+                @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+                {
+                    <li>@error.ErrorMessage</li>
+                }
+            </ul>
+        </div>
+    }
+
 
     <div class="mb-3">
         <label asp-for="TenLopHoc" class="form-label"></label>
@@ -51,12 +134,10 @@
         <span asp-validation-for="MaGiangVien" class="text-danger"></span>
     </div>
 
-    <button type="submit" class="btn btn-success">Lưu</button>
-    <a asp-action="Index" asp-controller="LOPHOCs" class="btn btn-secondary ms-2">Hủy</a>
+    <button type="submit" class="btn btn-success">Tạo mới</button>
+    <a asp-action="Index" class="btn btn-secondary ms-2">Hủy</a>
 </form>
 
 @section Scripts {
-    @{
-        await Html.RenderPartialAsync("_ValidationScriptsPartial");
-    }
+    @await Html.PartialAsync("_ValidationScriptsPartial")
 }

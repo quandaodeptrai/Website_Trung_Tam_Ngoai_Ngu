@@ -6,6 +6,7 @@ using System.Linq;
 using System.Security.Claims;
 using System;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 
 namespace QuanLyTTNgoaiNgu.Controllers
 {
@@ -28,43 +29,51 @@ namespace QuanLyTTNgoaiNgu.Controllers
         public async Task<IActionResult> Login(
             string username,
             string password,
-            bool rememberMe,         // <- bind checkbox
+            bool rememberMe,
             string returnUrl = null)
         {
-            var user = _ctx.TAIKHOAN
-                .FirstOrDefault(u => u.TenDangNhap == username && u.MatKhau == password);
+            var user = _ctx.TAIKHOAN.FirstOrDefault(u => u.TenDangNhap == username && u.MatKhau == password);
             if (user == null)
             {
                 ModelState.AddModelError("", "Tên đăng nhập hoặc mật khẩu không đúng");
                 return View();
             }
 
-            // Tạo claims
+            // Xác định họ tên
+            string hoTen = user.TenDangNhap; // mặc định
+            if (user.VaiTro == "GiangVien")
+            {
+                var gv = _ctx.GIANGVIEN.FirstOrDefault(g => g.MaTaiKhoan == user.MaTaiKhoan);
+                if (gv != null) hoTen = gv.HoTen;
+            }
+            else if (user.VaiTro == "HocVien")
+            {
+                var hv = _ctx.HOCVIEN
+    .Include(h => h.DANGKYMOI)
+    .FirstOrDefault(h => h.MaTaiKhoan == user.MaTaiKhoan);
+
+                if (hv != null && hv.DANGKYMOI != null) hoTen = hv.DANGKYMOI.HoTen;
+
+            }
+
             var claims = new[]
             {
                 new Claim(ClaimTypes.Name, user.TenDangNhap),
-                new Claim(ClaimTypes.Role, user.VaiTro)
+                new Claim(ClaimTypes.Role, user.VaiTro),
+                new Claim("FullName", hoTen),
             };
             var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+            var props = new AuthenticationProperties { IsPersistent = rememberMe };
 
-            // Chỉ cần IsPersistent: nếu true thì cookie sẽ dùng ExpireTimeSpan từ Program.cs
-            var props = new AuthenticationProperties
-            {
-                IsPersistent = rememberMe
-            };
-
-            // Sign in
             await HttpContext.SignInAsync(
                 CookieAuthenticationDefaults.AuthenticationScheme,
                 new ClaimsPrincipal(identity),
                 props
             );
 
-            // Redirect về returnUrl nếu có
             if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
                 return Redirect(returnUrl);
 
-            // Ngược lại điều hướng theo role
             return user.VaiTro switch
             {
                 "Admin" => RedirectToAction("AdminHome", "Home"),
@@ -72,6 +81,46 @@ namespace QuanLyTTNgoaiNgu.Controllers
                 "HocVien" => RedirectToAction("HocVienHome", "Home"),
                 _ => RedirectToAction("Index", "Home")
             };
+        }
+
+        [HttpGet]
+        public IActionResult QuenMatKhau()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public IActionResult QuenMatKhau(string username, string email)
+        {
+            if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(email))
+            {
+                ViewBag.Error = "Vui lòng nhập đầy đủ tên đăng nhập và email!";
+                return View();
+            }
+
+            var taikhoan = _ctx.TAIKHOAN.FirstOrDefault(t => t.TenDangNhap == username);
+            if (taikhoan == null)
+            {
+                ViewBag.Error = "Không tìm thấy tài khoản này!";
+                return View();
+            }
+
+            var hocvien = _ctx.HOCVIEN
+                .Where(hv => hv.MaTaiKhoan == taikhoan.MaTaiKhoan)
+                .FirstOrDefault(hv => hv.DANGKYMOI != null && hv.DANGKYMOI.Email == email);
+
+            if (hocvien == null)
+            {
+                ViewBag.Error = "Email không khớp với tài khoản!";
+                return View();
+            }
+
+            taikhoan.MatKhau = "111111";
+            _ctx.Update(taikhoan);
+            _ctx.SaveChanges();
+
+            ViewBag.Message = "Khôi phục mật khẩu thành công! Mật khẩu mới là: 111111";
+            return View();
         }
 
         [HttpGet]

@@ -1,43 +1,149 @@
 ﻿@model QuanLyTTNgoaiNgu.Models.DANGKYMOI
 
 @{
-    ViewData["Title"] = "Đăng ký mới";
+    ViewData["Title"] = "Đăng ký học viên mới";
+    Layout = "_LayoutTrangChu";
 }
 
-<h2>@ViewData["Title"]</h2>
+@section Styles {
+    <style>
+        .register-wrapper {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 80vh;
+            padding: 20px;
+        }
 
-<form asp-action="Create" method="post">
-    <div class="mb-3">
-        <label asp-for="HoTen" class="form-label"></label>
-        <input asp-for="HoTen" class="form-control" />
-        <span asp-validation-for="HoTen" class="text-danger"></span>
+        .register-box {
+            background-color: #fff;
+            padding: 40px;
+            border-radius: 12px;
+            max-width: 600px;
+            width: 100%;
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
+        }
+
+            .register-box h2 {
+                text-align: center;
+                font-weight: 700;
+                color: #1d3557;
+                margin-bottom: 30px;
+            }
+
+        .form-group {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+            .form-group label {
+                width: 130px;
+                margin-bottom: 0;
+                font-weight: 600;
+                color: #333;
+            }
+
+            .form-group input {
+                flex: 1;
+                padding: 12px;
+                border-radius: 8px;
+                border: 1px solid #ccc;
+                font-size: 16px;
+            }
+
+        .form-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 30px;
+        }
+
+        .btn-submit {
+            flex: 1;
+            background-color: #2a9d8f;
+            color: white;
+            font-weight: bold;
+            padding: 14px;
+            border: none;
+            border-radius: 8px;
+            transition: background 0.3s;
+        }
+
+            .btn-submit:hover {
+                background-color: #21867a;
+            }
+
+        .btn-cancel {
+            flex: 1;
+            margin-left: 15px;
+            background-color: #e63946;
+            color: #fff;
+            font-weight: bold;
+            padding: 14px;
+            border: none;
+            border-radius: 8px;
+            text-align: center;
+            text-decoration: none;
+            transition: background 0.3s;
+        }
+
+            .btn-cancel:hover {
+                background-color: #c92a35;
+                text-decoration: none;
+            }
+
+        .text-danger {
+            font-size: 14px;
+            color: red;
+            margin-top: 5px;
+        }
+    </style>
+}
+
+<div class="register-wrapper">
+    <div class="register-box">
+        <h2>Đăng ký học viên mới</h2>
+
+        <form asp-action="Create" method="post">
+            <div class="form-group">
+                <label asp-for="HoTen"></label>
+                <input asp-for="HoTen" class="form-control" />
+            </div>
+            <span asp-validation-for="HoTen" class="text-danger"></span>
+
+            <div class="form-group">
+                <label asp-for="NgaySinh"></label>
+                <input asp-for="NgaySinh" type="date" class="form-control" />
+            </div>
+            <span asp-validation-for="NgaySinh" class="text-danger"></span>
+
+            <div class="form-group">
+                <label asp-for="SoDienThoai"></label>
+                <input asp-for="SoDienThoai" class="form-control" />
+            </div>
+            <span asp-validation-for="SoDienThoai" class="text-danger"></span>
+
+            <div class="form-group">
+                <label asp-for="DiaChi"></label>
+                <input asp-for="DiaChi" class="form-control" />
+            </div>
+            <span asp-validation-for="DiaChi" class="text-danger"></span>
+
+            <div class="form-group">
+                <label asp-for="Email"></label>
+                <input asp-for="Email" class="form-control" />
+            </div>
+            <span asp-validation-for="Email" class="text-danger"></span>
+
+            <div class="form-actions">
+                <button type="submit" class="btn-submit">Gửi đăng ký</button>
+                <a asp-controller="Home" asp-action="Index" class="btn-cancel">Hủy</a>
+            </div>
+        </form>
     </div>
-    <div class="mb-3">
-        <label asp-for="NgaySinh" class="form-label"></label>
-        <input asp-for="NgaySinh" type="date" class="form-control" />
-        <span asp-validation-for="NgaySinh" class="text-danger"></span>
-    </div>
-    <div class="mb-3">
-        <label asp-for="SoDienThoai" class="form-label"></label>
-        <input asp-for="SoDienThoai" class="form-control" />
-        <span asp-validation-for="SoDienThoai" class="text-danger"></span>
-    </div>
-    <div class="mb-3">
-        <label asp-for="DiaChi" class="form-label"></label>
-        <input asp-for="DiaChi" class="form-control" />
-        <span asp-validation-for="DiaChi" class="text-danger"></span>
-    </div>
-    <div class="mb-3">
-        <label asp-for="Email" class="form-label"></label>
-        <input asp-for="Email" class="form-control" />
-        <span asp-validation-for="Email" class="text-danger"></span>
-    </div>
-    <button type="submit" class="btn btn-success">Gửi đăng ký</button>
-    <a asp-controller="Home" asp-action="Index" class="btn btn-secondary ms-2">Hủy</a>
-</form>
+</div>
 
 @section Scripts {
-    @{
-        await Html.RenderPartialAsync("_ValidationScriptsPartial");
-    }
+    @await Html.PartialAsync("_ValidationScriptsPartial")
 }

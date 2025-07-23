@@ -1,7 +1,86 @@
 ﻿@model QuanLyTTNgoaiNgu.Models.ApproveViewModel
+
 @{
     ViewData["Title"] = "Duyệt đăng ký";
+    Layout = "_LayoutAdmin";
 }
+
+<style>
+    h2 {
+        color: #1d3557;
+        font-weight: bold;
+        margin-bottom: 30px;
+        text-align: center;
+    }
+
+    .card {
+        background-color: #ffffff;
+        border-radius: 8px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        padding: 20px;
+        margin-bottom: 30px;
+    }
+
+    .card-body {
+        font-size: 16px;
+    }
+
+    .card p {
+        margin-bottom: 10px;
+    }
+
+    .form-label {
+        font-size: 16px;
+        color: #333;
+    }
+
+    .form-control {
+        padding: 12px;
+        border-radius: 8px;
+        border: 1px solid #ddd;
+        width: 100%;
+        margin-bottom: 15px;
+        font-size: 14px;
+    }
+
+        .form-control:disabled {
+            background-color: #f8f9fa;
+            cursor: not-allowed;
+        }
+
+    .btn {
+        padding: 10px 20px;
+        font-size: 16px;
+        border-radius: 6px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+
+    .btn-primary {
+        background-color: #4CAF50;
+        color: white;
+        border: none;
+    }
+
+        .btn-primary:hover {
+            background-color: #45a049;
+        }
+
+    .btn-secondary {
+        background-color: #6c757d;
+        color: white;
+        border: none;
+    }
+
+        .btn-secondary:hover {
+            background-color: #5a6268;
+        }
+
+    .ms-2 {
+        margin-left: 10px;
+    }
+
+</style>
 
 <h2>@ViewData["Title"]</h2>
 

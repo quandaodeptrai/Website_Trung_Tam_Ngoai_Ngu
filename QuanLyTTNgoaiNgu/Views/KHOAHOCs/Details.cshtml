@@ -1,36 +1,82 @@
 ﻿@model QuanLyTTNgoaiNgu.Models.KHOAHOC
 
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = "Chi tiết Khóa học";
+    Layout = "_LayoutAdmin";
 }
 
-<h1>Details</h1>
+@section Styles {
+    <style>
+        h1 {
+            font-size: 28px;
+            margin-bottom: 20px;
+            color: #1d3557;
+        }
 
-<div>
-    <h4>KHOAHOC</h4>
-    <hr />
+        .card {
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 12px;
+            max-width: 700px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        dl.row dt {
+            font-weight: bold;
+            color: #2d2d2d;
+        }
+
+        dl.row dd {
+            color: #555;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 10px 18px;
+            text-decoration: none;
+            font-weight: 600;
+            border-radius: 6px;
+            transition: background-color 0.3s ease;
+            margin-right: 10px;
+        }
+
+        .btn-primary {
+            background-color: #3a86ff;
+            color: white;
+        }
+
+            .btn-primary:hover {
+                background-color: #2b6ed3;
+            }
+
+        .btn-secondary {
+            background-color: #6c757d;
+            color: white;
+        }
+
+            .btn-secondary:hover {
+                background-color: #5a6268;
+            }
+    </style>
+}
+
+<h1>@ViewData["Title"]</h1>
+
+<div class="card">
+    <h4 style="color:#1d3557; margin-bottom: 20px;">Thông tin khóa học</h4>
     <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.TenKhoaHoc)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.TenKhoaHoc)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.MoTa)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.MoTa)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.MucHocPhi)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.MucHocPhi)
-        </dd>
+        <dt class="col-sm-3">Tên khóa học</dt>
+        <dd class="col-sm-9">@Model.TenKhoaHoc</dd>
+
+        <dt class="col-sm-3">Mô tả</dt>
+        <dd class="col-sm-9">@Model.MoTa</dd>
+
+        <dt class="col-sm-3">Mức học phí</dt>
+        <dd class="col-sm-9">@Model.MucHocPhi.ToString("N0") VNĐ</dd>
     </dl>
-</div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model?.MaKhoaHoc">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+
+    <div class="mt-3">
+        <a asp-action="Edit" asp-route-id="@Model.MaKhoaHoc" class="btn btn-primary">Sửa</a>
+        <a asp-action="Index" class="btn btn-secondary">Quay lại</a>
+    </div>
 </div>

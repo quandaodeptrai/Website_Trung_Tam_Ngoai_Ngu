@@ -1,36 +1,79 @@
 ﻿@model QuanLyTTNgoaiNgu.Models.TAIKHOAN
 
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = "Chi tiết tài khoản";
+    Layout = "_LayoutAdmin";
 }
 
-<h1>Details</h1>
+@section Styles {
+    <style>
+        .details-container {
+            max-width: 600px;
+            margin: 40px auto;
+            background: #ffffff;
+            padding: 30px 40px;
+            border-radius: 16px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            font-family: 'Segoe UI', sans-serif;
+        }
 
-<div>
-    <h4>TAIKHOAN</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.TenDangNhap)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.TenDangNhap)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.MatKhau)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.MatKhau)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.VaiTro)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.VaiTro)
-        </dd>
+            .details-container h1 {
+                text-align: center;
+                font-size: 28px;
+                color: #1d3557;
+                margin-bottom: 30px;
+            }
+
+            .details-container dt {
+                font-weight: bold;
+                color: #333;
+                margin-top: 15px;
+            }
+
+            .details-container dd {
+                margin-left: 0;
+                padding: 6px 12px;
+                background: #f1f5f9;
+                border-radius: 8px;
+            }
+
+            .details-container .actions {
+                margin-top: 30px;
+                text-align: center;
+            }
+
+                .details-container .actions a {
+                    margin: 0 10px;
+                    text-decoration: none;
+                    padding: 10px 20px;
+                    background-color: #1d3557;
+                    color: white;
+                    border-radius: 8px;
+                    transition: background 0.3s;
+                }
+
+                    .details-container .actions a:hover {
+                        background-color: #457b9d;
+                    }
+    </style>
+}
+
+<div class="details-container">
+    <h1>Chi tiết tài khoản</h1>
+
+    <dl>
+        <dt>Tên đăng nhập</dt>
+        <dd>@Model.TenDangNhap</dd>
+
+        <dt>Mật khẩu</dt>
+        <dd>@Model.MatKhau</dd>
+
+        <dt>Vai trò</dt>
+        <dd>@Model.VaiTro</dd>
     </dl>
-</div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model?.MaTaiKhoan">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+
+    <div class="actions">
+        <a asp-action="Edit" asp-route-id="@Model?.MaTaiKhoan">Chỉnh sửa</a>
+        <a asp-action="Index">Quay lại danh sách</a>
+    </div>
 </div>

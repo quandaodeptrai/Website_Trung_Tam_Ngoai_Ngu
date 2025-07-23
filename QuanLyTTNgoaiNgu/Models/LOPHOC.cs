@@ -27,7 +27,7 @@ namespace QuanLyTTNgoaiNgu.Models
         public int MaGiangVien { get; set; }
         public virtual KHOAHOC? KHOAHOC { get; set; }
         public virtual GIANGVIEN? GIANGVIEN { get; set; }
-        public virtual ICollection<THOIKHOABIEU> THOIKHOABIEUs { get; set; }
+        public virtual ICollection<THOIKHOABIEU>? THOIKHOABIEUs { get; set; }
         public virtual ICollection<PHIEUDANGKY>? PHIEUDANGKies { get; set; }
 
 

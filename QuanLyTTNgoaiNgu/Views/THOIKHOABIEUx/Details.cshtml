@@ -1,36 +1,83 @@
 ﻿@model QuanLyTTNgoaiNgu.Models.THOIKHOABIEU
 
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = "Chi tiết lịch học";
+    Layout = "_LayoutAdmin";
 }
 
-<h1>Details</h1>
+@section Styles {
+    <style>
+        .details-wrapper {
+            max-width: 600px;
+            margin: 40px auto;
+            background: #ffffff;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
 
-<div>
-    <h4>THOIKHOABIEU</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.CaHoc)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.CaHoc)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.NgayHoc)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.NgayHoc)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.LOPHOC)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.LOPHOC.TenLopHoc)
-        </dd>
-    </dl>
-</div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model?.MaLichHoc">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+        h1 {
+            text-align: center;
+            font-size: 28px;
+            margin-bottom: 25px;
+            color: #1d3557;
+        }
+
+        .details-row {
+            display: flex;
+            margin-bottom: 15px;
+        }
+
+        .details-label {
+            width: 30%;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .details-value {
+            width: 70%;
+            color: #555;
+        }
+
+        .details-actions {
+            text-align: center;
+            margin-top: 25px;
+        }
+
+            .details-actions a {
+                margin: 0 10px;
+                padding: 8px 18px;
+                text-decoration: none;
+                border-radius: 8px;
+                color: #fff;
+                background-color: #457b9d;
+                transition: background 0.3s ease;
+            }
+
+                .details-actions a:hover {
+                    background-color: #1d3557;
+                }
+    </style>
+}
+
+<div class="details-wrapper">
+    <h1>Chi tiết lịch học</h1>
+
+    <div class="details-row">
+        <div class="details-label">Ca học:</div>
+        <div class="details-value">@Model.CaHoc</div>
+    </div>
+    <div class="details-row">
+        <div class="details-label">Ngày học:</div>
+        <div class="details-value">@(Model.NgayHoc.HasValue ? Model.NgayHoc.Value.ToString("dd/MM/yyyy") : "")</div>
+    </div>
+    <div class="details-row">
+        <div class="details-label">Lớp học:</div>
+        <div class="details-value">@Model.LOPHOC?.TenLopHoc</div>
+    </div>
+
+    <div class="details-actions">
+        <a asp-action="Edit" asp-route-id="@Model.MaLichHoc">Chỉnh sửa</a>
+        <a asp-action="Index">Quay lại</a>
+    </div>
 </div>

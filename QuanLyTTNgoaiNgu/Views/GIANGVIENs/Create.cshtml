@@ -1,52 +1,123 @@
 ﻿@model QuanLyTTNgoaiNgu.Models.GIANGVIEN
 
 @{
-    ViewData["Title"] = "Create";
+    ViewData["Title"] = "Thêm giảng viên";
+    Layout = "_LayoutAdmin";
 }
 
-<h1>Create</h1>
+@section Styles {
+    <style>
+        h1 {
+            font-size: 28px;
+            margin-bottom: 20px;
+            color: #1d3557;
+        }
 
-<h4>GIANGVIEN</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Create">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="HoTen" class="control-label"></label>
-                <input asp-for="HoTen" class="form-control" />
-                <span asp-validation-for="HoTen" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="ChuyenMon" class="control-label"></label>
-                <input asp-for="ChuyenMon" class="form-control" />
-                <span asp-validation-for="ChuyenMon" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Email" class="control-label"></label>
-                <input asp-for="Email" class="form-control" />
-                <span asp-validation-for="Email" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="SoDienThoai" class="control-label"></label>
-                <input asp-for="SoDienThoai" class="form-control" />
-                <span asp-validation-for="SoDienThoai" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="MaTaiKhoan" class="control-label"></label>
-                <select asp-for="MaTaiKhoan" class ="form-control" asp-items="ViewBag.MaTaiKhoan"></select>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
-            </div>
-        </form>
-    </div>
-</div>
+        .form-container {
+            max-width: 600px;
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
 
-<div>
-    <a asp-action="Index">Back to List</a>
+        .form-group {
+            margin-bottom: 18px;
+        }
+
+        label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 6px;
+            color: #333;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+        }
+
+        .text-danger {
+            color: red;
+            font-size: 13px;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 10px 20px;
+            text-decoration: none;
+            border-radius: 6px;
+            font-weight: bold;
+            margin-right: 10px;
+            transition: background-color 0.3s ease;
+        }
+
+        .btn-primary {
+            background-color: #2a9d8f;
+            color: white;
+        }
+
+            .btn-primary:hover {
+                background-color: #21867a;
+            }
+
+        .btn-secondary {
+            background-color: #6c757d;
+            color: white;
+        }
+
+            .btn-secondary:hover {
+                background-color: #5a6268;
+            }
+    </style>
+}
+
+<h1>@ViewData["Title"]</h1>
+
+<div class="form-container">
+    <form asp-action="Create">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+        <div class="form-group">
+            <label asp-for="HoTen"></label>
+            <input asp-for="HoTen" type="text" />
+            <span asp-validation-for="HoTen" class="text-danger"></span>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="ChuyenMon"></label>
+            <input asp-for="ChuyenMon" type="text" />
+            <span asp-validation-for="ChuyenMon" class="text-danger"></span>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="Email"></label>
+            <input asp-for="Email" type="email" />
+            <span asp-validation-for="Email" class="text-danger"></span>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="SoDienThoai"></label>
+            <input asp-for="SoDienThoai" type="text" />
+            <span asp-validation-for="SoDienThoai" class="text-danger"></span>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="MaTaiKhoan"></label>
+            <select asp-for="MaTaiKhoan" asp-items="ViewBag.MaTaiKhoan"></select>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Tạo mới</button>
+        <a asp-action="Index" class="btn btn-secondary">Quay lại</a>
+    </form>
 </div>
 
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 }

@@ -1,33 +1,92 @@
 ﻿@model QuanLyTTNgoaiNgu.Models.KETQUAHOCTAP
 
 @{
-    ViewData["Title"] = "Delete";
+    ViewData["Title"] = "Xóa kết quả học tập";
+    Layout = "_LayoutAdmin";
 }
 
-<h1>Delete</h1>
+@section Styles {
+    <style>
+        h1 {
+            font-size: 26px;
+            margin-bottom: 20px;
+            color: #e63946;
+        }
 
-<h3>Are you sure you want to delete this?</h3>
-<div>
-    <h4>KETQUAHOCTAP</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Diem)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Diem)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.PHIEUDANGKY)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.PHIEUDANGKY.MaPhieu)
-        </dd>
-    </dl>
-    
-    <form asp-action="Delete">
-        <input type="hidden" asp-for="MaKetQua" />
-        <input type="submit" value="Delete" class="btn btn-danger" /> |
-        <a asp-action="Index">Back to List</a>
-    </form>
-</div>
+        h4 {
+            font-size: 20px;
+            color: #1d3557;
+        }
+
+        dl {
+            background-color: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            max-width: 600px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+        }
+
+        dt {
+            font-weight: bold;
+            color: #1d3557;
+            margin-top: 10px;
+        }
+
+        dd {
+            margin-left: 0;
+            margin-bottom: 10px;
+        }
+
+        form {
+            display: flex;
+            gap: 15px;
+        }
+
+        .btn {
+            padding: 10px 18px;
+            border-radius: 6px;
+            font-weight: bold;
+            text-decoration: none;
+            transition: background-color 0.3s ease;
+        }
+
+        .btn-danger {
+            background-color: #e63946;
+            color: white;
+            border: none;
+        }
+
+            .btn-danger:hover {
+                background-color: #c82333;
+            }
+
+        .btn-secondary {
+            background-color: #6c757d;
+            color: white;
+        }
+
+            .btn-secondary:hover {
+                background-color: #5a6268;
+            }
+    </style>
+}
+
+<h1>@ViewData["Title"]</h1>
+
+<h4>Bạn có chắc chắn muốn xóa kết quả học tập sau?</h4>
+<hr />
+
+<dl>
+    <dt>Điểm</dt>
+    <dd>@Html.DisplayFor(model => model.Diem)</dd>
+
+    <dt>Mã Phiếu Đăng Ký</dt>
+    <dd>@Html.DisplayFor(model => model.PHIEUDANGKY.MaPhieu)</dd>
+</dl>
+
+<form asp-action="Delete">
+    <input type="hidden" asp-for="MaKetQua" />
+    <input type="submit" value="Xóa" class="btn btn-danger" />
+    <a asp-action="Index" class="btn btn-secondary">Quay lại</a>
+</form>

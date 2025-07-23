@@ -1,47 +1,122 @@
 ﻿@model IEnumerable<QuanLyTTNgoaiNgu.Models.KHOAHOC>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Danh sách Khóa học";
+    Layout = "_LayoutAdmin";
 }
 
-<h1>Index</h1>
+@section Styles {
+    <style>
+        h1 {
+            font-size: 28px;
+            margin-bottom: 25px;
+            color: #1d3557;
+        }
+
+        .btn-create {
+            display: inline-block;
+            background-color: #2a9d8f;
+            color: white;
+            padding: 10px 16px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+
+            .btn-create:hover {
+                background-color: #21867a;
+            }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: white;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+
+        th {
+            background-color: #1d3557;
+            color: white;
+            font-weight: 600;
+        }
+
+        tr:hover {
+            background-color: #f1f1f1;
+        }
+
+        .action-buttons a {
+            margin-right: 6px;
+            display: inline-block;
+            padding: 6px 12px;
+            font-size: 14px;
+            border-radius: 5px;
+            text-decoration: none;
+            color: white;
+        }
+
+        .btn-edit {
+            background-color: #3a86ff;
+        }
+
+        .btn-details {
+            background-color: #43aa8b;
+        }
+
+        .btn-delete {
+            background-color: #e63946;
+        }
+
+        .btn-edit:hover {
+            background-color: #2b6ed3;
+        }
+
+        .btn-details:hover {
+            background-color: #2f8f72;
+        }
+
+        .btn-delete:hover {
+            background-color: #c1272d;
+        }
+    </style>
+}
+
+<h1>@ViewData["Title"]</h1>
 
 <p>
-    <a asp-action="Create">Create New</a>
+    <a asp-action="Create" class="btn-create">Thêm Khóa học</a>
 </p>
-<table class="table">
+
+<table>
     <thead>
         <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.TenKhoaHoc)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.MoTa)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.MucHocPhi)
-            </th>
-            <th></th>
+            <th>@Html.DisplayNameFor(model => model.TenKhoaHoc)</th>
+            <th>@Html.DisplayNameFor(model => model.MoTa)</th>
+            <th>@Html.DisplayNameFor(model => model.MucHocPhi)</th>
+            <th>Thao tác</th>
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.TenKhoaHoc)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.MoTa)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.MucHocPhi)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.MaKhoaHoc">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.MaKhoaHoc">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.MaKhoaHoc">Delete</a>
-            </td>
-        </tr>
-}
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.TenKhoaHoc</td>
+                <td>@item.MoTa</td>
+                <td>@item.MucHocPhi.ToString("N0") VND</td>
+                <td class="action-buttons">
+                    <a asp-action="Details" asp-route-id="@item.MaKhoaHoc" class="btn-details">Chi tiết</a>
+                    <a asp-action="Edit" asp-route-id="@item.MaKhoaHoc" class="btn-edit">Sửa</a>
+                    <a asp-action="Delete" asp-route-id="@item.MaKhoaHoc" class="btn-delete">Xóa</a>
+                </td>
+            </tr>
+        }
     </tbody>
 </table>

@@ -1,36 +1,83 @@
 ﻿@model QuanLyTTNgoaiNgu.Models.PHIEUDANGKY
 
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = "Chi tiết Phiếu đăng ký";
+    Layout = "_LayoutAdmin";
 }
 
-<h1>Details</h1>
+@section Styles {
+    <style>
+        .details-container {
+            max-width: 700px;
+            margin: 50px auto;
+            background: #ffffff;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            font-family: 'Segoe UI', sans-serif;
+        }
 
-<div>
-    <h4>PHIEUDANGKY</h4>
+            .details-container h1 {
+                text-align: center;
+                color: #1d3557;
+                margin-bottom: 25px;
+            }
+
+        dt {
+            font-weight: bold;
+            color: #457b9d;
+        }
+
+        dd {
+            margin-bottom: 15px;
+        }
+
+        .details-actions {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+            .details-actions a {
+                margin: 0 10px;
+                padding: 8px 16px;
+                border-radius: 8px;
+                text-decoration: none;
+                color: #fff;
+                background-color: #1d3557;
+                transition: background 0.3s;
+            }
+
+                .details-actions a:hover {
+                    background-color: #457b9d;
+                }
+    </style>
+}
+
+<div class="details-container">
+    <h1>Chi tiết Phiếu đăng ký</h1>
     <hr />
     <dl class="row">
-        <dt class = "col-sm-2">
+        <dt class="col-sm-4">
             @Html.DisplayNameFor(model => model.NgayDangKy)
         </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.NgayDangKy)
+        <dd class="col-sm-8">
+            @(Model.NgayDangKy.HasValue ? Model.NgayDangKy.Value.ToString("dd/MM/yyyy") : "")
         </dd>
-        <dt class = "col-sm-2">
+        <dt class="col-sm-4">
             @Html.DisplayNameFor(model => model.HOCVIEN)
         </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.HOCVIEN.MaHocVien)
+        <dd class="col-sm-8">
+            @Model.HOCVIEN?.MaHocVien
         </dd>
-        <dt class = "col-sm-2">
+        <dt class="col-sm-4">
             @Html.DisplayNameFor(model => model.LOPHOC)
         </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.LOPHOC.TenLopHoc)
+        <dd class="col-sm-8">
+            @Model.LOPHOC?.TenLopHoc
         </dd>
     </dl>
-</div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model?.MaPhieu">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+    <div class="details-actions">
+        <a asp-action="Edit" asp-route-id="@Model?.MaPhieu">Chỉnh sửa</a>
+        <a asp-action="Index">Quay lại</a>
+    </div>
 </div>

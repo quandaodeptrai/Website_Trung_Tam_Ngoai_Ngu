@@ -1,0 +1,110 @@
+﻿@model IEnumerable<QuanLyTTNgoaiNgu.Models.THONGBAO>
+@{
+    ViewData["Title"] = "Thông báo của bạn";
+    Layout = "_LayoutGiangVien";
+}
+
+@section Styles {
+    <style>
+        h2 {
+            font-size: 28px;
+            color: #1d3557;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .notification-container {
+            background-color: #ffffff;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            max-width: 1000px;
+            margin: auto;
+        }
+
+        .notification-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+            .notification-table thead {
+                background-color: #1d3557;
+                color: white;
+            }
+
+            .notification-table th, .notification-table td {
+                padding: 12px 15px;
+                border: 1px solid #ddd;
+                text-align: left;
+            }
+
+            .notification-table tbody tr:nth-child(even) {
+                background-color: #f9f9f9;
+            }
+
+        .alert-info {
+            background-color: #e3f2fd;
+            color: #0d47a1;
+            padding: 15px;
+            border-radius: 8px;
+            max-width: 600px;
+            margin: 20px auto;
+            text-align: center;
+        }
+
+        .btn-back {
+            display: inline-block;
+            margin-top: 25px;
+            padding: 10px 20px;
+            border-radius: 6px;
+            background-color: transparent;
+            color: #1d3557;
+            border: 2px solid #1d3557;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+            .btn-back:hover {
+                background-color: #1d3557;
+                color: #fff;
+            }
+
+        .btn-wrapper {
+            text-align: center;
+        }
+    </style>
+}
+
+<div class="notification-container">
+    <h2>@ViewData["Title"]</h2>
+
+    @if (!Model.Any())
+    {
+        <div class="alert alert-info">Bạn chưa có thông báo nào.</div>
+    }
+    else
+    {
+        <table class="notification-table">
+            <thead>
+                <tr>
+                    <th>Ngày</th>
+                    <th>Tiêu đề</th>
+                    <th>Nội dung</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var tb in Model)
+                {
+                    <tr>
+                        <td>@tb.NgayThongBao?.ToString("dd/MM/yyyy HH:mm")</td>
+                        <td>@tb.TieuDe</td>
+                        <td>@tb.NoiDung</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+
+</div>

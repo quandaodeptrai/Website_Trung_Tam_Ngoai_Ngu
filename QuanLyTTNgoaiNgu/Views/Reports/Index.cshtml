@@ -1,71 +1,157 @@
 ﻿@model QuanLyTTNgoaiNgu.Models.ReportViewModel
 @{
-    ViewData["Title"] = "Báo cáo – Thống kê";
+    ViewData["Title"] = "Báo cáo – Thống kê";
+    Layout = "_LayoutAdmin";
 }
 
-<h2>@ViewData["Title"]</h2>
-
-<h4>Tổng quan</h4>
-<ul>
-    <li>Học viên: @Model.TotalStudents</li>
-    <li>Giảng viên: @Model.TotalTeachers</li>
-    <li>Lớp học: @Model.TotalClasses</li>
-    <li>HV chưa đăng ký lớp: @Model.UnenrolledStudents</li>
-</ul>
-
-<h4>Số HV theo lớp</h4>
-<table class="table table-sm">
-    <thead><tr><th>Lớp</th><th>Số HV</th></tr></thead>
-    <tbody>
-        @foreach (var c in Model.StudentsPerClass)
-        {
-            <tr><td>@c.ClassName</td><td>@c.Count</td></tr>
+@section Styles {
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: linear-gradient(to right, #f8f9fa, #e9ecef);
         }
-    </tbody>
-</table>
 
-<h4>Số lớp theo khóa</h4>
-<table class="table table-sm">
-    <thead><tr><th>Khóa</th><th>Số lớp</th></tr></thead>
-    <tbody>
-        @foreach (var c in Model.ClassesPerCourse)
-        {
-            <tr><td>@c.CourseName</td><td>@c.Count</td></tr>
+        .report-container {
+            max-width: 1000px;
+            margin: 40px auto;
+            background-color: white;
+            padding: 40px;
+            border-radius: 16px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.05);
         }
-    </tbody>
-</table>
 
-<h4>Số HV theo khóa</h4>
-<table class="table table-sm">
-    <thead><tr><th>Khóa</th><th>Số HV</th></tr></thead>
-    <tbody>
-        @foreach (var c in Model.StudentsPerCourse)
-        {
-            <tr><td>@c.CourseName</td><td>@c.Count</td></tr>
+        h2 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 30px;
         }
-    </tbody>
-</table>
 
-<h4>Tổng doanh thu</h4>
-<h5>Theo lớp</h5>
-<table class="table table-sm">
-    <thead><tr><th>Lớp</th><th>Doanh thu</th></tr></thead>
-    <tbody>
-        @foreach (var r in Model.RevenuePerClass)
-        {
-            <tr><td>@r.Key</td>
-                    <td>@($"{r.Amount:N0} VND")</td></tr>
+        h4, h5 {
+            color: #1d3557;
+            margin-top: 30px;
         }
-    </tbody>
-</table>
 
-<h5>Theo khóa</h5>
-<table class="table table-sm">
-    <thead><tr><th>Khóa</th><th>Doanh thu</th></tr></thead>
-    <tbody>
-        @foreach (var r in Model.RevenuePerCourse)
-        {
+        ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+            ul li {
+                background-color: #f1f1f1;
+                margin: 6px 0;
+                padding: 10px 14px;
+                border-radius: 8px;
+            }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+            font-size: 15px;
+        }
+
+        th, td {
+            padding: 10px;
+            border: 1px solid #ccc;
+            text-align: left;
+        }
+
+        th {
+            background-color: #6c757d;
+            color: white;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f8f9fa;
+        }
+
+        tr:hover {
+            background-color: #e2e6ea;
+        }
+
+        .back-button {
+            display: inline-block;
+            margin-top: 40px;
+            padding: 10px 18px;
+            background-color: #1d3557;
+            color: white;
+            border-radius: 8px;
+            text-decoration: none;
+            transition: background 0.3s ease;
+        }
+
+            .back-button:hover {
+                background-color: #457b9d;
+            }
+    </style>
+}
+
+<div class="report-container">
+    <h2>@ViewData["Title"]</h2>
+
+    <h4>Tổng quan</h4>
+    <ul>
+        <li>Học viên: @Model.TotalStudents</li>
+        <li>Giảng viên: @Model.TotalTeachers</li>
+        <li>Lớp học: @Model.TotalClasses</li>
+        <li>HV chưa đăng ký lớp: @Model.UnenrolledStudents</li>
+    </ul>
+
+    <h4>Số HV theo lớp</h4>
+    <table>
+        <thead><tr><th>Lớp</th><th>Số HV</th></tr></thead>
+        <tbody>
+            @foreach (var c in Model.StudentsPerClass)
+            {
+                <tr><td>@c.ClassName</td><td>@c.Count</td></tr>
+            }
+        </tbody>
+    </table>
+
+    <h4>Số lớp theo khóa</h4>
+    <table>
+        <thead><tr><th>Khóa</th><th>Số lớp</th></tr></thead>
+        <tbody>
+            @foreach (var c in Model.ClassesPerCourse)
+            {
+                <tr><td>@c.CourseName</td><td>@c.Count</td></tr>
+            }
+        </tbody>
+    </table>
+
+    <h4>Số HV theo khóa</h4>
+    <table>
+        <thead><tr><th>Khóa</th><th>Số HV</th></tr></thead>
+        <tbody>
+            @foreach (var c in Model.StudentsPerCourse)
+            {
+                <tr><td>@c.CourseName</td><td>@c.Count</td></tr>
+            }
+        </tbody>
+    </table>
+
+    <h4>Tổng doanh thu</h4>
+    <h5>Theo lớp</h5>
+    <table>
+        <thead><tr><th>Lớp</th><th>Doanh thu</th></tr></thead>
+        <tbody>
+            @foreach (var r in Model.RevenuePerClass)
+            {
                 <tr><td>@r.Key</td><td>@($"{r.Amount:N0} VND")</td></tr>
-        }
-    </tbody>
-</table>
+            }
+        </tbody>
+    </table>
+
+    <h5>Theo khóa</h5>
+    <table>
+        <thead><tr><th>Khóa</th><th>Doanh thu</th></tr></thead>
+        <tbody>
+            @foreach (var r in Model.RevenuePerCourse)
+            {
+                <tr><td>@r.Key</td><td>@($"{r.Amount:N0} VND")</td></tr>
+            }
+        </tbody>
+    </table>
+
+    <a href="javascript:history.back()" class="back-button">← Quay lại</a>
+</div>

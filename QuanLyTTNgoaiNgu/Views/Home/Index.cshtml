@@ -1,18 +1,31 @@
 ﻿@model IEnumerable<QuanLyTTNgoaiNgu.Models.KHOAHOC>
 
 @{
-    ViewData["Title"] = "Trang chủ";
+    Layout = "_LayoutTrangChu";
+
 }
 
-<h1>Danh sách khóa học</h1>
+<!-- Carousel -->
+<div class="carousel">
+    <img src="@((ViewBag.CarouselImages as List<string>)?[0] ?? "/images/anh_trung_tam.jpg")"
+         alt="Slide chính"
+         style="width: 100%; max-height: 450px; object-fit: cover; border-radius: 10px; margin-bottom: 30px;">
 
-<ul>
-    @foreach (var khoahoc in Model)
-    {
-        <li>
-            <strong>@khoahoc.TenKhoaHoc</strong><br />
-            @khoahoc.MoTa<br />
-            Học phí: @String.Format("{0:N0}", khoahoc.MucHocPhi) VNĐ
-        </li>
-    }
-</ul>
+</div>
+
+<!-- Khóa học nổi bật -->
+<section class="courses-section">
+    <h2 class="section-title">Khóa học nổi bật</h2>
+    <div class="course-grid">
+        @foreach (var item in ViewBag.FeaturedCourses)
+        {
+            <div class="course-card">
+                <img src="@item.Image" alt="@item.TenKhoaHoc">
+                <div class="course-content">
+                    <h3>@item.TenKhoaHoc</h3>
+                    <p class="description">@item.MoTa</p>
+                </div>
+            </div>
+        }
+    </div>
+</section>

@@ -2,55 +2,126 @@
 
 @{
     ViewData["Title"] = "Danh sách Học viên";
+    Layout = "_LayoutAdmin";
+}
+
+@section Styles {
+    <style>
+        h1 {
+            font-size: 28px;
+            margin-bottom: 20px;
+            color: #1d3557;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: white;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+
+        th {
+            background-color: #1d3557;
+            color: white;
+            font-weight: 600;
+        }
+
+        tr:hover {
+            background-color: #f1f1f1;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .action-buttons a {
+            padding: 6px 12px;
+            font-size: 14px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: 600;
+            color: white;
+            transition: background-color 0.3s;
+        }
+
+        .btn-info {
+            background-color: #457b9d;
+        }
+
+        .btn-secondary {
+            background-color: #6c757d;
+        }
+
+        .btn-primary {
+            background-color: #2a9d8f;
+        }
+
+        .btn-danger {
+            background-color: #e63946;
+        }
+
+        .btn-info:hover {
+            background-color: #35607a;
+        }
+
+        .btn-secondary:hover {
+            background-color: #5a6268;
+        }
+
+        .btn-primary:hover {
+            background-color: #21867a;
+        }
+
+        .btn-danger:hover {
+            background-color: #c1272d;
+        }
+    </style>
 }
 
 <h1>@ViewData["Title"]</h1>
 
-<p>
-    <a class="btn btn-primary" asp-action="Create">Tạo mới học viên</a>
-</p>
-
-<table class="table table-striped">
+<table>
     <thead>
         <tr>
-            <th>Mã học viên</th>
+            <th>Mã HV</th>
             <th>Họ tên</th>
             <th>Ngày sinh</th>
             <th>Điện thoại</th>
             <th>Địa chỉ</th>
             <th>Email</th>
-            <th>Mã Tài khoản</th>
-            <th>Mã QTV duyệt</th>
-            
-            <th></th>
+            <th>Mã TK</th>
+            <th>Mã QTV</th>
+            <th>Thao tác</th>
         </tr>
     </thead>
     <tbody>
         @foreach (var item in Model)
         {
             <tr>
-					<td>@item.MaHocVien</td>
+                <td>@item.MaHocVien</td>
                 <td>@item.DANGKYMOI?.HoTen</td>
-                <td>
-                    @{
-                        // Nếu NgaySinh có giá trị thì format, không thì để trống
-                        var ngay = item.DANGKYMOI?.NgaySinh;
-                    }
-                    @(ngay.HasValue ? ngay.Value.ToString("dd/MM/yyyy") : "")
-                </td>
+                <td>@(item.DANGKYMOI?.NgaySinh?.ToString("dd/MM/yyyy"))</td>
                 <td>@item.DANGKYMOI?.SoDienThoai</td>
                 <td>@item.DANGKYMOI?.DiaChi</td>
                 <td>@item.DANGKYMOI?.Email</td>
                 <td>@item.TAIKHOAN?.MaTaiKhoan</td>
                 <td>@item.DANGKYMOI?.MaQuanTriVien</td>
-                
-                    <td>
-              <a asp-action="Details"      asp-route-id="@item.MaHocVien" class="btn btn-sm btn-info">Xem thông tin</a>
-              <a asp-action="History"      asp-route-id="@item.MaHocVien" class="btn btn-sm btn-secondary">Lịch sử đăng ký</a>
-              <a asp-action="AssignClass"  asp-route-id="@item.MaHocVien" class="btn btn-sm btn-warning">Phân lớp</a>
-              <a asp-action="Edit"         asp-route-id="@item.MaHocVien" class="btn btn-sm btn-primary">Sửa</a>
-              <a asp-action="Delete"       asp-route-id="@item.MaHocVien" class="btn btn-sm btn-danger">Xóa</a>
-           </td>
+                <td class="action-buttons">
+                    <a asp-action="Details" asp-route-id="@item.MaHocVien" class="btn-info">Xem</a>
+                    <a asp-action="History" asp-route-id="@item.MaHocVien" class="btn-secondary">Lịch sử</a>
+                    <a asp-action="Edit" asp-route-id="@item.MaHocVien" class="btn-primary">Sửa</a>
+                    <a asp-action="Delete" asp-route-id="@item.MaHocVien" class="btn-danger">Xóa</a>
+                </td>
             </tr>
         }
     </tbody>

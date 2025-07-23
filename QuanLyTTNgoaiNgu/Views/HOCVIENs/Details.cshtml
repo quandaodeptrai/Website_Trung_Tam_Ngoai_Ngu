@@ -1,35 +1,118 @@
 ﻿@model QuanLyTTNgoaiNgu.Models.HOCVIEN
 @{
     ViewData["Title"] = "Chi tiết Học viên";
+    Layout = "_LayoutAdmin";
 }
+
+@section Styles {
+    <style>
+        h1 {
+            font-size: 28px;
+            margin-bottom: 25px;
+            color: #1d3557;
+        }
+
+        .card {
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            max-width: 800px;
+        }
+
+        .detail-row {
+            display: flex;
+            margin-bottom: 16px;
+        }
+
+        .detail-label {
+            width: 200px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .detail-value {
+            flex: 1;
+            color: #555;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 16px;
+            margin-top: 30px;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 10px 24px;
+            text-decoration: none;
+            border-radius: 6px;
+            font-weight: 600;
+            transition: background-color 0.3s;
+            text-align: center;
+        }
+
+        .btn-primary {
+            background-color: #2a9d8f;
+            color: white;
+        }
+
+            .btn-primary:hover {
+                background-color: #21867a;
+            }
+
+        .btn-secondary {
+            background-color: #6c757d;
+            color: white;
+        }
+
+            .btn-secondary:hover {
+                background-color: #5a6268;
+            }
+    </style>
+}
+
 <h1>@ViewData["Title"]</h1>
-<div class="card mb-3">
-    <div class="card-body">
-        <dl class="row">
-            <dt class="col-sm-3">Mã Học viên</dt>
-            <dd class="col-sm-9">@Model.MaHocVien</dd>
 
-            <dt class="col-sm-3">Họ tên</dt>
-            <dd class="col-sm-9">@Model.DANGKYMOI?.HoTen</dd>
+<div class="card">
+    <div class="detail-row">
+        <div class="detail-label">Mã Học viên:</div>
+        <div class="detail-value">@Model.MaHocVien</div>
+    </div>
 
-            <dt class="col-sm-3">Ngày sinh</dt>
-            <dd class="col-sm-9">@(Model.DANGKYMOI?.NgaySinh?.ToString("dd/MM/yyyy") ?? "")</dd>
+    <div class="detail-row">
+        <div class="detail-label">Họ tên:</div>
+        <div class="detail-value">@Model.DANGKYMOI?.HoTen</div>
+    </div>
 
-            <dt class="col-sm-3">Điện thoại</dt>
-            <dd class="col-sm-9">@Model.DANGKYMOI?.SoDienThoai</dd>
+    <div class="detail-row">
+        <div class="detail-label">Ngày sinh:</div>
+        <div class="detail-value">@(Model.DANGKYMOI?.NgaySinh?.ToString("dd/MM/yyyy") ?? "")</div>
+    </div>
 
-            <dt class="col-sm-3">Địa chỉ</dt>
-            <dd class="col-sm-9">@Model.DANGKYMOI?.DiaChi</dd>
+    <div class="detail-row">
+        <div class="detail-label">Điện thoại:</div>
+        <div class="detail-value">@Model.DANGKYMOI?.SoDienThoai</div>
+    </div>
 
-            <dt class="col-sm-3">Email</dt>
-            <dd class="col-sm-9">@Model.DANGKYMOI?.Email</dd>
+    <div class="detail-row">
+        <div class="detail-label">Địa chỉ:</div>
+        <div class="detail-value">@Model.DANGKYMOI?.DiaChi</div>
+    </div>
 
-            <dt class="col-sm-3">Mã Tài khoản</dt>
-            <dd class="col-sm-9">@Model.MaTaiKhoan</dd>
-        </dl>
+    <div class="detail-row">
+        <div class="detail-label">Email:</div>
+        <div class="detail-value">@Model.DANGKYMOI?.Email</div>
+    </div>
+
+    <div class="detail-row">
+        <div class="detail-label">Mã Tài khoản:</div>
+        <div class="detail-value">@Model.MaTaiKhoan</div>
+    </div>
+
+    <!-- Nhóm nút chức năng -->
+    <div class="button-group">
+        <a asp-action="Edit" asp-route-id="@Model.MaHocVien" class="btn btn-primary">Sửa</a>
+        <a asp-action="Index" class="btn btn-secondary">Quay lại</a>
     </div>
 </div>
-<p>
-    <a asp-action="Edit" asp-route-id="@Model.MaHocVien" class="btn btn-primary">Sửa</a>
-    <a asp-action="Index" class="btn btn-secondary">Quay lại</a>
-</p>

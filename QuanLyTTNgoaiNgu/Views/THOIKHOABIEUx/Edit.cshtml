@@ -1,44 +1,116 @@
 ﻿@model QuanLyTTNgoaiNgu.Models.THOIKHOABIEU
 
 @{
-    ViewData["Title"] = "Edit";
+    ViewData["Title"] = "Cập nhật Thời khóa biểu";
+    Layout = "_LayoutAdmin";
 }
 
-<h1>Edit</h1>
+@section Styles {
+    <style>
+        h1 {
+            font-size: 28px;
+            color: #1d3557;
+            text-align: center;
+            margin-bottom: 20px;
+        }
 
-<h4>THOIKHOABIEU</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Edit">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="MaLichHoc" />
-            <div class="form-group">
-                <label asp-for="CaHoc" class="control-label"></label>
-                <input asp-for="CaHoc" class="form-control" />
-                <span asp-validation-for="CaHoc" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="NgayHoc" class="control-label"></label>
-                <input asp-for="NgayHoc" class="form-control" />
-                <span asp-validation-for="NgayHoc" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="MaLopHoc" class="control-label"></label>
-                <select asp-for="MaLopHoc" class="form-control" asp-items="ViewBag.MaLopHoc"></select>
-                <span asp-validation-for="MaLopHoc" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
-            </div>
-        </form>
+        .form-container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: #fff;
+            padding: 35px;
+            border-radius: 12px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.05);
+        }
+
+        label {
+            font-weight: 600;
+            color: #333;
+        }
+
+        .form-control {
+            border-radius: 8px;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #1d3557, #457b9d);
+            border: none;
+            border-radius: 12px;
+            padding: 12px 28px;
+            font-weight: 600;
+            color: #fff;
+            transition: all 0.3s ease;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+        }
+
+            .btn-primary:hover {
+                background: linear-gradient(135deg, #16324f, #2b6c8c);
+                box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+                transform: translateY(-2px);
+            }
+
+
+        .text-danger {
+            font-size: 14px;
+        }
+
+        .back-link {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+            .back-link a {
+                color: #1d3557;
+                font-weight: 500;
+                text-decoration: none;
+            }
+
+                .back-link a:hover {
+                    text-decoration: underline;
+                }
+    </style>
+}
+
+<h1>Cập nhật Thời khóa biểu</h1>
+
+<div class="form-container">
+    <form asp-action="Edit">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <input type="hidden" asp-for="MaLichHoc" />
+
+        <div class="form-group">
+            <label asp-for="CaHoc" class="control-label"></label>
+            <input asp-for="CaHoc" class="form-control" />
+            <span asp-validation-for="CaHoc" class="text-danger"></span>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="NgayHoc" class="control-label"></label>
+            <input asp-for="NgayHoc" class="form-control" type="date" />
+            <span asp-validation-for="NgayHoc" class="text-danger"></span>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="MaLopHoc" class="control-label"></label>
+            <select asp-for="MaLopHoc" class="form-control" asp-items="ViewBag.MaLopHoc"></select>
+            <span asp-validation-for="MaLopHoc" class="text-danger"></span>
+        </div>
+
+        <div class="form-group text-center">
+            <input type="submit" value="Lưu thay đổi" class="btn btn-primary" />
+        </div>
+    </form>
+
+    <div class="back-link">
+        <a asp-action="Index">← Quay lại danh sách</a>
     </div>
 </div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
-
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 }

@@ -1,47 +1,136 @@
 ﻿@model IEnumerable<QuanLyTTNgoaiNgu.Models.TAIKHOAN>
-
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Quản lý Tài khoản";
+    Layout = "_LayoutAdmin";
 }
 
-<h1>Index</h1>
+<h1>Quản lý Tài khoản</h1>
 
 <p>
-    <a asp-action="Create">Create New</a>
+    <div class="create-button-container">
+        <a asp-action="Create" class="btn-create">Tạo tài khoản mới</a>
+    </div>
+
 </p>
-<table class="table">
+
+<table>
     <thead>
         <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.TenDangNhap)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.MatKhau)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.VaiTro)
-            </th>
-            <th></th>
+            <th>@Html.DisplayNameFor(model => model.TenDangNhap)</th>
+            <th>@Html.DisplayNameFor(model => model.MatKhau)</th>
+            <th>@Html.DisplayNameFor(model => model.VaiTro)</th>
+            <th>Thao tác</th>
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.TenDangNhap)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.MatKhau)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.VaiTro)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.MaTaiKhoan">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.MaTaiKhoan">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.MaTaiKhoan">Delete</a>
-            </td>
-        </tr>
-}
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.TenDangNhap</td>
+                <td>@item.MatKhau</td>
+                <td>@item.VaiTro</td>
+                <td class="action-buttons">
+                    <a asp-action="Edit" asp-route-id="@item.MaTaiKhoan" class="btn-edit">Sửa</a>
+                    <a asp-action="Details" asp-route-id="@item.MaTaiKhoan" class="btn-details">Chi tiết</a>
+                    <a asp-action="Delete" asp-route-id="@item.MaTaiKhoan" class="btn-delete">Xóa</a>
+                </td>
+
+            </tr>
+        }
     </tbody>
 </table>
+
+@section Styles {
+    <style>
+        h1 {
+            font-size: 28px;
+            margin-bottom: 25px;
+            color: #1d3557;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: white;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        th, td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #eee;
+            text-align: left;
+        }
+
+        th {
+            background-color: #1d3557;
+            color: white;
+            font-weight: bold;
+        }
+
+        tr:hover {
+            background-color: #f8f9fa;
+        }
+
+        .action-buttons a {
+            margin-right: 8px;
+            padding: 6px 12px;
+            font-size: 14px;
+            border-radius: 5px;
+            text-decoration: none;
+            color: white;
+        }
+
+        .btn-edit {
+            background-color: #3a86ff;
+        }
+
+            .btn-edit:hover {
+                background-color: #2b6ed3;
+            }
+
+        .btn-details {
+            background-color: #43aa8b;
+        }
+
+            .btn-details:hover {
+                background-color: #2f8f72;
+            }
+
+        .create-button-container {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        .btn-create {
+            background-color: #1d3557;
+            color: white;
+            padding: 10px 20px;
+            font-size: 15px;
+            border: none;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: background-color 0.3s ease;
+        }
+
+            .btn-create:hover {
+                background-color: #16324c;
+            }
+
+        .btn-delete {
+            background-color: #e63946;
+            color: white;
+            padding: 6px 12px;
+            font-size: 14px;
+            border-radius: 5px;
+            text-decoration: none;
+        }
+
+            .btn-delete:hover {
+                background-color: #d62828;
+            }
+
+    </style>
+}

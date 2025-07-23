@@ -1,41 +1,97 @@
 ﻿@model IEnumerable<QuanLyTTNgoaiNgu.Models.KETQUAHOCTAP>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Kết quả học tập học viên";
+    Layout = "_LayoutAdmin";
 }
 
-<h1>Index</h1>
+@section Styles {
+    <style>
+        h1 {
+            font-size: 28px;
+            margin-bottom: 25px;
+            color: #1d3557;
+        }
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: white;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        th, td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #eee;
+            text-align: left;
+        }
+
+        th {
+            background-color: #1d3557;
+            color: white;
+            font-weight: bold;
+        }
+
+        tr:hover {
+            background-color: #f8f9fa;
+        }
+
+        .action-buttons a {
+            margin-right: 8px;
+            padding: 6px 12px;
+            font-size: 14px;
+            border-radius: 5px;
+            text-decoration: none;
+            color: white;
+        }
+
+        .btn-edit {
+            background-color: #3a86ff;
+        }
+
+            .btn-edit:hover {
+                background-color: #2b6ed3;
+            }
+
+        .btn-details {
+            background-color: #43aa8b;
+        }
+
+            .btn-details:hover {
+                background-color: #2f8f72;
+            }
+    </style>
+}
+
+<h1>@ViewData["Title"]</h1>
+
+<table>
     <thead>
         <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Diem)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.PHIEUDANGKY)
-            </th>
-            <th></th>
+            <th>Mã Đăng ký</th>
+            <th>Mã Học viên</th>
+            <th>Họ tên Học viên</th>
+            <th>Lớp học</th>
+            <th>Điểm</th>
+            <th>Thao tác</th>
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Diem)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.PHIEUDANGKY.MaPhieu)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.MaKetQua">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.MaKetQua">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.MaKetQua">Delete</a>
-            </td>
-        </tr>
-}
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.PHIEUDANGKY?.MaPhieu</td>
+                <td>@item.PHIEUDANGKY?.HOCVIEN?.MaHocVien</td>
+                <td>@item.PHIEUDANGKY?.HOCVIEN?.DANGKYMOI?.HoTen</td>
+                <td>@item.PHIEUDANGKY?.LOPHOC?.TenLopHoc</td>
+                <td>@item.Diem</td>
+                <td class="action-buttons">
+                    <a asp-action="Details" asp-route-id="@item.MaKetQua" class="btn-details">Chi tiết</a>
+                    <a asp-action="Edit" asp-route-id="@item.MaKetQua" class="btn-edit">Sửa</a>
+                </td>
+            </tr>
+        }
     </tbody>
 </table>

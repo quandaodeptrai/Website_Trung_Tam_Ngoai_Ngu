@@ -1,48 +1,102 @@
 ﻿@model QuanLyTTNgoaiNgu.Models.GIANGVIEN
 
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = "Chi tiết Giảng viên";
+    Layout = "_LayoutAdmin";
 }
 
-<h1>Details</h1>
+@section Styles {
+    <style>
+        h1 {
+            font-size: 28px;
+            margin-bottom: 20px;
+            color: #1d3557;
+        }
 
-<div>
-    <h4>GIANGVIEN</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.HoTen)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.HoTen)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.ChuyenMon)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.ChuyenMon)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Email)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Email)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.SoDienThoai)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.SoDienThoai)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.TAIKHOAN)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.TAIKHOAN.MatKhau)
-        </dd>
-    </dl>
+        .card {
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            max-width: 800px;
+        }
+
+        .detail-row {
+            display: flex;
+            margin-bottom: 16px;
+        }
+
+        .detail-label {
+            width: 200px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .detail-value {
+            flex: 1;
+            color: #555;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 10px 20px;
+            text-decoration: none;
+            border-radius: 6px;
+            font-weight: 600;
+            margin-right: 10px;
+            transition: background-color 0.3s;
+        }
+
+        .btn-primary {
+            background-color: #2a9d8f;
+            color: white;
+        }
+
+            .btn-primary:hover {
+                background-color: #21867a;
+            }
+
+        .btn-secondary {
+            background-color: #6c757d;
+            color: white;
+        }
+
+            .btn-secondary:hover {
+                background-color: #5a6268;
+            }
+
+        .btn-container {
+            margin-top: 25px;
+        }
+    </style>
+}
+
+<h1>@ViewData["Title"]</h1>
+
+<div class="card">
+    <div class="detail-row">
+        <div class="detail-label">Họ tên:</div>
+        <div class="detail-value">@Model.HoTen</div>
+    </div>
+    <div class="detail-row">
+        <div class="detail-label">Chuyên môn:</div>
+        <div class="detail-value">@Model.ChuyenMon</div>
+    </div>
+    <div class="detail-row">
+        <div class="detail-label">Email:</div>
+        <div class="detail-value">@Model.Email</div>
+    </div>
+    <div class="detail-row">
+        <div class="detail-label">Điện thoại:</div>
+        <div class="detail-value">@Model.SoDienThoai</div>
+    </div>
+    <div class="detail-row">
+        <div class="detail-label">Mật khẩu tài khoản:</div>
+        <div class="detail-value">@Model.TAIKHOAN?.MatKhau</div>
+    </div>
 </div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model?.MaGiangVien">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+
+<div class="btn-container">
+    <a asp-action="Edit" asp-route-id="@Model?.MaGiangVien" class="btn btn-primary">Sửa</a>
+    <a asp-action="Index" class="btn btn-secondary">Quay lại</a>
 </div>
