@@ -1,0 +1,29 @@
+﻿@model IEnumerable<QuanLyTTNgoaiNgu.Models.ScheduleItemViewModel>
+@{
+    ViewData["Title"] = "Lịch học của bạn";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Ngày học</th>
+            <th>Ca học</th>
+            <th>Khóa học</th>
+            <th>Lớp học</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.NgayHoc.ToString("dd/MM/yyyy")</td>
+                <td>@item.CaHoc</td>
+                <td>@item.TenKhoaHoc</td>
+                <td>@item.TenLopHoc</td>
+            </tr>
+        }
+    </tbody>
+</table>
+

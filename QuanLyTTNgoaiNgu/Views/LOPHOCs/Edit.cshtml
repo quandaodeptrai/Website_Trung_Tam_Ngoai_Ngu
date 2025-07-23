@@ -1,59 +1,38 @@
 ﻿@model QuanLyTTNgoaiNgu.Models.LOPHOC
-
 @{
-    ViewData["Title"] = "Edit";
+    ViewData["Title"] = "Sửa lớp học";
 }
 
-<h1>Edit</h1>
+<h2>@ViewData["Title"]</h2>
 
-<h4>LOPHOC</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Edit">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="MaLopHoc" />
-            <div class="form-group">
-                <label asp-for="TenLopHoc" class="control-label"></label>
-                <input asp-for="TenLopHoc" class="form-control" />
-                <span asp-validation-for="TenLopHoc" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="SLHocVienToiDa" class="control-label"></label>
-                <input asp-for="SLHocVienToiDa" class="form-control" />
-                <span asp-validation-for="SLHocVienToiDa" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="NgayBatDau" class="control-label"></label>
-                <input asp-for="NgayBatDau" class="form-control" />
-                <span asp-validation-for="NgayBatDau" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="NgayKetThuc" class="control-label"></label>
-                <input asp-for="NgayKetThuc" class="form-control" />
-                <span asp-validation-for="NgayKetThuc" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="MaKhoaHoc" class="control-label"></label>
-                <select asp-for="MaKhoaHoc" class="form-control" asp-items="ViewBag.MaKhoaHoc"></select>
-                <span asp-validation-for="MaKhoaHoc" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="MaGiangVien" class="control-label"></label>
-                <select asp-for="MaGiangVien" class="form-control" asp-items="ViewBag.MaGiangVien"></select>
-                <span asp-validation-for="MaGiangVien" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
-            </div>
-        </form>
+@Html.ValidationSummary(true, "", new { @class = "alert alert-danger" })
+
+<form asp-action="Edit" method="post">
+    @Html.AntiForgeryToken()
+    <input type="hidden" asp-for="MaLopHoc" />
+    <!-- Các trường giống Create -->
+    <div class="mb-3">
+        <label asp-for="TenLopHoc" class="form-label"></label>
+        <input asp-for="TenLopHoc" class="form-control" />
+        <span asp-validation-for="TenLopHoc" class="text-danger"></span>
     </div>
-</div>
-
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
+    <!-- ... SLHocVienToiDa, NgayBatDau, NgayKetThuc như trên ... -->
+    <div class="mb-3">
+        <label asp-for="MaKhoaHoc" class="form-label">Khóa học</label>
+        <select asp-for="MaKhoaHoc" class="form-select" asp-items="ViewBag.MaKhoaHoc"></select>
+        <span asp-validation-for="MaKhoaHoc" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="MaGiangVien" class="form-label">Giảng viên</label>
+        <select asp-for="MaGiangVien" class="form-select" asp-items="ViewBag.MaGiangVien"></select>
+        <span asp-validation-for="MaGiangVien" class="text-danger"></span>
+    </div>
+    <button type="submit" class="btn btn-success">Lưu</button>
+    <a asp-action="Index" class="btn btn-secondary ms-2">Hủy</a>
+</form>
 
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 }

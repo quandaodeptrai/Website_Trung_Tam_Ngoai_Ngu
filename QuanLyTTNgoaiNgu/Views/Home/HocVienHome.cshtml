@@ -5,8 +5,19 @@
 <p>Chào mừng @User.Identity.Name! Bạn đang ở <strong>Học viên Dashboard</strong>.</p>
 
 <div class="btn-group">
-    <a asp-controller="HocVien" asp-action="MyEnrollments" class="btn btn-primary">Khóa đã đăng ký</a>
-    <a asp-controller="HocVien" asp-action="Payment"       class="btn btn-secondary">Thanh toán</a>
-    <a asp-controller="HocVien" asp-action="Index"         class="btn btn-info">Dashboard chính</a>
+    
+    <a asp-controller="HOCVIENs" asp-action="ChangePassword" class="btn btn-warning">
+        Đổi mật khẩu
+    </a><br />
+    <a asp-controller="HOCVIENs" asp-action="Courses" class="btn btn-success">
+        Xem khóa học
+    </a><br />
+    <a asp-controller="HOCVIENs" asp-action="Schedule" class="btn btn-info">
+    Lịch học
+</a><br />
+    <a asp-controller="HOCVIENs" asp-action="Debt"           class="btn btn-danger">Kiểm tra công nợ</a><br />
+    <a asp-controller="HOCVIENs" asp-action="Results" class="btn btn-primary">
+        Xem kết quả thi
+    </a>
 </div>
 

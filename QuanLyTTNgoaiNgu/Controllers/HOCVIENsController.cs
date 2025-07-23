@@ -1,12 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using QuanLyTTNgoaiNgu.Data;
 using QuanLyTTNgoaiNgu.Models;
+using Microsoft.AspNetCore.Mvc;
 
 namespace QuanLyTTNgoaiNgu.Controllers
 {
@@ -170,7 +173,6 @@ namespace QuanLyTTNgoaiNgu.Controllers
             return _context.HOCVIEN.Any(e => e.MaHocVien == id);
         }
 
-        
 
         // GET: HOCVIENs/History/5
         public async Task<IActionResult> History(int? id)
@@ -181,30 +183,27 @@ namespace QuanLyTTNgoaiNgu.Controllers
                     .ThenInclude(p => p.LOPHOC)
                 .Include(h => h.PHIEUDANGKies)
                     .ThenInclude(p => p.KETQUAHOCTAP)
+                .Include(h => h.PHIEUDANGKies)
+                    .ThenInclude(p => p.HOCPHI)
                 .FirstOrDefaultAsync(h => h.MaHocVien == id);
-
             if (hv == null) return NotFound();
             return View(hv);
         }
 
+        // GET: HOCVIENs/AssignClass/5
         public async Task<IActionResult> AssignClass(int? id)
         {
             if (id == null) return NotFound();
-
-            // Include DANGKYMOI để Model.DANGKYMOI không null
             var hocvien = await _context.HOCVIEN
                 .Include(h => h.DANGKYMOI)
                 .FirstOrDefaultAsync(h => h.MaHocVien == id);
-
             if (hocvien == null) return NotFound();
 
-            // Lấy danh sách lớp hiện có để chọn
             ViewBag.AvailableClasses = new SelectList(
                 _context.LOPHOC.ToList(),
                 "MaLopHoc",
                 "TenLopHoc"
             );
-
             return View(hocvien);
         }
 
@@ -212,7 +211,7 @@ namespace QuanLyTTNgoaiNgu.Controllers
         [HttpPost, ValidateAntiForgeryToken]
         public async Task<IActionResult> AssignClass(int id, int selectedLopHoc)
         {
-            // Tạo phieu dang ky mới cho học viên id vào lớp selectedLopHoc
+            // 1. Tạo phiếu đăng ký
             var phieu = new PHIEUDANGKY
             {
                 MaHocVien = id,
@@ -220,10 +219,342 @@ namespace QuanLyTTNgoaiNgu.Controllers
                 NgayDangKy = DateTime.Now
             };
             _context.PHIEUDANGKY.Add(phieu);
+            await _context.SaveChangesAsync(); // EF gán phieu.MaPhieu
+
+            // 2. Tạo học phí mặc định (chưa nộp)
+            var hocPhi = new HOCPHI
+            {
+                MaPhieu = phieu.MaPhieu,
+                TrangThai = false,
+                NgayNop = null
+            };
+            _context.HOCPHI.Add(hocPhi);
+
+            // 3. Tạo kết quả học tập mặc định (điểm 0)
+            var ketQua = new KETQUAHOCTAP
+            {
+                MaPhieu = phieu.MaPhieu,
+                Diem = 0.0
+            };
+            _context.KETQUAHOCTAP.Add(ketQua);
+
+            // 4. Lưu mọi thay đổi
             await _context.SaveChangesAsync();
 
-            // Chuyển về History để xem ngay kết quả
+            // 5. Quay lại lịch sử để xem ngay
             return RedirectToAction(nameof(History), new { id });
+        }
+
+        // GET: ChangePassword
+        [HttpGet]
+        public IActionResult ChangePassword()
+        {
+            return View();
+        }
+
+        // POST: ChangePassword
+        [HttpPost, ValidateAntiForgeryToken]
+        public async Task<IActionResult> ChangePassword(ChangePasswordViewModel m)
+        {
+            if (!ModelState.IsValid)
+                return View(m);
+
+            // Lấy username từ claim
+            var username = User.FindFirstValue(ClaimTypes.Name);
+            var user = await _context.TAIKHOAN
+                .FirstOrDefaultAsync(u => u.TenDangNhap == username);
+
+            if (user == null)
+                return RedirectToAction("Login", "Account");
+
+            // Kiểm tra mật khẩu cũ
+            if (user.MatKhau != m.OldPassword)
+            {
+                ModelState.AddModelError("OldPassword", "Mật khẩu cũ không đúng.");
+                return View(m);
+            }
+
+            // Cập nhật mật khẩu mới
+            user.MatKhau = m.NewPassword;
+            _context.Update(user);
+            await _context.SaveChangesAsync();
+
+            // Sau khi đổi, sign-out để bắt login lại
+            await HttpContext.SignOutAsync();
+            TempData["Message"] = "Đổi mật khẩu thành công. Vui lòng đăng nhập lại.";
+            return RedirectToAction("Login", "Account");
+        }
+
+        // 1) Danh sách khóa học, có hỗ trợ search
+        public async Task<IActionResult> Courses(string searchString)
+        {
+            // 1a. Lấy danh sách course
+            var query = _context.KHOAHOC.AsQueryable();
+
+            // 1b. Nếu có search, filter
+            if (!string.IsNullOrWhiteSpace(searchString))
+            {
+                query = query.Where(c => c.TenKhoaHoc.Contains(searchString));
+            }
+
+            // 1c. Project về ViewModel (hoặc entity nếu bạn muốn)
+            var courses = await query
+                .Select(c => new CourseViewModel
+                {
+                    MaKhoaHoc = c.MaKhoaHoc,
+                    TenKhoaHoc = c.TenKhoaHoc,
+                    MoTa = c.MoTa,
+                    MucHocPhi = c.MucHocPhi
+                })
+                .ToListAsync();
+
+            // 1d. Đưa lại searchString để view giữ input
+            ViewData["CurrentFilter"] = searchString;
+
+            return View(courses);
+        }
+
+        // 2) Danh sách lớp của một khóa
+        public async Task<IActionResult> Classes(int courseId)
+        {
+            // 1. Lấy MaHocVien của học viên hiện tại
+            var username = User.FindFirstValue(ClaimTypes.Name);
+            var hv = await _context.HOCVIEN
+                .FirstOrDefaultAsync(h => h.TAIKHOAN.TenDangNhap == username);
+            if (hv == null)
+                return RedirectToAction(nameof(Courses));
+
+            var hvId = hv.MaHocVien;
+
+            // 2. Truy vấn lớp
+            var list = await _context.LOPHOC
+                .Where(l => l.MaKhoaHoc == courseId)
+                .Include(l => l.THOIKHOABIEUs)
+                .Select(l => new ClassInfoViewModel
+                {
+                    MaLopHoc = l.MaLopHoc,
+                    TenLopHoc = l.TenLopHoc,
+                    SLHocVienToiDa = l.SLHocVienToiDa,
+                    SLHocVienHienTai = l.PHIEUDANGKies.Count(),
+                    NgayBatDau = l.NgayBatDau,
+                    Schedules = l.THOIKHOABIEUs.ToList(),
+                    // Dùng LINQ-to-Entities thay vì hv.PHIEUDANGKies.Any(...)
+                    CanRegister = DateTime.Now < l.NgayBatDau
+                                      && l.PHIEUDANGKies.Count() < l.SLHocVienToiDa
+                                      && !_context.PHIEUDANGKY
+                                            .Any(p => p.MaHocVien == hvId
+                                                   && p.MaLopHoc == l.MaLopHoc)
+                })
+                .ToListAsync();
+
+            ViewBag.CourseId = courseId;
+            return View(list);
+        }
+
+        // 3) Đăng ký lớp
+        [HttpPost, ValidateAntiForgeryToken]
+        public async Task<IActionResult> RegisterClass(int classId)
+        {
+            // 1. Lấy học viên hiện tại
+            var username = User.FindFirstValue(ClaimTypes.Name);
+            var hv = await _context.HOCVIEN
+                .FirstOrDefaultAsync(h => h.TAIKHOAN.TenDangNhap == username);
+            if (hv == null) return RedirectToAction(nameof(Courses));
+
+            // 2. Lấy lớp
+            var lop = await _context.LOPHOC
+                .Include(l => l.PHIEUDANGKies)
+                .FirstOrDefaultAsync(l => l.MaLopHoc == classId);
+            if (lop == null) return RedirectToAction(nameof(Courses));
+
+            // 3. Kiểm tra điều kiện
+            if (DateTime.Now >= lop.NgayBatDau
+             || lop.PHIEUDANGKies.Count() >= lop.SLHocVienToiDa
+             || _context.PHIEUDANGKY.Any(p => p.MaHocVien == hv.MaHocVien && p.MaLopHoc == classId))
+            {
+                TempData["Error"] = "Không thể đăng ký lớp này.";
+                return RedirectToAction(nameof(Classes), new { courseId = lop.MaKhoaHoc });
+            }
+
+            // 4. Tạo phiếu đăng ký
+            var phieu = new PHIEUDANGKY
+            {
+                MaHocVien = hv.MaHocVien,
+                MaLopHoc = classId,
+                NgayDangKy = DateTime.Now
+            };
+            _context.PHIEUDANGKY.Add(phieu);
+            await _context.SaveChangesAsync(); // để EF gán phieu.MaPhieu
+
+            // 5. Tạo kết quả học tập mặc định (điểm = 0)
+            var ketqua = new KETQUAHOCTAP
+            {
+                MaPhieu = phieu.MaPhieu,
+                Diem = 0.0
+            };
+            _context.KETQUAHOCTAP.Add(ketqua);
+
+            // 6. Tạo học phí mặc định (chưa nộp)
+            var hocphi = new HOCPHI
+            {
+                MaPhieu = phieu.MaPhieu,
+                TrangThai = false,
+                NgayNop = null
+            };
+            _context.HOCPHI.Add(hocphi);
+
+            // 7. Lưu mọi thay đổi
+            await _context.SaveChangesAsync();
+
+            TempData["Success"] = "Đăng ký lớp thành công! Vui lòng kiểm tra công nợ để thanh toán học phí.";
+            return RedirectToAction(nameof(Classes), new { courseId = lop.MaKhoaHoc });
+        }
+
+        // GET: /HocVien/Debt
+        public async Task<IActionResult> Debt()
+        {
+            // 1. Tìm Học viên hiện tại
+            var username = User.FindFirstValue(ClaimTypes.Name);
+            var hv = await _context.HOCVIEN
+                .FirstOrDefaultAsync(h => h.TAIKHOAN.TenDangNhap == username);
+            if (hv == null) return RedirectToAction("Index", "Home");
+
+            // 2. Lấy danh sách HOCPHI kèm PHIEUDANGKY → LOPHOC → KHOAHOC
+            var list = await _context.HOCPHI
+                .Include(hp => hp.PHIEUDANGKY)
+                    .ThenInclude(p => p.LOPHOC)
+                        .ThenInclude(l => l.KHOAHOC)
+                .Where(hp => hp.PHIEUDANGKY.MaHocVien == hv.MaHocVien)
+                .Select(hp => new DebtItemViewModel
+                {
+                    MaHocPhi = hp.MaHocPhi,
+                    TrangThai = hp.TrangThai,
+                    NgayNop = hp.NgayNop,
+                    TenLopHoc = hp.PHIEUDANGKY.LOPHOC.TenLopHoc,
+                    TenKhoaHoc = hp.PHIEUDANGKY.LOPHOC.KHOAHOC.TenKhoaHoc,
+                    MucHocPhi = hp.PHIEUDANGKY.LOPHOC.KHOAHOC.MucHocPhi
+                })
+                .ToListAsync();
+
+            return View(new DebtViewModel { Items = list });
+        }
+
+        // POST: /HocVien/PayDebt
+        [HttpPost, ValidateAntiForgeryToken]
+        public async Task<IActionResult> PayDebt(int[] selectedIds)
+        {
+            if (selectedIds == null || selectedIds.Length == 0)
+            {
+                TempData["DebtError"] = "Vui lòng chọn ít nhất một khoản cần nộp.";
+                return RedirectToAction(nameof(Debt));
+            }
+
+            var today = DateTime.Now;
+            var items = await _context.HOCPHI
+                .Where(hp => selectedIds.Contains(hp.MaHocPhi))
+                .ToListAsync();
+
+            foreach (var hp in items)
+            {
+                hp.TrangThai = true;
+                hp.NgayNop = today;
+            }
+            await _context.SaveChangesAsync();
+
+            TempData["DebtSuccess"] = $"Bạn đã nộp thành công {items.Count} khoản!";
+            return RedirectToAction(nameof(Debt));
+        }
+
+        // GET: HOCVIENs/Results or HOCVIENs/Results/{id}
+        public async Task<IActionResult> Results(int? id)
+        {
+            // Nếu không có id, lấy từ user hiện tại
+            if (!id.HasValue)
+            {
+                var username = User.Identity.Name;
+                var hv0 = await _context.HOCVIEN
+                    .FirstOrDefaultAsync(h => h.TAIKHOAN.TenDangNhap == username);
+                if (hv0 == null) return RedirectToAction("Index", "Home");
+                id = hv0.MaHocVien;
+            }
+
+            // Lấy Học viên theo id
+            var hv = await _context.HOCVIEN
+                .Include(h => h.TAIKHOAN)
+                .FirstOrDefaultAsync(h => h.MaHocVien == id.Value);
+            if (hv == null) return NotFound();
+
+            // Load kết quả kèm PHIEUDANGKY → LOPHOC → KHOAHOC và HOCPHI
+            var rawList = await _context.KETQUAHOCTAP
+                .Include(kq => kq.PHIEUDANGKY)
+                    .ThenInclude(p => p.LOPHOC)
+                        .ThenInclude(l => l.KHOAHOC)
+                .Include(kq => kq.PHIEUDANGKY)
+                    .ThenInclude(p => p.HOCPHI)
+                .Where(kq => kq.PHIEUDANGKY.MaHocVien == id.Value)
+                .ToListAsync();
+
+            // Tạo ViewModel sau khi load xong (in‑memory)
+            var vm = rawList.Select(kq =>
+            {
+                var paid = kq.PHIEUDANGKY.HOCPHI?.TrangThai == true;
+                var grade = kq.Diem >= 8 ? "Giỏi"
+                          : kq.Diem >= 5 ? "Khá"
+                          : "Không qua";
+                return new ResultItemViewModel
+                {
+                    TenKhoaHoc = kq.PHIEUDANGKY.LOPHOC.KHOAHOC.TenKhoaHoc,
+                    TenLopHoc = kq.PHIEUDANGKY.LOPHOC.TenLopHoc,
+                    Diem = paid ? kq.Diem : 0,
+                    XepLoai = paid ? grade : "",
+                    CanView = paid
+                };
+            }).ToList();
+
+            return View(vm);
+        }
+
+        // GET: HOCVIENs/Schedule
+        public async Task<IActionResult> Schedule()
+        {
+            // 1. Xác định học viên
+            var username = User.Identity.Name;
+            var hv = await _context.HOCVIEN
+                .FirstOrDefaultAsync(h => h.TAIKHOAN.TenDangNhap == username);
+            if (hv == null)
+                return RedirectToAction("Index", "Home");
+
+            // 2. Lấy danh sách MaLopHoc đã đăng ký, DISTINCT
+            var classIds = await _context.PHIEUDANGKY
+                .Where(p => p.MaHocVien == hv.MaHocVien)
+                .Select(p => p.MaLopHoc)
+                .Distinct()
+                .ToListAsync();
+
+            if (!classIds.Any())
+                return View(new List<ScheduleItemViewModel>());
+
+            // 3. Lấy lịch cho các lớp đó
+            var rawSchedules = await _context.THOIKHOABIEU
+                .Include(t => t.LOPHOC)
+                    .ThenInclude(l => l.KHOAHOC)
+                .Where(t => classIds.Contains(t.MaLopHoc))
+                .ToListAsync();
+
+            // 4. Map sang ViewModel và sort
+            var list = rawSchedules
+                .Select(t => new ScheduleItemViewModel
+                {
+                    TenKhoaHoc = t.LOPHOC.KHOAHOC.TenKhoaHoc,
+                    TenLopHoc = t.LOPHOC.TenLopHoc,
+                    CaHoc = t.CaHoc,
+                    NgayHoc = t.NgayHoc!.Value
+                })
+                .OrderBy(si => si.NgayHoc)
+                .ThenBy(si => si.CaHoc)
+                .ToList();
+
+            return View(list);
         }
 
     }

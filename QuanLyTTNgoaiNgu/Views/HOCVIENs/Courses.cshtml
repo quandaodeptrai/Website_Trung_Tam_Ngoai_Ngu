@@ -1,0 +1,39 @@
+﻿@model IEnumerable<QuanLyTTNgoaiNgu.Models.CourseViewModel>
+@{
+    ViewData["Title"] = "Danh sách Khóa học";
+    var currentFilter = (string)ViewData["CurrentFilter"];
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<form asp-action="Courses" method="get" class="row g-2 mb-4">
+    <div class="col-auto">
+        <input
+            type="text"
+            name="searchString"
+            value="@currentFilter"
+            class="form-control"
+            placeholder="Tìm theo tên khóa học..." />
+    </div>
+    <div class="col-auto">
+        <button type="submit" class="btn btn-primary">Tìm</button>
+    </div>
+</form>
+
+<div class="row">
+    @foreach (var c in Model)
+    {
+            <div class="col-md-4 mb-3">
+                <div class="card h-100">
+                    <div class="card-body d-flex flex-column">
+                        <h5 class="card-title">@c.TenKhoaHoc</h5>
+                        <p class="flex-grow-1">@c.MoTa</p>
+                        <p><strong>Học phí:</strong> @($"{c.MucHocPhi:N0} VND")</p>
+                        <a asp-action="Classes" asp-route-courseId="@c.MaKhoaHoc" class="btn btn-primary mt-auto">
+                            Xem lớp
+                        </a>
+                    </div>
+                </div>
+            </div>
+    }
+</div>

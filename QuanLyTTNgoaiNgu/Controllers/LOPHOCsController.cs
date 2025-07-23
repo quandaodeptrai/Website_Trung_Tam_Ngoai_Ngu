@@ -22,8 +22,72 @@ namespace QuanLyTTNgoaiNgu.Controllers
         // GET: LOPHOCs
         public async Task<IActionResult> Index()
         {
-            var quanLyTTNgoaiNguContext = _context.LOPHOC.Include(l => l.GIANGVIEN).Include(l => l.KHOAHOC);
-            return View(await quanLyTTNgoaiNguContext.ToListAsync());
+            var list = await _context.LOPHOC
+                .Include(l => l.KHOAHOC)
+                .Include(l => l.GIANGVIEN)
+                .ToListAsync();
+            return View(list);
+        }
+
+        // GET: LOPHOCs/Create
+        public IActionResult Create()
+        {
+            ViewData["MaKhoaHoc"] = new SelectList(_context.KHOAHOC, "MaKhoaHoc", "TenKhoaHoc");
+            ViewData["MaGiangVien"] = new SelectList(_context.GIANGVIEN, "MaGiangVien", "HoTen");
+            return View();
+        }
+
+        // POST: LOPHOCs/Create
+        [HttpPost, ValidateAntiForgeryToken]
+        public async Task<IActionResult> Create(
+            [Bind("TenLopHoc,SLHocVienToiDa,NgayBatDau,NgayKetThuc,MaKhoaHoc,MaGiangVien")]
+            LOPHOC model)
+        {
+            // Xem log ModelState
+            if (!ModelState.IsValid)
+            {
+                // Build lại dropdown để view có thể render
+                ViewData["MaKhoaHoc"] = new SelectList(_context.KHOAHOC, "MaKhoaHoc", "TenKhoaHoc", model.MaKhoaHoc);
+                ViewData["MaGiangVien"] = new SelectList(_context.GIANGVIEN, "MaGiangVien", "HoTen", model.MaGiangVien);
+                return View(model);
+            }
+
+            _context.Add(model);
+            await _context.SaveChangesAsync();
+            // Đảm bảo redirect đúng controller/action
+            return RedirectToAction(nameof(Index), "LOPHOCs");
+        }
+
+
+        // GET: LOPHOCs/Edit/5
+        public async Task<IActionResult> Edit(int? id)
+        {
+            if (id == null) return NotFound();
+            var lop = await _context.LOPHOC.FindAsync(id);
+            if (lop == null) return NotFound();
+
+            ViewData["MaKhoaHoc"] = new SelectList(_context.KHOAHOC, "MaKhoaHoc", "TenKhoaHoc", lop.MaKhoaHoc);
+            ViewData["MaGiangVien"] = new SelectList(_context.GIANGVIEN, "MaGiangVien", "HoTen", lop.MaGiangVien);
+            return View(lop);
+        }
+
+        // POST: LOPHOCs/Edit/5
+        [HttpPost, ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(int id,
+            [Bind("MaLopHoc,TenLopHoc,SLHocVienToiDa,NgayBatDau,NgayKetThuc,MaKhoaHoc,MaGiangVien")] LOPHOC model)
+        {
+            if (id != model.MaLopHoc) return NotFound();
+
+            if (ModelState.IsValid)
+            {
+                _context.Update(model);
+                await _context.SaveChangesAsync();
+                return RedirectToAction(nameof(Index));
+            }
+
+            ViewData["MaKhoaHoc"] = new SelectList(_context.KHOAHOC, "MaKhoaHoc", "TenKhoaHoc", model.MaKhoaHoc);
+            ViewData["MaGiangVien"] = new SelectList(_context.GIANGVIEN, "MaGiangVien", "HoTen", model.MaGiangVien);
+            return View(model);
         }
 
         // GET: LOPHOCs/Details/5
@@ -43,87 +107,6 @@ namespace QuanLyTTNgoaiNgu.Controllers
                 return NotFound();
             }
 
-            return View(lOPHOC);
-        }
-
-        // GET: LOPHOCs/Create
-        public IActionResult Create()
-        {
-            ViewData["MaGiangVien"] = new SelectList(_context.GIANGVIEN, "MaGiangVien", "ChuyenMon");
-            ViewData["MaKhoaHoc"] = new SelectList(_context.KHOAHOC, "MaKhoaHoc", "MoTa");
-            return View();
-        }
-
-        // POST: LOPHOCs/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("MaLopHoc,TenLopHoc,SLHocVienToiDa,NgayBatDau,NgayKetThuc,MaKhoaHoc,MaGiangVien")] LOPHOC lOPHOC)
-        {
-            if (ModelState.IsValid)
-            {
-                _context.Add(lOPHOC);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
-            }
-            ViewData["MaGiangVien"] = new SelectList(_context.GIANGVIEN, "MaGiangVien", "ChuyenMon", lOPHOC.MaGiangVien);
-            ViewData["MaKhoaHoc"] = new SelectList(_context.KHOAHOC, "MaKhoaHoc", "MoTa", lOPHOC.MaKhoaHoc);
-            return View(lOPHOC);
-        }
-
-        // GET: LOPHOCs/Edit/5
-        public async Task<IActionResult> Edit(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var lOPHOC = await _context.LOPHOC.FindAsync(id);
-            if (lOPHOC == null)
-            {
-                return NotFound();
-            }
-            ViewData["MaGiangVien"] = new SelectList(_context.GIANGVIEN, "MaGiangVien", "ChuyenMon", lOPHOC.MaGiangVien);
-            ViewData["MaKhoaHoc"] = new SelectList(_context.KHOAHOC, "MaKhoaHoc", "MoTa", lOPHOC.MaKhoaHoc);
-            return View(lOPHOC);
-        }
-
-        // POST: LOPHOCs/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("MaLopHoc,TenLopHoc,SLHocVienToiDa,NgayBatDau,NgayKetThuc,MaKhoaHoc,MaGiangVien")] LOPHOC lOPHOC)
-        {
-            if (id != lOPHOC.MaLopHoc)
-            {
-                return NotFound();
-            }
-
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    _context.Update(lOPHOC);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!LOPHOCExists(lOPHOC.MaLopHoc))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
-            }
-            ViewData["MaGiangVien"] = new SelectList(_context.GIANGVIEN, "MaGiangVien", "ChuyenMon", lOPHOC.MaGiangVien);
-            ViewData["MaKhoaHoc"] = new SelectList(_context.KHOAHOC, "MaKhoaHoc", "MoTa", lOPHOC.MaKhoaHoc);
             return View(lOPHOC);
         }
 

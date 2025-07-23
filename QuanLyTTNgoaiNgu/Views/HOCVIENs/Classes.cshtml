@@ -1,0 +1,63 @@
+﻿@model IEnumerable<QuanLyTTNgoaiNgu.Models.ClassInfoViewModel>
+@{
+    ViewData["Title"] = "Danh sách Lớp học";
+    var courseId = (int)ViewBag.CourseId;
+}
+<h2>@ViewData["Title"]</h2>
+
+@if (TempData["Error"] != null)
+{
+        <div class="alert alert-danger">
+        @TempData["Error"]
+        </div>
+}
+@if (TempData["Success"] != null)
+{
+        <div class="alert alert-success">
+        @TempData["Success"]
+        </div>
+}
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Lớp</th><th>SL tối đa</th><th>SL hiện tại</th>
+            <th>Ngày bắt đầu</th><th>Thời khóa biểu</th><th></th>
+        </tr>
+    </thead>
+    <tbody>
+    @foreach(var l in Model) {
+        <tr>
+            <td>@l.TenLopHoc</td>
+            <td>@l.SLHocVienToiDa</td>
+            <td>@l.SLHocVienHienTai</td>
+                <td>@l.NgayBatDau.ToString("dd/MM/yyyy")</td>
+            <td>
+                <ul class="mb-0">
+                        @foreach (var tkb in l.Schedules)
+                        {
+                          <li>
+                            @tkb.CaHoc — @tkb.NgayHoc?.ToString("dd/MM/yyyy")
+                          </li>
+                         }
+                
+                </ul>
+            </td>
+            <td>
+                @if (l.CanRegister)
+                {
+                    <form asp-action="RegisterClass" method="post">
+                        <input type="hidden" name="classId" value="@l.MaLopHoc" />
+                        <button type="submit" class="btn btn-sm btn-success">Đăng ký</button>
+                    </form>
+                }
+                else
+                {
+                    <span class="text-muted">Không thể đăng ký</span>
+                }
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>
+

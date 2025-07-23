@@ -1,46 +1,44 @@
 ﻿@model QuanLyTTNgoaiNgu.Models.HOCVIEN
-
 @{
-    ViewData["Title"] = "Lịch sử học tập";
+    ViewData["Title"] = "Lịch sử học viên";
 }
 
-<h1>@ViewData["Title"] của @Model.DANGKYMOI?.HoTen</h1>
+<h2>@ViewData["Title"] – @Model.DANGKYMOI?.HoTen</h2>
 
-@if (Model.PHIEUDANGKies == null || !Model.PHIEUDANGKies.Any())
-{
-        <p>Chưa có lịch sử đăng ký hoặc kết quả học tập.</p>
-}
-else
-{
-        <table class="table table-bordered">
-            <thead>
-                <tr>
-                    <th>Lớp học</th>
-                    <th>Ngày đăng ký</th>
-                    <th>Điểm</th>
-                </tr>
-            </thead>
-            <tbody>
-            @foreach (var phieu in Model.PHIEUDANGKies)
-            {
-                    <tr>
-                        <td>@(phieu.LOPHOC?.TenLopHoc ?? "—")</td>
-                        <td>
-                        @* Dùng DisplayFor để áp dụng DisplayFormat từ model *@
-                        @Html.DisplayFor(_ => phieu.NgayDangKy)
-                        </td>
-                        <td>
-                        @(phieu.KETQUAHOCTAP != null
-                                ? phieu.KETQUAHOCTAP.Diem.ToString()
-                                : "Chưa có")
-                        </td>
-                    </tr>
-            }
-            </tbody>
-        </table>
-}
-
-<p>
-    <a asp-action="Index" class="btn btn-secondary">Quay về danh sách</a>
-    <a asp-action="AssignClass" asp-route-id="@Model.MaHocVien" class="btn btn-primary">Phân lớp</a>
-</p>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Lớp</th>
+            <th>Ngày đăng ký</th>
+            <th>Điểm</th>
+            <th>Học phí</th>
+            <th>Trạng thái nộp</th>
+            <th>Ngày nộp</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var p in Model.PHIEUDANGKies)
+        {
+            <tr>
+                <td>@p.LOPHOC?.TenLopHoc</td>
+                <td>@p.NgayDangKy?.ToString("dd/MM/yyyy")</td>
+                <td>
+                    @(p.KETQUAHOCTAP != null
+                            ? p.KETQUAHOCTAP.Diem.ToString("0.0")
+                            : "-")
+                </td>
+                <td>
+                    @(p.HOCPHI != null
+                            ? p.LOPHOC.KHOAHOC.MucHocPhi.ToString("N0") + " VND"
+                            : "-")
+                </td>
+                <td>
+                    @(p.HOCPHI?.TrangThai == true ? "Đã nộp" : "Chưa nộp")
+                </td>
+                <td>
+                    @(p.HOCPHI?.NgayNop?.ToString("dd/MM/yyyy") ?? "-")
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

@@ -1,0 +1,35 @@
+﻿@model IEnumerable<QuanLyTTNgoaiNgu.Models.ResultItemViewModel>
+@{
+    ViewData["Title"] = "Xem kết quả thi";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Khóa học</th>
+            <th>Lớp học</th>
+            <th>Điểm</th>
+            <th>Xếp loại</th>
+            <th>Ghi chú</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var r in Model)
+        {
+            <tr>
+                <td>@r.TenKhoaHoc</td>
+                <td>@r.TenLopHoc</td>
+                <td>@(r.CanView ? r.Diem.ToString("0.0") : "-")</td>
+                <td>@(r.CanView ? r.XepLoai : "-")</td>
+                <td>
+                    @if (!r.CanView)
+                    {
+                            <span class="text-danger">Vui lòng thanh toán công nợ trước</span>
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

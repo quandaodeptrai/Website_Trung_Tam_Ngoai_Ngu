@@ -1,0 +1,92 @@
+﻿@model QuanLyTTNgoaiNgu.Models.DebtViewModel
+@{
+    ViewData["Title"] = "Kiểm tra công nợ";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+@if (TempData["DebtError"] != null)
+{
+        <div class="alert alert-danger">@TempData["DebtError"]</div>
+}
+@if (TempData["DebtSuccess"] != null)
+{
+        <div class="alert alert-success">@TempData["DebtSuccess"]</div>
+}
+
+<form asp-action="PayDebt" method="post">
+    @Html.AntiForgeryToken()
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Chọn</th>
+                <th>Khóa học</th>
+                <th>Lớp học</th>
+                <th>Số tiền (VND)</th>
+                <th>Trạng thái</th>
+                <th>Ngày nộp</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.Items)
+            {
+                <tr>
+                    <td>
+                        @if (!item.TrangThai)
+                        {
+                                <input type="checkbox" class="debt-check" 
+                                       name="selectedIds" value="@item.MaHocPhi" />
+                        }
+                    </td>
+                    <td>@item.TenKhoaHoc</td>
+                    <td>@item.TenLopHoc</td>
+                    <td class="amount">
+                        @String.Format("{0:N0} VND", item.MucHocPhi)
+                    </td>
+                    <td>
+                        @(item.TrangThai ? "Đã nộp" : "Chưa nộp")
+                    </td>
+                    <td>
+                        @(item.NgayNop?.ToString("dd/MM/yyyy") ?? "-")
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <div class="mb-3">
+        <strong>Tổng phải nộp:</strong>
+        <span id="totalAmount">0 VND</span>
+    </div>
+
+    <button type="submit" class="btn btn-success" id="payBtn" disabled>
+        Nộp
+    </button>
+</form>
+
+@section Scripts {
+        <script>
+            // Khi checkbox thay đổi, tính lại tổng
+            const checks = document.querySelectorAll('.debt-check');
+            const totalSpan = document.getElementById('totalAmount');
+            const payBtn = document.getElementById('payBtn');
+
+            function updateTotal() {
+                let sum = 0;
+                checks.forEach(cb => {
+                    if (cb.checked) {
+                        // tìm thẻ <td class="amount"> cùng hàng
+                        const row = cb.closest('tr');
+                        const txt = row.querySelector('.amount').innerText;
+                        // "2.000.000 VND" -> parse number
+                        const num = Number(txt.replace(/[^0-9]/g, ''));
+                        sum += num;
+                    }
+                });
+                totalSpan.innerText = sum.toLocaleString() + ' VND';
+                payBtn.disabled = sum === 0;
+            }
+
+            checks.forEach(cb => cb.addEventListener('change', updateTotal));
+        </script>
+}

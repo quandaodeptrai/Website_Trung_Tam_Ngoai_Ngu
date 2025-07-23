@@ -1,65 +1,39 @@
 ﻿@model IEnumerable<QuanLyTTNgoaiNgu.Models.LOPHOC>
-
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Quản lý Lớp học";
 }
 
-<h1>Index</h1>
+<h2>@ViewData["Title"]</h2>
 
 <p>
-    <a asp-action="Create">Create New</a>
+    <a asp-action="Create" asp-controller="LOPHOCs" class="btn btn-primary">Tạo lớp mới</a>
 </p>
-<table class="table">
+
+<table class="table table-striped">
     <thead>
         <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.TenLopHoc)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.SLHocVienToiDa)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.NgayBatDau)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.NgayKetThuc)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.KHOAHOC)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.GIANGVIEN)
-            </th>
-            <th></th>
+            <th>Mã lớp</th><th>Tên lớp</th><th>SL tối đa</th>
+            <th>Ngày bắt đầu</th><th>Ngày kết thúc</th>
+            <th>Khóa học</th><th>Giảng viên</th><th></th>
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.TenLopHoc)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.SLHocVienToiDa)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.NgayBatDau)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.NgayKetThuc)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.KHOAHOC.MoTa)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.GIANGVIEN.ChuyenMon)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.MaLopHoc">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.MaLopHoc">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.MaLopHoc">Delete</a>
-            </td>
-        </tr>
-}
+        @foreach (var l in Model)
+        {
+            <tr>
+                <td>@l.MaLopHoc</td>
+                <td>@l.TenLopHoc</td>
+                <td>@l.SLHocVienToiDa</td>
+                <td>@l.NgayBatDau.ToString("dd/MM/yyyy")</td>
+                <td>@l.NgayKetThuc.ToString("dd/MM/yyyy")</td>
+                <td>@l.KHOAHOC?.TenKhoaHoc</td>
+                <td>@l.GIANGVIEN?.HoTen</td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@l.MaLopHoc" class="btn btn-sm btn-warning">Sửa</a>
+                    <a asp-action="Details" asp-route-id="@l.MaLopHoc" class="btn btn-sm btn-info">Chi tiết</a>
+                    <a asp-action="Delete" asp-route-id="@l.MaLopHoc" class="btn btn-sm btn-danger">Xóa</a>
+                </td>
+            </tr>
+        }
     </tbody>
 </table>
