@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using QuanLyTTNgoaiNgu.Data;
 using QuanLyTTNgoaiNgu.Models;
+using ClosedXML.Excel;
+using System.IO;
 
 namespace QuanLyTTNgoaiNgu.Controllers
 {
@@ -109,43 +111,62 @@ namespace QuanLyTTNgoaiNgu.Controllers
             return View(kETQUAHOCTAP);
         }
 
-        // GET: KETQUAHOCTAPs/Delete/5
-        public async Task<IActionResult> Delete(int? id)
+        public async Task<IActionResult> Export()
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var kETQUAHOCTAP = await _context.KETQUAHOCTAP
+            // 1. Lấy dữ liệu cùng các quan hệ
+            var data = await _context.KETQUAHOCTAP
                 .Include(k => k.PHIEUDANGKY)
-                .FirstOrDefaultAsync(m => m.MaKetQua == id);
-            if (kETQUAHOCTAP == null)
+                    .ThenInclude(p => p.HOCVIEN)
+                        .ThenInclude(h => h.DANGKYMOI)
+                .Include(k => k.PHIEUDANGKY)
+                    .ThenInclude(p => p.LOPHOC)
+                .ToListAsync();
+
+            // 2. Tạo workbook và worksheet
+            using var wb = new XLWorkbook();
+            var ws = wb.Worksheets.Add("Kết quả học tập");
+
+            // 3. Ghi header
+            ws.Cell(1, 1).Value = "STT";
+            ws.Cell(1, 2).Value = "Mã Phiếu";
+            ws.Cell(1, 3).Value = "Mã Học viên";
+            ws.Cell(1, 4).Value = "Họ tên HV";
+            ws.Cell(1, 5).Value = "Lớp học";
+            ws.Cell(1, 6).Value = "Điểm";
+
+            // 4. Ghi dữ liệu
+            for (int i = 0; i < data.Count; i++)
             {
-                return NotFound();
+                var row = i + 2;
+                var item = data[i];
+                ws.Cell(row, 1).Value = i + 1;
+                ws.Cell(row, 2).Value = item.MaKetQua;
+                ws.Cell(row, 3).Value = item.PHIEUDANGKY?.MaHocVien;
+                ws.Cell(row, 4).Value = item.PHIEUDANGKY?.HOCVIEN?.DANGKYMOI?.HoTen;
+                ws.Cell(row, 5).Value = item.PHIEUDANGKY?.LOPHOC?.TenLopHoc;
+                ws.Cell(row, 6).Value = item.Diem;
             }
 
-            return View(kETQUAHOCTAP);
-        }
+            // 5. Tự động điều chỉnh cột
+            ws.Columns().AdjustToContents();
 
-        // POST: KETQUAHOCTAPs/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
-        {
-            var kETQUAHOCTAP = await _context.KETQUAHOCTAP.FindAsync(id);
-            if (kETQUAHOCTAP != null)
-            {
-                _context.KETQUAHOCTAP.Remove(kETQUAHOCTAP);
-            }
+            // 6. Xuất file
+            using var ms = new MemoryStream();
+            wb.SaveAs(ms);
+            ms.Seek(0, SeekOrigin.Begin);
 
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            var fileName = $"KetQuaHocTap_{DateTime.Now:yyyyMMdd}.xlsx";
+            return File(
+                ms.ToArray(),
+                "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                fileName
+            );
         }
 
         private bool KETQUAHOCTAPExists(int id)
         {
             return _context.KETQUAHOCTAP.Any(e => e.MaKetQua == id);
         }
+
     }
 }

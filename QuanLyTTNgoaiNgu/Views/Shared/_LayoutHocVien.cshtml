@@ -21,27 +21,42 @@
             <p class="sidebar-user">Xin chào, @fullName!</p>
 
             <nav class="nav-links">
-                <a asp-controller="HOCVIENs" asp-action="ChangePassword" class="btn btn-warning">
+                <a asp-controller="HOCVIENs" asp-action="ChangePassword"
+                   class="@(ViewContext.RouteData.Values["Controller"]?.ToString() == "HOCVIENs" && ViewContext.RouteData.Values["Action"]?.ToString() == "ChangePassword" ? "active" : "")">
                     Đổi mật khẩu
                 </a>
-                <a asp-controller="HOCVIENs" asp-action="Courses" class="btn btn-success">
+
+                <a asp-controller="HOCVIENs" asp-action="Courses"
+                   class="@(ViewContext.RouteData.Values["Controller"]?.ToString() == "HOCVIENs" && ViewContext.RouteData.Values["Action"]?.ToString() == "Courses" ? "active" : "")">
                     Xem khóa học
                 </a>
-                <a asp-controller="HOCVIENs" asp-action="Schedule" class="btn btn-info">
-                    Lịch học
+
+                <a asp-controller="HOCVIENs" asp-action="Schedule"
+                   class="@(ViewContext.RouteData.Values["Controller"]?.ToString() == "HOCVIENs" && ViewContext.RouteData.Values["Action"]?.ToString() == "Schedule" ? "active" : "")">
+                    Xem lịch học
                 </a>
-                <a asp-controller="HOCVIENs" asp-action="Debt" class="btn btn-danger">
+
+                <a asp-controller="HOCVIENs" asp-action="Debt"
+                   class="@(ViewContext.RouteData.Values["Controller"]?.ToString() == "HOCVIENs" && ViewContext.RouteData.Values["Action"]?.ToString() == "Debt" ? "active" : "")">
                     Kiểm tra công nợ
-                    </a>
-                <a asp-controller="HOCVIENs" asp-action="Results" class="btn btn-primary">
+                </a>
+
+                <a asp-controller="HOCVIENs" asp-action="Results"
+                   class="@(ViewContext.RouteData.Values["Controller"]?.ToString() == "HOCVIENs" && ViewContext.RouteData.Values["Action"]?.ToString() == "Results" ? "active" : "")">
                     Xem kết quả thi
                 </a>
-                <a asp-controller="HOCVIENs" asp-action="Notifications" class="btn btn-info">
+
+                <a asp-controller="HOCVIENs" asp-action="Notifications"
+                   class="@(ViewContext.RouteData.Values["Controller"]?.ToString() == "HOCVIENs" && ViewContext.RouteData.Values["Action"]?.ToString() == "Notifications" ? "active" : "")">
                     Xem thông báo
-                    </a>
-                <a asp-controller="HOCVIENs" asp-action="ChangeInfor" class="btn btn-warning">
+                </a>
+
+                <a asp-controller="HOCVIENs" asp-action="ChangeInfor"
+                   class="@(ViewContext.RouteData.Values["Controller"]?.ToString() == "HOCVIENs" && ViewContext.RouteData.Values["Action"]?.ToString() == "ChangeInfor" ? "active" : "")">
                     Đổi thông tin cá nhân
-                    </a>
+                </a>
+
+       
                 <a asp-controller="Account" asp-action="Logout" class="logout"
                    onclick="return confirm('Bạn chắc chắn muốn đăng xuất?')">Đăng xuất</a>
             </nav>

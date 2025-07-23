@@ -21,11 +21,27 @@
             <p class="sidebar-user">Xin chào, @fullName!</p>
 
             <nav class="nav-links">
-                <a asp-controller="GIANGVIENs" asp-action="MyClasses" class="btn btn-primary">Xem lớp của tôi</a>
-                <a asp-controller="GIANGVIENs" asp-action="ScheduleAll"  class="btn btn-secondary">Lịch dạy</a>
-                <a asp-controller="GIANGVIENs" asp-action="Notifications" class="btn btn-info">Xem thông báo </a>
-               
+                @{
+                    var currentController = ViewContext.RouteData.Values["Controller"]?.ToString();
+                    var currentAction = ViewContext.RouteData.Values["Action"]?.ToString();
+                }
 
+                <a asp-controller="GIANGVIENs" asp-action="MyClasses"
+                   class="@(currentController == "GIANGVIENs" && currentAction == "MyClasses" ? "active" : "")">
+                    Lớp đang dạy
+                </a>
+
+                <a asp-controller="GIANGVIENs" asp-action="ScheduleAll"
+                   class="@(currentController == "GIANGVIENs" && currentAction == "ScheduleAll" ? "active" : "")">
+                    Lịch dạy
+                </a>
+
+                <a asp-controller="GIANGVIENs" asp-action="Notifications"
+                   class="@(currentController == "GIANGVIENs" && currentAction == "Notifications" ? "active" : "")">
+                    Xem thông báo
+                </a>
+
+ 
                 <a asp-controller="Account" asp-action="Logout" class="logout"
                    onclick="return confirm('Bạn chắc chắn muốn đăng xuất?')">Đăng xuất</a>
             </nav>

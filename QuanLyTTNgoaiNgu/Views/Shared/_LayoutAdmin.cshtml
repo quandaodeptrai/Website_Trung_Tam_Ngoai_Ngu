@@ -21,18 +21,54 @@
             <p class="sidebar-user">Xin chào, @fullName!</p>
 
             <nav class="nav-links">
-                <a asp-controller="DANGKYMOIs" asp-action="Index">Quản lý Phiếu đăng ký</a>
-                <a asp-controller="HOCVIENs" asp-action="Index">Quản lý Học viên</a>
-                <a asp-controller="GIANGVIENs" asp-action="Index">Quản lý Giảng viên</a>
-                <a asp-controller="KHOAHOCs" asp-action="Index">Quản lý Khóa học</a>
-                <a asp-controller="LOPHOCs" asp-action="Index">Quản lý Lớp học</a>
-                <a asp-controller="KETQUAHOCTAPs" asp-action="Index">Kết quả học tập</a>
-                <a asp-controller="HOCPHIs" asp-action="Index">Quản lý Học phí</a>
-                <a asp-controller="PHIEUDANGKies" asp-action="Index">Quản lý Phiếu Đăng ký Lớp học</a>
-                <a asp-controller="TAIKHOANs" asp-action="Index">Quản lý Tài khoản</a>
-                <a asp-controller="THONGBAOs" asp-action="Index">Quản lý Thông báo</a>
-                <a asp-controller="THOIKHOABIEUx" asp-action="Index">Quản lý Thời khóa biểu</a>
-                <td> <a asp-controller="Reports" asp-action="Index">Báo cáo – Thống kê</a>
+                <a asp-controller="DANGKYMOIs" asp-action="Index"
+                   class="@(ViewContext.RouteData.Values["Controller"]?.ToString() == "DANGKYMOIs" ? "active" : "")">
+                    Quản lý Phiếu đăng ký
+                </a>
+                <a asp-controller="HOCVIENs" asp-action="Index"
+                   class="@(ViewContext.RouteData.Values["Controller"]?.ToString() == "HOCVIENs" ? "active" : "")">
+                    Quản lý Học viên
+                </a>
+                <a asp-controller="GIANGVIENs" asp-action="Index"
+                   class="@(ViewContext.RouteData.Values["Controller"]?.ToString() == "GIANGVIENs" ? "active" : "")">
+                    Quản lý Giảng viên
+                </a>
+                <a asp-controller="KHOAHOCs" asp-action="Index"
+                   class="@(ViewContext.RouteData.Values["Controller"]?.ToString() == "KHOAHOCs" ? "active" : "")">
+                    Quản lý Khóa học
+                </a>
+                <a asp-controller="LOPHOCs" asp-action="Index"
+                   class="@(ViewContext.RouteData.Values["Controller"]?.ToString() == "LOPHOCs" ? "active" : "")">
+                    Quản lý Lớp học
+                </a>
+                <a asp-controller="KETQUAHOCTAPs" asp-action="Index"
+                   class="@(ViewContext.RouteData.Values["Controller"]?.ToString() == "KETQUAHOCTAPs" ? "active" : "")">
+                    Quản lý Kết quả học tập
+                </a>
+                <a asp-controller="HOCPHIs" asp-action="Index"
+                   class="@(ViewContext.RouteData.Values["Controller"]?.ToString() == "HOCPHIs" ? "active" : "")">
+                    Quản lý Học phí
+                </a>
+                <a asp-controller="PHIEUDANGKies" asp-action="Index"
+                   class="@(ViewContext.RouteData.Values["Controller"]?.ToString() == "PHIEUDANGKies" ? "active" : "")">
+                    Quản lý Phiếu Đăng ký Lớp học
+                </a>
+                <a asp-controller="TAIKHOANs" asp-action="Index"
+                   class="@(ViewContext.RouteData.Values["Controller"]?.ToString() == "TAIKHOANs" ? "active" : "")">
+                    Quản lý Tài khoản
+                </a>
+                <a asp-controller="THONGBAOs" asp-action="Index"
+                   class="@(ViewContext.RouteData.Values["Controller"]?.ToString() == "THONGBAOs" ? "active" : "")">
+                    Quản lý Thông báo
+                </a>
+                <a asp-controller="THOIKHOABIEUx" asp-action="Index"
+                   class="@(ViewContext.RouteData.Values["Controller"]?.ToString() == "THOIKHOABIEUx" ? "active" : "")">
+                    Quản lý Thời khóa biểu
+                </a>
+                <a asp-controller="Reports" asp-action="Index"
+                   class="@(ViewContext.RouteData.Values["Controller"]?.ToString() == "Reports" ? "active" : "")">
+                    Báo cáo – Thống kê
+                </a>
                 <a asp-controller="Account" asp-action="Logout" class="logout"
                    onclick="return confirm('Bạn chắc chắn muốn đăng xuất?')">Đăng xuất</a>
             </nav>

@@ -79,3 +79,12 @@ body {
         background-color: #f28482;
         color: white;
     }
+
+.nav-links a.active {
+    background-color: #ffd166;
+    color: #1d3557;
+    font-weight: bold;
+}
+.nav-links a {
+    transition: background-color 0.3s, color 0.3s;
+}
