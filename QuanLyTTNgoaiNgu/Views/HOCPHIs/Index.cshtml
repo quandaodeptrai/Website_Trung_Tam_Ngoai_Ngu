@@ -38,30 +38,33 @@
             background-color: #f8f9fa;
         }
 
-        .action-buttons a {
+        .action-buttons a,
+        .action-buttons button {
             margin-right: 8px;
             padding: 6px 12px;
             font-size: 14px;
             border-radius: 5px;
             text-decoration: none;
             color: white;
+            border: none;
+            cursor: pointer;
         }
 
         .btn-edit {
             background-color: #3a86ff;
         }
 
-            .btn-edit:hover {
-                background-color: #2b6ed3;
-            }
-
         .btn-details {
             background-color: #43aa8b;
         }
 
-            .btn-details:hover {
-                background-color: #2f8f72;
-            }
+        .btn-pay {
+            background-color: #ff9f1c;
+        }
+
+        .btn-details:hover {
+            background-color: #2f8f72;
+        }
 
         .paid {
             color: green;
@@ -72,10 +75,31 @@
             color: red;
             font-weight: bold;
         }
+
+        .pay-form {
+            margin-top: 10px;
+        }
+
+            .pay-form input[type="number"] {
+                width: 100px;
+                padding: 5px;
+                margin-right: 5px;
+                border-radius: 5px;
+                border: 1px solid #ccc;
+            }
     </style>
 }
 
 <h1>@ViewData["Title"]</h1>
+
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success">@TempData["Success"]</div>
+}
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger">@TempData["Error"]</div>
+}
 
 <table>
     <thead>
@@ -114,6 +138,15 @@
                 </td>
                 <td class="action-buttons">
                     <a asp-action="Details" asp-route-id="@item.MaHocPhi" class="btn-details">Chi tiết</a>
+
+                    @if (!item.TrangThai)
+                    {
+                        <form asp-action="ThanhToan" method="post" class="pay-form d-inline">
+                            <input type="hidden" name="MaHocPhi" value="@item.MaHocPhi" />
+                            <input type="number" step="1000" name="SoTienNhap" placeholder="Nhập số tiền" required />
+                            <button type="submit" class="btn-pay">Thanh toán</button>
+                        </form>
+                    }
                 </td>
             </tr>
         }

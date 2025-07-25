@@ -1,6 +1,6 @@
-﻿@{
-    Layout = null;
-}
+﻿@using Microsoft.AspNetCore.Http
+@inject IHttpContextAccessor HttpContextAccessor
+
 <!DOCTYPE html>
 <html lang="vi">
 <head>
@@ -8,6 +8,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - Trung tâm Ngoại ngữ 5AE</title>
     <link href="~/css/home_index.css" rel="stylesheet" />
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="-1" />
+
     <style>
         * {
             box-sizing: border-box;

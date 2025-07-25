@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -10,6 +11,10 @@ using QuanLyTTNgoaiNgu.Models;
 
 namespace QuanLyTTNgoaiNgu.Controllers
 {
+    [Authorize(Roles = "Admin")]
+    [Authorize]
+    [NoCache]
+    [ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
     public class QUANTRIVIENsController : Controller
     {
         private readonly QuanLyTTNgoaiNguContext _context;

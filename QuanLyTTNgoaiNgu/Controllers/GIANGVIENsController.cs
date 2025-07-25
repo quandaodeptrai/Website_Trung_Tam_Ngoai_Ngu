@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -11,6 +12,10 @@ using QuanLyTTNgoaiNgu.Models;
 
 namespace QuanLyTTNgoaiNgu.Controllers
 {
+    [Authorize(Roles = "GiangVien")]
+    [Authorize]
+    [NoCache]
+    [ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
     public class GIANGVIENsController : Controller
     {
         private readonly QuanLyTTNgoaiNguContext _context;

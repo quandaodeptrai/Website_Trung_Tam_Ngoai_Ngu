@@ -7,9 +7,13 @@ using System.Security.Claims;
 using System;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authorization;
 
 namespace QuanLyTTNgoaiNgu.Controllers
 {
+
+    [NoCache]
+    [ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
     public class AccountController : Controller
     {
         private readonly QuanLyTTNgoaiNguContext _ctx;
@@ -122,16 +126,23 @@ namespace QuanLyTTNgoaiNgu.Controllers
             ViewBag.Message = "Khôi phục mật khẩu thành công! Mật khẩu mới là: 111111";
             return View();
         }
-
         [HttpGet]
         public async Task<IActionResult> Logout()
         {
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-            return RedirectToAction("Index", "Home");
+
+            // Ngăn trình duyệt lưu cache
+            Response.Headers["Cache-Control"] = "no-cache, no-store, must-revalidate";
+            Response.Headers["Pragma"] = "no-cache";
+            Response.Headers["Expires"] = "0";
+
+            return RedirectToAction("Login");
         }
 
-        [HttpGet]
-        public IActionResult AccessDenied()
-            => View();
+        public IActionResult LoggedOut()
+        {
+            return View(); // Trang thông báo "Bạn đã đăng xuất"
+        }
+
     }
 }

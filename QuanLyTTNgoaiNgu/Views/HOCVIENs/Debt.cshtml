@@ -136,6 +136,11 @@
                         <td>@item.TenLopHoc</td>
                         <td class="amount">
                             @String.Format("{0:N0} VND", item.MucHocPhi)
+                            @if (!item.TrangThai)
+                            {
+                                <br />
+                                <input type="number" step="1000" name="SoTienNhap[@item.MaHocPhi]" placeholder="Nhập số tiền" class="amount-input" style="margin-top:5px;" />
+                            }
                         </td>
                         <td>
                             @(item.TrangThai ? "Đã nộp" : "Chưa nộp")
@@ -146,6 +151,7 @@
                     </tr>
                 }
             </tbody>
+
         </table>
 
         <div class="mb-3">

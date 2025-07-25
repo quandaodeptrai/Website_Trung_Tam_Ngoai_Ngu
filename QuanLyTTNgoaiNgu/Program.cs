@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.DataProtection;
 using Microsoft.EntityFrameworkCore;
 using QuanLyTTNgoaiNgu.Data;
 
+
+
 var builder = WebApplication.CreateBuilder(args);
 
 // 1. Dùng EphemeralDataProtectionProvider để key KHÔNG được lưu ra file
@@ -34,6 +36,7 @@ builder.Services.AddAuthorization(options =>
     options.AddPolicy("GiangVienOnly", p => p.RequireRole("GiangVien"));
     options.AddPolicy("HocVienOnly", p => p.RequireRole("HocVien"));
 });
+builder.Services.AddHttpContextAccessor();
 
 var app = builder.Build();
 

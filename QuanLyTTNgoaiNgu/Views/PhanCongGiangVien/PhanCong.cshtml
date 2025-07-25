@@ -1,0 +1,210 @@
+﻿@model PhanCongGiangVienViewModel
+@{
+    ViewData["Title"] = "Phân công giảng viên";
+    Layout = "_LayoutAdmin";
+}
+
+@section Styles {
+    <style>
+        .phancong-container {
+            max-width: 1000px;
+            margin: 50px auto;
+            padding: 40px;
+            background: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+        }
+
+        h2 {
+            font-size: 32px;
+            margin-bottom: 30px;
+            color: #1d3557;
+            text-align: center;
+        }
+
+        .form-label {
+            font-weight: 600;
+            color: #333;
+        }
+
+        .form-control, .form-select {
+            border-radius: 8px;
+            padding: 10px 14px;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .btn-primary, .btn-success {
+            border-radius: 8px;
+            padding: 10px 20px;
+            font-size: 16px;
+            font-weight: 600;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background-color: #2a9d8f;
+            border: none;
+            color: #fff;
+        }
+
+            .btn-primary:hover {
+                background-color: #21867a;
+            }
+
+        .btn-success {
+            background-color: #457b9d;
+            border: none;
+            color: #fff;
+        }
+
+            .btn-success:hover {
+                background-color: #35607a;
+            }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: white;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        th, td {
+            padding: 14px 18px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+
+        th {
+            background-color: #1d3557;
+            color: white;
+            font-weight: 600;
+        }
+
+        tr:hover {
+            background-color: #f9f9f9;
+        }
+
+        .badge-ca {
+            background-color: #e76f51;
+            color: white;
+            border-radius: 6px;
+            padding: 4px 8px;
+            font-size: 14px;
+        }
+
+        .validation-summary-errors {
+            margin-bottom: 20px;
+            color: #e63946;
+        }
+    </style>
+}
+
+<div class="phancong-container">
+    <h2>Phân công giảng viên</h2>
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success">@TempData["SuccessMessage"]</div>
+    }
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
+    }
+    <div asp-validation-summary="All" class="validation-summary-errors"></div>
+
+    <form asp-action="ThucHienPhanCong" method="post" class="row g-4 mb-4">
+        <div class="col-md-4">
+            <label asp-for="NgayHoc" class="form-label">Ngày học</label>
+            <input asp-for="NgayHoc" type="date" class="form-control" />
+            <span asp-validation-for="NgayHoc" class="text-danger"></span>
+        </div>
+        <div class="col-md-4">
+            <label asp-for="CaHoc" class="form-label">Ca học</label>
+            <select asp-for="CaHoc" class="form-select">
+                <option value="">-- Chọn ca học --</option>
+                <option>1-3</option>
+                <option>4-6</option>
+                <option>7-9</option>
+                <option>3-5</option>
+                <option>5-7</option>
+            </select>
+            <span asp-validation-for="CaHoc" class="text-danger"></span>
+        </div>
+        <div class="col-md-4">
+            <label asp-for="MaLopHoc" class="form-label">Lớp học</label>
+            <select asp-for="MaLopHoc" class="form-select" asp-items="ViewBag.LopHocList">
+                <option value="">-- Chọn lớp --</option>
+            </select>
+            <span asp-validation-for="MaLopHoc" class="text-danger"></span>
+        </div>
+        <div class="col-12 text-end">
+            <button type="submit" class="btn btn-primary">Xem danh sách giảng viên</button>
+        </div>
+    </form>
+
+    @* Luôn hiển thị dropdown giảng viên, nhưng chỉ khi đã load model.DanhSachGiangVienPhuHop *@
+    @if (Model != null && Model.DanhSachGiangVienPhuHop != null)
+    {
+        <div class="mb-4">
+            <h4 style="color:#1d3557;">Chọn giảng viên để phân công</h4>
+            <form asp-action="ThucHienPhanCong" method="post" class="row g-4">
+                <input type="hidden" asp-for="NgayHoc" />
+                <input type="hidden" asp-for="CaHoc" />
+                <input type="hidden" asp-for="MaLopHoc" />
+
+                <div class="col-md-8">
+                    <label asp-for="MaGiangVienDuocChon" class="form-label">Giảng viên</label>
+                    <select asp-for="MaGiangVienDuocChon" class="form-select">
+                        <option value="">-- Chọn giảng viên --</option>
+                        @foreach (var gv in Model.DanhSachGiangVienPhuHop)
+                        {
+                            <option value="@gv.MaGiangVien">@gv.HoTen - @gv.ChuyenMon</option>
+                        }
+                    </select>
+                    <span asp-validation-for="MaGiangVienDuocChon" class="text-danger"></span>
+                </div>
+                <div class="col-md-4 d-flex align-items-end">
+                    <button type="submit" class="btn btn-success w-100">Phân công</button>
+                </div>
+            </form>
+        </div>
+    }
+
+    <h4 style="color:#1d3557;">Lịch đã phân công</h4>
+    <div class="table-responsive">
+        <table>
+            <thead>
+                <tr>
+                    <th>Giảng viên</th>
+                    <th>Lớp học</th>
+                    <th>Ngày học</th>
+                    <th>Ca học</th>
+                    <th>Hành động</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (ViewBag.LichDaPhanCong != null)
+                {
+                    foreach (var item in ViewBag.LichDaPhanCong as List<QuanLyTTNgoaiNgu.Models.LichPhanCongItem>)
+                    {
+                        <tr>
+                            <td>@item.TenGiangVien</td>
+                            <td>@item.TenLopHoc</td>
+                            <td>@item.NgayHoc.ToString("dd/MM/yyyy")</td>
+                            <td><span class="badge-ca">@item.CaHoc</span></td>
+                            <td>
+                                <form asp-action="XoaLich" method="post" onsubmit="return confirm('Bạn có chắc muốn xóa lịch này?');">
+                                    <input type="hidden" name="MaLichHoc" value="@item.MaLichHoc" />
+                                    <button type="submit" class="btn btn-danger btn-sm">Xóa</button>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

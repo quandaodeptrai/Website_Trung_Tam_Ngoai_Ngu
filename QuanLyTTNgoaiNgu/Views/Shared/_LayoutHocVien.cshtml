@@ -1,7 +1,29 @@
-﻿@{
-    Layout = null;
+﻿@using Microsoft.AspNetCore.Http
+@inject IHttpContextAccessor HttpContextAccessor
+
+@if (!HttpContextAccessor.HttpContext.User.Identity.IsAuthenticated)
+{
+    <script>
+        window.location.href = "/Account/Login";
+    </script>
+}
+
+@{
+
     var fullName = User.FindFirst("FullName")?.Value ?? User.Identity.Name;
 }
+@section Scripts {
+    <script>
+        window.addEventListener("pageshow", function (event) {
+            if (event.persisted || (window.performance && performance.navigation.type === 2)) {
+                // Nếu quay lại bằng nút back -> reload lại trang (và sẽ bị redirect do đã đăng xuất)
+                location.reload();
+            }
+        });
+    </script>
+
+}
+
 
 <!DOCTYPE html>
 <html lang="vi">
@@ -11,6 +33,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="stylesheet" href="~/css/Home.css" />
     @RenderSection("Styles", required: false)
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="-1" />
+
 
 </head>
 <body>
@@ -59,6 +85,7 @@
        
                 <a asp-controller="Account" asp-action="Logout" class="logout"
                    onclick="return confirm('Bạn chắc chắn muốn đăng xuất?')">Đăng xuất</a>
+
             </nav>
         </aside>
 

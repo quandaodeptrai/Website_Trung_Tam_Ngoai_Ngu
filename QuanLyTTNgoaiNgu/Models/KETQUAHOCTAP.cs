@@ -8,6 +8,7 @@ namespace QuanLyTTNgoaiNgu.Models
         [Key]
         public int MaKetQua { get; set; }
         [Required]
+        [Range(0, 10, ErrorMessage = "Điểm phải nằm trong khoảng từ 0 đến 10.")]
         public double Diem { get; set; }
         [ForeignKey("PHIEUDANGKY")]
         public int MaPhieu { get; set; }

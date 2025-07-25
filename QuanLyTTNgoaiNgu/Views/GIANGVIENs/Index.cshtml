@@ -86,6 +86,27 @@
         .btn-delete:hover {
             background-color: #c1272d;
         }
+
+        .btn-excel {
+            background-color: #28a745; /* Màu xanh lá dịu */
+            color: white;
+            padding: 8px 18px;
+            font-size: 14px;
+            font-weight: 500;
+            border: none;
+            border-radius: 6px;
+            text-decoration: none;
+            display: inline-block;
+            transition: background-color 0.3s ease;
+        }
+
+            .btn-excel i {
+                margin-right: 6px;
+            }
+
+            .btn-excel:hover {
+                background-color: #218838;
+            }
     </style>
 }
 
@@ -121,4 +142,7 @@
             </tr>
         }
     </tbody>
+    <a asp-controller="PhanCongGiangVien" asp-action="PhanCong" class="btn btn-excel">
+        <i class="fas fa-file-excel"></i> Phân công giảng viên
+    </a>
 </table>

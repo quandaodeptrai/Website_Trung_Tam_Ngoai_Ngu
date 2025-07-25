@@ -9,9 +9,13 @@ using QuanLyTTNgoaiNgu.Data;
 using QuanLyTTNgoaiNgu.Models;
 using ClosedXML.Excel;
 using System.IO;
+using Microsoft.AspNetCore.Authorization;
 
 namespace QuanLyTTNgoaiNgu.Controllers
 {
+    [Authorize]
+    [NoCache]
+    [ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
     public class KETQUAHOCTAPsController : Controller
     {
         private readonly QuanLyTTNgoaiNguContext _context;
@@ -87,29 +91,43 @@ namespace QuanLyTTNgoaiNgu.Controllers
                 return NotFound();
             }
 
-            if (ModelState.IsValid)
+            // Kiểm tra nếu có lỗi về định dạng float (ModelState không hợp lệ)
+            if (!ModelState.IsValid)
             {
-                try
+                // Nếu lỗi binding do nhập sai định dạng cho Diem
+                if (ModelState.ContainsKey("Diem") &&
+                    ModelState["Diem"].Errors.Count > 0 &&
+                    ModelState["Diem"].Errors[0].ErrorMessage.Contains("not valid"))
                 {
-                    _context.Update(kETQUAHOCTAP);
-                    await _context.SaveChangesAsync();
+                    // Gỡ lỗi cũ và thêm lỗi thân thiện
+                    ModelState["Diem"].Errors.Clear();
+                    ModelState.AddModelError("Diem", "Vui lòng nhập điểm là số từ 0 đến 10.");
                 }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!KETQUAHOCTAPExists(kETQUAHOCTAP.MaKetQua))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
+
+                ViewData["MaPhieu"] = new SelectList(_context.PHIEUDANGKY, "MaPhieu", "MaPhieu", kETQUAHOCTAP.MaPhieu);
+                return View(kETQUAHOCTAP);
+            }
+
+
+            try
+            {
+                _context.Update(kETQUAHOCTAP);
+                await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["MaPhieu"] = new SelectList(_context.Set<PHIEUDANGKY>(), "MaPhieu", "MaPhieu", kETQUAHOCTAP.MaPhieu);
-            return View(kETQUAHOCTAP);
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!KETQUAHOCTAPExists(kETQUAHOCTAP.MaKetQua))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
         }
+
 
         public async Task<IActionResult> Export()
         {

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -10,6 +11,9 @@ using QuanLyTTNgoaiNgu.Models;
 
 namespace QuanLyTTNgoaiNgu.Controllers
 {
+    [Authorize]
+    [NoCache]
+    [ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
     public class THONGBAOsController : Controller
     {
         private readonly QuanLyTTNgoaiNguContext _context;
@@ -64,7 +68,7 @@ namespace QuanLyTTNgoaiNgu.Controllers
         [HttpPost, ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(NotificationViewModel vm)
         {
-            // Reload accounts always
+            // Luôn nạp lại danh sách tài khoản để hiển thị lại view nếu có lỗi
             vm.Accounts = _context.TAIKHOAN
                 .Select(t => new AccountSelect
                 {
@@ -73,6 +77,12 @@ namespace QuanLyTTNgoaiNgu.Controllers
                     VaiTro = t.VaiTro
                 })
                 .ToList();
+
+            // ✅ Kiểm tra model hợp lệ
+            if (!ModelState.IsValid)
+            {
+                return View(vm);
+            }
 
             var now = DateTime.Now;
             foreach (var accId in vm.SelectedAccounts)
@@ -89,6 +99,7 @@ namespace QuanLyTTNgoaiNgu.Controllers
 
             return RedirectToAction(nameof(Index));
         }
+
 
 
         // GET: THONGBAOs/Edit/5

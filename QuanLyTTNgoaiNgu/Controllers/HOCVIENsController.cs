@@ -10,9 +10,14 @@ using Microsoft.EntityFrameworkCore;
 using QuanLyTTNgoaiNgu.Data;
 using QuanLyTTNgoaiNgu.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 
 namespace QuanLyTTNgoaiNgu.Controllers
 {
+    [Authorize(Roles = "HocVien")]
+    [Authorize]
+    [NoCache]
+    [ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
     public class HOCVIENsController : Controller
     {
         private readonly QuanLyTTNgoaiNguContext _context;
@@ -23,14 +28,28 @@ namespace QuanLyTTNgoaiNgu.Controllers
         }
 
         // GET: HOCVIENs
-        public async Task<IActionResult> Index()
+        // GET: HOCVIENs
+        public async Task<IActionResult> Index(string searchString)
         {
-            var list = await _context.HOCVIEN
+            var query = _context.HOCVIEN
                 .Include(h => h.DANGKYMOI)
                 .Include(h => h.TAIKHOAN)
-                .ToListAsync();
-            return View(list);
+                .AsQueryable();
+
+            if (!string.IsNullOrWhiteSpace(searchString))
+            {
+                query = query.Where(h =>
+                    h.DANGKYMOI.HoTen.Contains(searchString) ||
+                    h.DANGKYMOI.Email.Contains(searchString) ||
+                    h.DANGKYMOI.SoDienThoai.Contains(searchString)
+                );
+            }
+
+            ViewData["CurrentFilter"] = searchString;
+
+            return View(await query.ToListAsync());
         }
+
 
         // GET: HOCVIENs/Details/5
         public async Task<IActionResult> Details(int? id)
@@ -366,9 +385,8 @@ namespace QuanLyTTNgoaiNgu.Controllers
             return View(new DebtViewModel { Items = list });
         }
 
-        // POST: /HocVien/PayDebt
         [HttpPost, ValidateAntiForgeryToken]
-        public async Task<IActionResult> PayDebt(int[] selectedIds)
+        public async Task<IActionResult> PayDebt(int[] selectedIds, Dictionary<int, double> soTienNhap)
         {
             if (selectedIds == null || selectedIds.Length == 0)
             {
@@ -378,19 +396,39 @@ namespace QuanLyTTNgoaiNgu.Controllers
 
             var today = DateTime.Now;
             var items = await _context.HOCPHI
+                .Include(hp => hp.PHIEUDANGKY)
+                    .ThenInclude(p => p.LOPHOC)
+                        .ThenInclude(l => l.KHOAHOC)
                 .Where(hp => selectedIds.Contains(hp.MaHocPhi))
                 .ToListAsync();
 
+            var errors = new List<string>();
+            int successCount = 0;
+
             foreach (var hp in items)
             {
+                var mucHocPhi = hp.PHIEUDANGKY?.LOPHOC?.KHOAHOC?.MucHocPhi ?? 0;
+                if (!soTienNhap.TryGetValue(hp.MaHocPhi, out var soTien) || soTien != mucHocPhi)
+                {
+                    errors.Add($"Khoản học phí {hp.MaHocPhi} không hợp lệ (yêu cầu {mucHocPhi:N0} VND).");
+                    continue;
+                }
+
                 hp.TrangThai = true;
                 hp.NgayNop = today;
+                successCount++;
             }
+
             await _context.SaveChangesAsync();
 
-            TempData["DebtSuccess"] = $"Bạn đã nộp thành công {items.Count} khoản!";
+            if (successCount > 0)
+                TempData["DebtSuccess"] = $"Đã thanh toán thành công {successCount} khoản.";
+            if (errors.Any())
+                TempData["DebtError"] = string.Join("<br>", errors);
+
             return RedirectToAction(nameof(Debt));
         }
+
 
         // GET: HOCVIENs/Results or HOCVIENs/Results/{id}
         public async Task<IActionResult> Results(int? id)

@@ -7,10 +7,14 @@ using QuanLyTTNgoaiNgu.Models;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Globalization;
+using Microsoft.AspNetCore.Authorization;
 
 
 namespace QuanLyTTNgoaiNgu.Controllers
 {
+
+    [NoCache]
+
     public class DANGKYMOIsController : Controller
     {
         private readonly QuanLyTTNgoaiNguContext _context;
@@ -26,7 +30,7 @@ namespace QuanLyTTNgoaiNgu.Controllers
             var list = await _context.DANGKYMOI.ToListAsync();
             return View(list);
         }
-        // GET: Pending
+        // GET: Pending: Ds đăng ký chưa xét duyệt
         public async Task<IActionResult> Pending()
         {
             var list = await _context.DANGKYMOI
@@ -36,7 +40,7 @@ namespace QuanLyTTNgoaiNgu.Controllers
             return View(list);
         }
 
-        // GET: Approve
+        // GET: Approve : xét duyệt 1 đk
         public async Task<IActionResult> Approve(int? id)
         {
             if (id == null) return NotFound();
@@ -99,8 +103,7 @@ namespace QuanLyTTNgoaiNgu.Controllers
             return RedirectToAction(nameof(Pending));
         }
 
-        // Helpers
-
+        // Loại bỏ dấu tiếng việt để tạo tên đăng nhập ko dấu
         private string RemoveDiacritics(string text)
         {
             var normalized = text.Normalize(NormalizationForm.FormD);
@@ -112,7 +115,7 @@ namespace QuanLyTTNgoaiNgu.Controllers
             }
             return sb.ToString().Normalize(NormalizationForm.FormC);
         }
-
+        //Sinh tên đăg nhập từ họ tên
         private string GenerateUsername(string hoTen)
         {
             var baseName = RemoveDiacritics(hoTen).ToLowerInvariant();
