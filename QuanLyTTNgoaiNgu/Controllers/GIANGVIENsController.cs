@@ -12,8 +12,7 @@ using QuanLyTTNgoaiNgu.Models;
 
 namespace QuanLyTTNgoaiNgu.Controllers
 {
-    [Authorize(Roles = "GiangVien")]
-    [Authorize]
+
     [NoCache]
     [ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
     public class GIANGVIENsController : Controller

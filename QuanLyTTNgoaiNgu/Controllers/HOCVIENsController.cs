@@ -14,8 +14,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace QuanLyTTNgoaiNgu.Controllers
 {
-    [Authorize(Roles = "HocVien")]
-    [Authorize]
+
     [NoCache]
     [ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
     public class HOCVIENsController : Controller
