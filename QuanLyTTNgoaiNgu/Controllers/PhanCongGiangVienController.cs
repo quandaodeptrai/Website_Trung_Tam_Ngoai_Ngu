@@ -6,7 +6,7 @@ using QuanLyTTNgoaiNgu.Models;
 
 namespace QuanLyTTNgoaiNgu.Controllers
 {
-    [Authorize]
+ 
     [NoCache]
     public class PhanCongGiangVienController : Controller
     {

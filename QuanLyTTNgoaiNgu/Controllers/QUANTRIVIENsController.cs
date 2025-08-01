@@ -12,7 +12,7 @@ using QuanLyTTNgoaiNgu.Models;
 namespace QuanLyTTNgoaiNgu.Controllers
 {
     [Authorize(Roles = "Admin")]
-    [Authorize]
+ 
     [NoCache]
     [ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
     public class QUANTRIVIENsController : Controller

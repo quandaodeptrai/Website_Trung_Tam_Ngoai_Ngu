@@ -13,7 +13,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace QuanLyTTNgoaiNgu.Controllers
 {
-    [Authorize]
+
     [NoCache]
     [ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
     public class KETQUAHOCTAPsController : Controller

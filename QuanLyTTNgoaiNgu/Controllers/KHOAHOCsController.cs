@@ -11,8 +11,7 @@ using QuanLyTTNgoaiNgu.Models;
 
 namespace QuanLyTTNgoaiNgu.Controllers
 {
-    [Authorize]
-    [Authorize]
+   
     [NoCache]
     [ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
     public class KHOAHOCsController : Controller
