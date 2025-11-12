@@ -1,16 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Claims;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authentication;
+﻿using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using QuanLyTTNgoaiNgu.Data;
+using QuanLyTTNgoaiNgu.Helpers;
 using QuanLyTTNgoaiNgu.Models;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Authorization;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Security.Claims;
+using System.Threading.Tasks;
 
 namespace QuanLyTTNgoaiNgu.Controllers
 {
@@ -259,10 +260,8 @@ namespace QuanLyTTNgoaiNgu.Controllers
             return View(courses);
         }
 
-        // 2) Danh sách lớp của một khóa
         public async Task<IActionResult> Classes(int courseId)
         {
-            // 1. Lấy MaHocVien của học viên hiện tại
             var username = User.FindFirstValue(ClaimTypes.Name);
             var hv = await _context.HOCVIEN
                 .FirstOrDefaultAsync(h => h.TAIKHOAN.TenDangNhap == username);
@@ -271,7 +270,6 @@ namespace QuanLyTTNgoaiNgu.Controllers
 
             var hvId = hv.MaHocVien;
 
-            // 2. Truy vấn lớp
             var list = await _context.LOPHOC
                 .Where(l => l.MaKhoaHoc == courseId)
                 .Include(l => l.THOIKHOABIEUs)
@@ -283,18 +281,19 @@ namespace QuanLyTTNgoaiNgu.Controllers
                     SLHocVienHienTai = l.PHIEUDANGKies.Count(),
                     NgayBatDau = l.NgayBatDau,
                     Schedules = l.THOIKHOABIEUs.ToList(),
-                    // Dùng LINQ-to-Entities thay vì hv.PHIEUDANGKies.Any(...)
+                    HasRegistered = _context.PHIEUDANGKY
+                                        .Any(p => p.MaHocVien == hvId && p.MaLopHoc == l.MaLopHoc),
                     CanRegister = DateTime.Now < l.NgayBatDau
-                                      && l.PHIEUDANGKies.Count() < l.SLHocVienToiDa
-                                      && !_context.PHIEUDANGKY
-                                            .Any(p => p.MaHocVien == hvId
-                                                   && p.MaLopHoc == l.MaLopHoc)
+                                  && l.PHIEUDANGKies.Count() < l.SLHocVienToiDa
+                                  && !_context.PHIEUDANGKY
+                                        .Any(p => p.MaHocVien == hvId && p.MaLopHoc == l.MaLopHoc)
                 })
                 .ToListAsync();
 
             ViewBag.CourseId = courseId;
             return View(list);
         }
+
 
         // 3) Đăng ký lớp
         [HttpPost, ValidateAntiForgeryToken]
@@ -478,17 +477,14 @@ namespace QuanLyTTNgoaiNgu.Controllers
             return View(vm);
         }
 
-        // GET: HOCVIENs/Schedule
-        public async Task<IActionResult> Schedule()
+        public async Task<IActionResult> Schedule(DateTime? date)
         {
-            // 1. Xác định học viên
             var username = User.Identity.Name;
             var hv = await _context.HOCVIEN
                 .FirstOrDefaultAsync(h => h.TAIKHOAN.TenDangNhap == username);
             if (hv == null)
                 return RedirectToAction("Index", "Home");
 
-            // 2. Lấy danh sách MaLopHoc đã đăng ký, DISTINCT
             var classIds = await _context.PHIEUDANGKY
                 .Where(p => p.MaHocVien == hv.MaHocVien)
                 .Select(p => p.MaLopHoc)
@@ -498,28 +494,38 @@ namespace QuanLyTTNgoaiNgu.Controllers
             if (!classIds.Any())
                 return View(new List<ScheduleItemViewModel>());
 
-            // 3. Lấy lịch cho các lớp đó
             var rawSchedules = await _context.THOIKHOABIEU
                 .Include(t => t.LOPHOC)
                     .ThenInclude(l => l.KHOAHOC)
+                .Include(t => t.LOPHOC)
+                    .ThenInclude(l => l.GIANGVIEN) // <-- Include giáo viên
                 .Where(t => classIds.Contains(t.MaLopHoc))
                 .ToListAsync();
 
-            // 4. Map sang ViewModel và sort
             var list = rawSchedules
                 .Select(t => new ScheduleItemViewModel
                 {
                     TenKhoaHoc = t.LOPHOC.KHOAHOC.TenKhoaHoc,
                     TenLopHoc = t.LOPHOC.TenLopHoc,
                     CaHoc = t.CaHoc,
-                    NgayHoc = t.NgayHoc!.Value
+                    NgayHoc = t.NgayHoc,
+                    GiaoVien = t.LOPHOC.GIANGVIEN?.HoTen 
                 })
                 .OrderBy(si => si.NgayHoc)
-                .ThenBy(si => si.CaHoc)
+                .ThenBy(si => {
+                    // Sắp xếp theo thứ tự ca học: 1-3,4-6,7-9,10-12
+                    var order = new List<string> { "1-3", "4-6", "7-9", "10-12" };
+                    return order.IndexOf(si.CaHoc);
+                })
                 .ToList();
 
+            ViewData["SelectedDate"] = date ?? DateTime.Now;
             return View(list);
-        }// GET: lấy thông báo
+        }
+
+
+
+
         public async Task<IActionResult> Notifications()
         {
             // 1) Lấy tài khoản hiện tại

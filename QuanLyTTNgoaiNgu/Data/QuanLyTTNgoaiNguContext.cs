@@ -19,13 +19,13 @@ namespace QuanLyTTNgoaiNgu.Data
             base.OnModelCreating(modelBuilder);
             //Dang ky moi
             modelBuilder.Entity<DANGKYMOI>().HasData(
-                new { MaDangKy = 1, HoTen = "Phạm Thị Mai", NgaySinh = new DateTime(2003, 4, 5), SoDienThoai = "123456", DiaChi = "Hanoi", Email = "mai@gmail.com", MaQuanTriVien = 1 },
-                new { MaDangKy = 2, HoTen = "Lê Văn Nam", NgaySinh = new DateTime(2004, 3, 5), SoDienThoai = "123654", DiaChi = "ThaiNguyen", Email = "nam@gmail.com", MaQuanTriVien = 1 },
-                new { MaDangKy = 3, HoTen = "Vũ Thị Thu", NgaySinh = new DateTime(2005, 4, 3), SoDienThoai = "321456", DiaChi = "NamDinh", Email = "thu@gmail.com", MaQuanTriVien = 2 },
-                new { MaDangKy = 4, HoTen = "Ngô Đức Long", NgaySinh = new DateTime(2003, 5, 4), SoDienThoai = "456123", DiaChi = "HaiDuong", Email = "long@gmail.com",  MaQuanTriVien = 2 },
-                new { MaDangKy = 5, HoTen = "Trần Hồng Nhung", NgaySinh = new DateTime(2004, 6, 5), SoDienThoai = "456321", DiaChi = "PhuTho", Email = "nhung@gmail.com",  MaQuanTriVien = 3 },
-                new { MaDangKy = 6, HoTen = "Nguyễn Thị Lý", NgaySinh = new DateTime(2005, 7, 6), SoDienThoai = "145236", DiaChi = "HaiPhong", Email = "ly@gmail.com", MaQuanTriVien = 1 },
-                new { MaDangKy = 7, HoTen = "Dương Đức Tin", NgaySinh = new DateTime(2003, 8, 7), SoDienThoai = "652341", DiaChi = "NinhBinh", Email = "duongductin02@gmail.com", MaQuanTriVien = 3 }
+                new { MaDangKy = 1, HoTen = "Phạm Thị Mai", NgaySinh = new DateTime(2003, 4, 5), SoDienThoai = "123456", DiaChi = "Hanoi", Email = "mai@gmail.com", MaQuanTriVien = 1, DaDuyet = false },
+                new { MaDangKy = 2, HoTen = "Lê Văn Nam", NgaySinh = new DateTime(2004, 3, 5), SoDienThoai = "123654", DiaChi = "ThaiNguyen", Email = "nam@gmail.com", MaQuanTriVien = 1, DaDuyet = false },
+                new { MaDangKy = 3, HoTen = "Vũ Thị Thu", NgaySinh = new DateTime(2005, 4, 3), SoDienThoai = "321456", DiaChi = "NamDinh", Email = "thu@gmail.com", MaQuanTriVien = 2, DaDuyet = false },
+                new { MaDangKy = 4, HoTen = "Ngô Đức Long", NgaySinh = new DateTime(2003, 5, 4), SoDienThoai = "456123", DiaChi = "HaiDuong", Email = "long@gmail.com",  MaQuanTriVien = 2, DaDuyet = false },
+                new { MaDangKy = 5, HoTen = "Trần Hồng Nhung", NgaySinh = new DateTime(2004, 6, 5), SoDienThoai = "456321", DiaChi = "PhuTho", Email = "nhung@gmail.com",  MaQuanTriVien = 3, DaDuyet = false },
+                new { MaDangKy = 6, HoTen = "Nguyễn Thị Lý", NgaySinh = new DateTime(2005, 7, 6), SoDienThoai = "145236", DiaChi = "HaiPhong", Email = "ly@gmail.com", MaQuanTriVien = 1, DaDuyet = false },
+                new { MaDangKy = 7, HoTen = "Dương Đức Tin", NgaySinh = new DateTime(2003, 8, 7), SoDienThoai = "652341", DiaChi = "NinhBinh", Email = "duongductin02@gmail.com", MaQuanTriVien = 3, DaDuyet = false }
                 );
             //Giang vien
             modelBuilder.Entity<GIANGVIEN>().HasData(

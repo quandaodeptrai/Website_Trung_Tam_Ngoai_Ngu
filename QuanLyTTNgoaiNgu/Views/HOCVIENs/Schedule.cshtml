@@ -1,109 +1,128 @@
 ﻿@model IEnumerable<QuanLyTTNgoaiNgu.Models.ScheduleItemViewModel>
+@using QuanLyTTNgoaiNgu.Helpers
 @{
-    ViewData["Title"] = "Lịch học của bạn";
+    ViewData["Title"] = "Lịch học theo tuần";
     Layout = "_LayoutHocVien";
+
+    var selectedDate = ViewData["SelectedDate"] != null
+                        ? (DateTime)ViewData["SelectedDate"]
+                        : DateTime.Now;
+
+    // Hàm tính ngày đầu tuần
+    DateTime StartOfWeek(DateTime dt)
+    {
+        int diff = (7 + (dt.DayOfWeek - DayOfWeek.Monday)) % 7;
+        return dt.AddDays(-diff).Date;
+    }
+
+    var startOfWeek = StartOfWeek(selectedDate);
+    var endOfWeek = startOfWeek.AddDays(6);
+
+    // Lọc dữ liệu trong tuần
+    var filteredModel = Model
+        .Where(s => s.NgayHoc.HasValue && s.NgayHoc.Value.Date >= startOfWeek && s.NgayHoc.Value.Date <= endOfWeek)
+        .ToList();
+
+    var scheduleDict = filteredModel
+        .GroupBy(s => (s.NgayHoc.Value.Date, s.CaHoc))
+        .ToDictionary(g => g.Key, g => g.ToList());
+
+    // Các ca học hợp lệ trong DB
+    var caHocList = new List<string> { "1-3", "4-6", "7-9", "10-12" };
+
+    var daysOfWeek = Enumerable.Range(0, 7)
+                               .Select(d => startOfWeek.AddDays(d))
+                               .ToList();
 }
 
-<h2>@ViewData["Title"]</h2>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
 <style>
-    h2 {
-        text-align: center;
-        font-size: 28px;
-        margin-bottom: 30px;
-        color: #2c3e50;
-        font-weight: bold;
+    .schedule-container {
+        background: #f8f9fa;
+        padding: 20px;
+        border-radius: 15px;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
     }
 
-    .table {
-        width: 100%;
-        border-collapse: collapse;
-        background-color: #fff;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-        border-radius: 10px;
-        overflow: hidden;
-        margin-bottom: 30px;
+    .schedule-item {
+        padding: 8px;
+        margin-bottom: 8px;
+        border-radius: 8px;
+        text-align: left;
+        background-color: #e3f2fd;
     }
-
-        .table thead {
-            background-color: #2980b9;
-            color: #ffffff;
-        }
-
-        .table th, .table td {
-            padding: 16px;
-            text-align: center;
-            border-bottom: 1px solid #ddd;
-            font-size: 15px;
-        }
-
-        .table tbody tr:hover {
-            background-color: #f5f8fa;
-        }
-
-    .text-danger {
-        color: #e74c3c;
-        font-weight: bold;
-    }
-
-    .btn-action {
-        display: inline-block;
-        padding: 8px 14px;
-        border: none;
-        border-radius: 6px;
-        font-size: 14px;
-        cursor: pointer;
-        transition: background-color 0.3s ease;
-        color: white;
-        margin: 0 5px;
-        text-decoration: none;
-    }
-
-    .btn-view {
-        background-color: #28a745;
-    }
-
-        .btn-view:hover {
-            background-color: #218838;
-        }
-
-    .btn-edit {
-        background-color: #ffc107;
-        color: #212529;
-    }
-
-        .btn-edit:hover {
-            background-color: #e0a800;
-        }
-
-    .btn-cancel {
-        background-color: #dc3545;
-    }
-
-        .btn-cancel:hover {
-            background-color: #c82333;
-        }
 </style>
 
-<table class="table table-bordered">
-    <thead>
-        <tr>
-            <th>Ngày học</th>
-            <th>Ca học</th>
-            <th>Khóa học</th>
-            <th>Lớp học</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model)
-        {
-            <tr>
-                <td>@item.NgayHoc.ToString("dd/MM/yyyy")</td>
-                <td>@item.CaHoc</td>
-                <td>@item.TenKhoaHoc</td>
-                <td>@item.TenLopHoc</td>
-            </tr>
-        }
-    </tbody>
-</table>
+<div class="schedule-container">
+    <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap">
+        <h3>@ViewData["Title"]</h3>
+        <div class="d-flex gap-2">
+            <button class="btn btn-primary" id="btnPrevWeek">← Trước</button>
+            <input type="date" id="weekPicker" class="form-control" style="width: 180px;" value="@selectedDate.ToString("yyyy-MM-dd")" />
+            <button class="btn btn-primary" id="btnNextWeek">Tiếp →</button>
+            <button class="btn btn-secondary" onclick="window.print()">🖨️ In lịch</button>
+        </div>
+    </div>
 
+    <div class="table-responsive">
+        <table class="table table-bordered text-center">
+            <thead class="table-primary">
+                <tr>
+                    <th>Ca học</th>
+                    @foreach (var day in daysOfWeek)
+                    {
+                        <th>@Html.Raw(day.ToString("dddd<br/>dd/MM/yyyy"))</th>
+                    }
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var ca in caHocList)
+                {
+                    <tr>
+                        <td class="fw-bold">@ca</td>
+                        @foreach (var day in daysOfWeek)
+                        {
+                            <td>
+                                @{
+                                    var key = (day.Date, ca);
+                                    var items = scheduleDict.ContainsKey(key) ? scheduleDict[key] : null;
+                                }
+                                @if (items != null && items.Any())
+                                {
+                                    foreach (var item in items)
+                                    {
+                                        <div class="schedule-item">
+                                            <strong>@item.TenKhoaHoc</strong><br />
+                                            Lớp: @item.TenLopHoc<br />
+                                            GV: @item.GiaoVien
+                                        </div>
+                                    }
+                                }
+                                else
+                                {
+                                    <span class="text-muted">—</span>
+                                }
+                            </td>
+                        }
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
 
+<script>
+    const picker = document.getElementById("weekPicker");
+
+    function updateWeek(days) {
+        let current = new Date(picker.value);
+        current.setDate(current.getDate() + days);
+        picker.value = current.toISOString().split('T')[0];
+        window.location.href = `?date=${picker.value}`;
+    }
+
+    document.getElementById("btnPrevWeek").addEventListener("click", () => updateWeek(-7));
+    document.getElementById("btnNextWeek").addEventListener("click", () => updateWeek(7));
+    picker.addEventListener("change", () => window.location.href = `?date=${picker.value}`);
+</script>

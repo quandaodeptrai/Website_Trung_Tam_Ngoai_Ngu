@@ -11,6 +11,7 @@ namespace QuanLyTTNgoaiNgu.Models
         public int SLHocVienHienTai { get; set; }
         public DateTime NgayBatDau { get; set; }
         public bool CanRegister { get; set; }
+        public bool HasRegistered { get; set; }
         public List<THOIKHOABIEU> Schedules { get; set; }
     }
 }

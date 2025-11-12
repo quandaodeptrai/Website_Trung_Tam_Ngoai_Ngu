@@ -155,7 +155,11 @@
                         </ul>
                     </td>
                     <td>
-                        @if (l.CanRegister)
+                        @if (l.HasRegistered)
+                        {
+                            <span class="text-success">Đã đăng ký</span>
+                        }
+                        else if (l.CanRegister)
                         {
                             <form asp-action="RegisterClass" method="post">
                                 <input type="hidden" name="classId" value="@l.MaLopHoc" />
@@ -167,6 +171,7 @@
                             <span class="text-muted">Không thể đăng ký</span>
                         }
                     </td>
+
                 </tr>
             }
         </tbody>

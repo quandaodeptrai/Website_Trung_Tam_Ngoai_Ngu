@@ -5,6 +5,60 @@
     Layout = "_LayoutAdmin";
 }
 
+<h2>@ViewData["Title"]</h2>
+
+<div style="text-align:center; margin-bottom:20px;">
+    <a asp-action="Pending" class="btn btn-duyet">Đăng ký chưa duyệt</a>
+</div>
+
+<table class="dk-table">
+    <thead>
+        <tr>
+            <th>Họ tên</th>
+            <th>Ngày sinh</th>
+            <th>Điện thoại</th>
+            <th>Địa chỉ</th>
+            <th>Email</th>
+            <th>Trạng thái</th>
+            <th>Hành động</th> <!-- Thêm cột hành động -->
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.HoTen</td>
+                <td>@item.NgaySinh?.ToString("dd/MM/yyyy")</td>
+                <td>@item.SoDienThoai</td>
+                <td>@item.DiaChi</td>
+                <td>@item.Email</td>
+                <td>
+                    @if (!item.DaDuyet)
+                    {
+                        <span class="text-warning">Chưa duyệt</span>
+                    }
+                    else
+                    {
+                        <span class="text-success">Đã duyệt</span>
+                    }
+                </td>
+                <td>
+                    @if (!item.DaDuyet)
+                    {
+                        <a asp-action="Approve" asp-route-id="@item.MaDangKy" class="btn btn-duyet">Duyệt</a>
+
+                    }
+                    else
+                    {
+                        <span class="text-success"> </span>
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+
 <style>
     h2 {
         margin-bottom: 20px;
@@ -39,19 +93,14 @@
             background-color: #f8f8f8;
         }
 
-    .action-button-container {
-        text-align: center;
-        margin-top: 30px;
-    }
-
     .btn-duyet {
         background-color: #1d3557;
         color: white;
-        padding: 14px 28px;
-        font-size: 18px;
+        padding: 8px 16px;
+        font-size: 14px;
         font-weight: bold;
         border: none;
-        border-radius: 8px;
+        border-radius: 6px;
         text-decoration: none;
         transition: background-color 0.3s ease, transform 0.2s ease;
         display: inline-block;
@@ -62,37 +111,4 @@
             transform: translateY(-2px);
             text-decoration: none;
         }
-
 </style>
-
-<h2>@ViewData["Title"]</h2>
-
-<table class="dk-table">
-    <thead>
-        <tr>
-            <th>Họ tên</th>
-            <th>Ngày sinh</th>
-            <th>Điện thoại</th>
-            <th>Địa chỉ</th>
-            <th>Email</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model)
-        {
-            <tr>
-                <td>@item.HoTen</td>
-                <td>@item.NgaySinh?.ToString("dd/MM/yyyy")</td>
-                <td>@item.SoDienThoai</td>
-                <td>@item.DiaChi</td>
-                <td>@item.Email</td>
-            </tr>
-        }
-    </tbody>
-</table>
-<div class="action-button-container">
-    <a asp-controller="DANGKYMOIs" asp-action="Pending" class="btn-duyet">
-        Duyệt đăng ký mới
-    </a>
-</div>
-

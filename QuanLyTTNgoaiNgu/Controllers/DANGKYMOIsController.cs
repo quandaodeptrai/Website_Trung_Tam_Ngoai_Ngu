@@ -8,29 +8,31 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Globalization;
 using Microsoft.AspNetCore.Authorization;
-
+using System.Net.Mail;
+using System.Net;
 
 namespace QuanLyTTNgoaiNgu.Controllers
 {
-
     [NoCache]
-
     public class DANGKYMOIsController : Controller
     {
         private readonly QuanLyTTNgoaiNguContext _context;
+        private readonly IConfiguration _configuration;
 
-        public DANGKYMOIsController(QuanLyTTNgoaiNguContext context)
+        public DANGKYMOIsController(QuanLyTTNgoaiNguContext context, IConfiguration configuration)
         {
             _context = context;
+            _configuration = configuration;
         }
 
-        // GET: DANGKYMOIs
+        // GET: Danh sách tất cả đăng ký
         public async Task<IActionResult> Index()
         {
             var list = await _context.DANGKYMOI.ToListAsync();
             return View(list);
         }
-        // GET: Pending: Ds đăng ký chưa xét duyệt
+
+        // GET: Pending - danh sách đăng ký chưa duyệt
         public async Task<IActionResult> Pending()
         {
             var list = await _context.DANGKYMOI
@@ -40,10 +42,11 @@ namespace QuanLyTTNgoaiNgu.Controllers
             return View(list);
         }
 
-        // GET: Approve : xét duyệt 1 đk
+        // GET: Approve - hiển thị form duyệt
         public async Task<IActionResult> Approve(int? id)
         {
             if (id == null) return NotFound();
+
             var dky = await _context.DANGKYMOI.FindAsync(id);
             if (dky == null) return NotFound();
 
@@ -55,144 +58,128 @@ namespace QuanLyTTNgoaiNgu.Controllers
                 SoDienThoai = dky.SoDienThoai,
                 DiaChi = dky.DiaChi,
                 Email = dky.Email,
-                GeneratedUsername = GenerateUsername(dky.HoTen)
+                GeneratedUsername = dky.Email
             };
             return View(vm);
         }
 
-        // POST: Approve
+        // POST: Approve - xác nhận duyệt
         [HttpPost, ValidateAntiForgeryToken]
         public async Task<IActionResult> Approve(int MaDangKy)
         {
             var dky = await _context.DANGKYMOI.FindAsync(MaDangKy);
             if (dky == null) return NotFound();
-
-            // Sinh username mới
-            var username = GenerateUsername(dky.HoTen);
-
-            // 1) Tạo tài khoản mới
-            var newTk = new TAIKHOAN
+            var existingHocVien = await _context.HOCVIEN
+                                    .FirstOrDefaultAsync(h => h.MaDangKy == dky.MaDangKy);
+            if (existingHocVien != null)
             {
-                TenDangNhap = username,
-                MatKhau = dky.SoDienThoai,
-                VaiTro = "HocVien"
-            };
-            _context.TAIKHOAN.Add(newTk);
+                // Chỉ cập nhật cột DaDuyet
+                dky.DaDuyet = true;
+                await _context.SaveChangesAsync();
+                return RedirectToAction(nameof(Index));
+            }
+         
+            // Tạo tên đăng nhập
+                var username = dky.Email;
+
+                // 1️⃣ Tạo tài khoản mới
+                var newTk = new TAIKHOAN
+                {
+                    TenDangNhap = username,
+                    MatKhau = dky.SoDienThoai,
+                    VaiTro = "HocVien"
+                };
+                _context.TAIKHOAN.Add(newTk);
+                await _context.SaveChangesAsync();
+
+            dky.DaDuyet = true; 
             await _context.SaveChangesAsync();
 
-            // 2) Tạo HOCVIEN liên kết
+            // 2️⃣ Tạo học viên liên kết
             _context.HOCVIEN.Add(new HOCVIEN
-            {
-                MaDangKy = dky.MaDangKy,
-                MaTaiKhoan = newTk.MaTaiKhoan
-            });
+                {
+                    MaDangKy = dky.MaDangKy,
+                    MaTaiKhoan = newTk.MaTaiKhoan
+                });
 
-            // 3) Cập nhật MaQuanTriVien theo admin hiện tại
-            var adminUser = User.Identity.Name;
-            var adminTk = await _context.TAIKHOAN
-                                 .FirstOrDefaultAsync(t => t.TenDangNhap == adminUser);
-            if (adminTk != null)
-            {
-                var qtv = await _context.QUANTRIVIEN
-                              .FirstOrDefaultAsync(q => q.MaTaiKhoan == adminTk.MaTaiKhoan);
-                if (qtv != null)
-                    dky.MaQuanTriVien = qtv.MaQuanTriVien;
-            }
+                // 3️⃣ Gán admin duyệt (nếu có)
+                var adminUser = User.Identity?.Name;
+                if (!string.IsNullOrEmpty(adminUser))
+                {
+                    var adminTk = await _context.TAIKHOAN.FirstOrDefaultAsync(t => t.TenDangNhap == adminUser);
+                    if (adminTk != null)
+                    {
+                        var qtv = await _context.QUANTRIVIEN.FirstOrDefaultAsync(q => q.MaTaiKhoan == adminTk.MaTaiKhoan);
+                        if (qtv != null)
+                            dky.MaQuanTriVien = qtv.MaQuanTriVien;
+                    }
+                }
 
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Pending));
-        }
+                await _context.SaveChangesAsync();
 
-        // Loại bỏ dấu tiếng việt để tạo tên đăng nhập ko dấu
-        private string RemoveDiacritics(string text)
-        {
-            var normalized = text.Normalize(NormalizationForm.FormD);
-            var sb = new StringBuilder();
-            foreach (var ch in normalized)
-            {
-                if (CharUnicodeInfo.GetUnicodeCategory(ch) != UnicodeCategory.NonSpacingMark)
-                    sb.Append(ch);
+                // 4️⃣ Gửi email thông báo tài khoản
+                try
+                {
+                    await SendApprovalEmail(dky.Email, username, dky.SoDienThoai);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Lỗi khi gửi email: {ex.Message}");
+                }
+
+                return RedirectToAction(nameof(Pending));
             }
-            return sb.ToString().Normalize(NormalizationForm.FormC);
-        }
-        //Sinh tên đăg nhập từ họ tên
-        private string GenerateUsername(string hoTen)
-        {
-            var baseName = RemoveDiacritics(hoTen).ToLowerInvariant();
-            baseName = Regex.Replace(baseName, @"\s+", ".");
-            var username = baseName;
-            int suffix = 1;
-            while (_context.TAIKHOAN.Any(u => u.TenDangNhap == username))
-            {
-                username = $"{baseName}{suffix}";
-                suffix++;
-            }
-            return username;
-        }
         
 
-
-        // GET: DANGKYMOIs/Create
-        public IActionResult Create()
+        // Hàm gửi email
+        private async Task SendApprovalEmail(string toEmail, string username, string password)
         {
-            return View();
+            var emailConfig = _configuration.GetSection("Smtp");
+            var fromEmail = emailConfig["Email"];
+            var fromPass = emailConfig["Password"];
+            var subject = "Xét duyệt đăng ký tài khoản trung tâm ngoại ngữ";
+            var body = $@"
+                <p>Xin chào,</p>
+                <p>Đăng ký học của bạn đã được xét duyệt thành công.</p>
+                <p><b>Tên đăng nhập:</b> {username}</p>
+                <p><b>Mật khẩu:</b> {password}</p>
+                <p>Vui lòng đăng nhập vào hệ thống để tiếp tục học.</p>
+                <p>Trân trọng,<br/>Trung tâm Ngoại ngữ</p>";
+
+            using (var mail = new MailMessage())
+            {
+                mail.From = new MailAddress(fromEmail);
+                mail.To.Add(toEmail);
+                mail.Subject = subject;
+                mail.Body = body;
+                mail.IsBodyHtml = true;
+
+                using (var smtp = new SmtpClient("smtp.gmail.com", 587))
+                {
+                    smtp.Credentials = new NetworkCredential(fromEmail, fromPass);
+                    smtp.EnableSsl = true;
+                    await smtp.SendMailAsync(mail);
+                }
+            }
         }
 
-        // POST: DANGKYMOIs/Create
-        [HttpPost]
-        [ValidateAntiForgeryToken]
+        // GET: Tạo mới đăng ký
+        public IActionResult Create() => View();
+
+        [HttpPost, ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("HoTen,NgaySinh,SoDienThoai,DiaChi,Email")] DANGKYMOI dky)
         {
-            if (!ModelState.IsValid)
-                return View(dky);
+            if (!ModelState.IsValid) return View(dky);
 
-            // Gán tạm MaQuanTriVien = 1 (Admin đầu tiên) để chờ xét duyệt
-            dky.MaQuanTriVien = 1;
-
+            dky.MaQuanTriVien = 1; // Tạm gán admin mặc định
             _context.Add(dky);
             await _context.SaveChangesAsync();
 
-            // Redirect sang trang thông báo
             return RedirectToAction(nameof(Submitted));
         }
 
-        // GET: DANGKYMOIs/Submitted
-        public IActionResult Submitted()
-        {
-            return View();
-        }
+        public IActionResult Submitted() => View();
 
-
-
-        // GET: DANGKYMOIs/Delete/5
-        public async Task<IActionResult> Delete(int? id)
-        {
-            if (id == null) return NotFound();
-
-            var item = await _context.DANGKYMOI
-                .FirstOrDefaultAsync(m => m.MaDangKy == id);
-            if (item == null) return NotFound();
-
-            return View(item);
-        }
-
-        // POST: DANGKYMOIs/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
-        {
-            var item = await _context.DANGKYMOI.FindAsync(id);
-            if (item != null)
-            {
-                _context.DANGKYMOI.Remove(item);
-                await _context.SaveChangesAsync();
-            }
-            return RedirectToAction(nameof(Index));
-        }
-
-        private bool DANGKYMOIExists(int id)
-            => _context.DANGKYMOI.Any(e => e.MaDangKy == id);
-
-
+        private bool DANGKYMOIExists(int id) => _context.DANGKYMOI.Any(e => e.MaDangKy == id);
     }
 }

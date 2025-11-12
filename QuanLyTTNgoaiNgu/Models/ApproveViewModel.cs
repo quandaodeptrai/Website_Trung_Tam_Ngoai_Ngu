@@ -23,7 +23,7 @@ namespace QuanLyTTNgoaiNgu.Models
         [Display(Name = "Email")]
         public string Email { get; set; }
 
-        [Display(Name = "Tên đăng nhập được sinh")]
+        [Display(Name = "Tài khoản")]
         public string GeneratedUsername { get; set; }
     }
 }

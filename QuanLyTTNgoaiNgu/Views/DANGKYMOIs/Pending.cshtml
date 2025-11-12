@@ -67,7 +67,7 @@
             <th>Điện thoại</th>
             <th>Địa chỉ</th>
             <th>Email</th>
-            <th>Duyệt</th>
+            <th>Hành động</th> <!-- Thêm cột hành động -->
         </tr>
     </thead>
     <tbody>
@@ -81,9 +81,7 @@
                 <td>@d.DiaChi</td>
                 <td>@d.Email</td>
                 <td>
-                    <a asp-action="Approve" asp-route-id="@d.MaDangKy" class="btn-approve">
-                        Duyệt
-                    </a>
+                    <a asp-action="Approve" asp-route-id="@d.MaDangKy" class="btn-approve">Duyệt</a>
                 </td>
             </tr>
         }

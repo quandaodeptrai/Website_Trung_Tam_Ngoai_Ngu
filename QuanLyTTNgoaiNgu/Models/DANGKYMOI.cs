@@ -30,6 +30,8 @@ namespace QuanLyTTNgoaiNgu.Models
         [ForeignKey("QUANTRIVIEN")]
         [Required]
         public int MaQuanTriVien { get; set; }
+        public bool DaDuyet { get; set; } = false;
+
         public virtual ICollection <QUANTRIVIEN>? QUANTRIVIENs { get; set; }
         public virtual HOCVIEN? HOCVIEN { get; set; }
     }

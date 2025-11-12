@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using QuanLyTTNgoaiNgu.Data;
 
@@ -11,9 +12,11 @@ using QuanLyTTNgoaiNgu.Data;
 namespace QuanLyTTNgoaiNgu.Migrations
 {
     [DbContext(typeof(QuanLyTTNgoaiNguContext))]
-    partial class QuanLyTTNgoaiNguContextModelSnapshot : ModelSnapshot
+    [Migration("20251112063622_UpdateDangKyMoi")]
+    partial class UpdateDangKyMoi
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
