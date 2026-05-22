@@ -5,26 +5,42 @@
 
 @section Styles {
     <style>
-        .success-wrapper {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 80vh;
-            padding: 20px;
+        body {
+            background: linear-gradient(to bottom, #ffe6e6, #fff);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
-        .success-box {
-            text-align: center;
-            background: #ffffff;
-            padding: 40px;
+        .success-container {
+            max-width: 900px;
+            margin: 60px auto;
+            background: #fff;
             border-radius: 12px;
-            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
-            max-width: 600px;
+            box-shadow: 0 10px 30px rgba(204, 0, 0, 0.2);
+            display: flex;
+            overflow: hidden;
+        }
+
+        /* Cột ảnh bên trái */
+        .success-image {
+            flex: 1;
+            min-width: 320px;
+            background: url('https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&w=800&q=80') center/cover no-repeat;
+        }
+
+        /* Cột thông báo bên phải */
+        .success-box {
+            flex: 1;
+            padding: 48px 60px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            text-align: center;
         }
 
             .success-box h2 {
-                color: #2a9d8f;
-                font-weight: bold;
+                color: #b30000;
+                font-size: 28px;
+                font-weight: 700;
                 margin-bottom: 20px;
             }
 
@@ -35,24 +51,45 @@
             }
 
         .btn-home {
-            background-color: #457b9d;
-            color: white;
+            background: #cc0000;
+            color: #fff;
             padding: 12px 30px;
             font-size: 16px;
-            font-weight: bold;
+            font-weight: 600;
             border: none;
-            border-radius: 8px;
+            border-radius: 6px;
             text-decoration: none;
-            transition: background 0.3s;
+            transition: 0.3s;
+            box-shadow: 0 5px 10px rgba(204,0,0,0.3);
+            display: inline-block;
         }
 
             .btn-home:hover {
-                background-color: #345873;
+                background: #990000;
             }
+
+        @@media (max-width: 768px) {
+            .success-container {
+                flex-direction: column;
+                margin: 20px auto 40px;
+            }
+
+            .success-image {
+                height: 200px;
+            }
+
+            .success-box {
+                padding: 32px 24px;
+            }
+        }
     </style>
 }
 
-<div class="success-wrapper">
+<div class="success-container">
+    <!-- Cột ảnh bên trái -->
+    <div class="success-image"></div>
+
+    <!-- Cột thông báo bên phải -->
     <div class="success-box">
         <h2>Đăng ký thành công!</h2>
         <p>

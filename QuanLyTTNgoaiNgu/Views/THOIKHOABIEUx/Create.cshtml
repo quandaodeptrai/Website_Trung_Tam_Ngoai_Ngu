@@ -7,93 +7,166 @@
 
 @section Styles {
     <style>
+        body {
+            background: linear-gradient(to bottom, #ffe6e6, #fff);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
         h1 {
             text-align: center;
-            font-size: 28px;
-            margin-top: 30px;
-            color: #1d3557;
+            font-size: 30px;
+            margin: 25px 0;
+            color: #b30000;
+            font-weight: 700;
         }
 
         .form-container {
-            max-width: 500px;
-            margin: 40px auto;
-            padding: 30px;
-            background: #f8f9fa;
-            border-radius: 15px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            max-width: 700px;
+            margin: 0 auto 60px;
+            padding: 25px;
+            background: #fff;
+            border-radius: 14px;
+            box-shadow: 0 10px 28px rgba(204,0,0,0.25);
         }
 
         label {
             font-weight: 600;
-            color: #333;
+            color: #b30000;
         }
 
-        .btn-primary {
+        .form-control {
+            border-radius: 8px;
+            padding: 10px;
+        }
+
+        .btn-primary,
+        .btn-secondary,
+        .btn-save {
             width: 100%;
-            background-color: #1d3557;
-            border: none;
             padding: 10px 0;
             font-size: 16px;
+            font-weight: 600;
             border-radius: 8px;
+            border: none;
+            transition: 0.25s;
+            margin-top: 10px;
         }
 
-            .btn-primary:hover {
-                background-color: #457b9d;
-            }
+        .btn-save {
+            background-color: #cc0000;
+            color: #fff;
+        }
+
+        .btn-save:hover {
+            background-color: #990000;
+            transform: scale(1.03);
+        }
 
         .back-button {
             display: inline-block;
             margin-top: 20px;
-            text-align: center;
-            background-color: #e9ecef;
-            color: #1d3557;
-            padding: 10px 20px;
+            background: #cc0000;
+            color: #fff;
+            padding: 8px 16px;
             border-radius: 8px;
             text-decoration: none;
             font-weight: bold;
-            transition: background-color 0.3s ease;
+            transition: 0.25s;
         }
 
-            .back-button:hover {
-                background-color: #d1dce5;
-            }
+        .back-button:hover {
+            background: #990000;
+            transform: scale(1.05);
+        }
 
         .form-group {
-            margin-bottom: 20px;
+            margin-bottom: 16px;
+        }
+
+        .form-check-label {
+            color: #333;
+            font-weight: 500;
+        }
+
+        .form-check-input {
+            transform: scale(1.15);
+            margin-right: 6px;
         }
 
         .text-danger {
             font-size: 14px;
         }
     </style>
+
+    <!-- Flatpickr CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 }
 
 <h1>Thêm thời khóa biểu</h1>
 
 <div class="form-container">
-    <form asp-action="Create">
+    <form asp-action="Create" method="post">
+        @Html.AntiForgeryToken()
+
         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
+        <!-- Chọn lớp -->
         <div class="form-group">
-            <label asp-for="CaHoc" class="control-label"></label>
-            <input asp-for="CaHoc" class="form-control" />
-            <span asp-validation-for="CaHoc" class="text-danger"></span>
+            <label for="MaLopHoc">Chọn lớp</label>
+            <select asp-for="MaLopHoc" class="form-control" id="MaLopHoc">
+                <option value="">-- Chọn lớp --</option>
+                @if (ViewBag.LOPHOCList != null)
+                {
+                    foreach (var lop in ViewBag.LOPHOCList)
+                    {<option value="@lop.MaLopHoc"
+                                data-start="@lop.NgayBatDau"
+                                data-end="@lop.NgayKetThuc">
+                            @lop.TenLopHoc
+                        </option>
+                    }
+                }
+            </select>
+            <span asp-validation-for="MaLopHoc" class="text-danger"></span>
         </div>
 
+        <!-- Chọn ngày -->
         <div class="form-group">
-            <label asp-for="NgayHoc" class="control-label"></label>
-            <input asp-for="NgayHoc" type="date" class="form-control" />
+            <label>Chọn ngày học</label>
+            <input asp-for="NgayHoc" type="text" class="form-control" id="NgayHoc" disabled />
             <span asp-validation-for="NgayHoc" class="text-danger"></span>
         </div>
 
-        <div class="form-group">
-            <label asp-for="MaLopHoc" class="control-label"></label>
-            <select asp-for="MaLopHoc" class="form-control" asp-items="ViewBag.MaLopHoc"></select>
+        <!-- Chọn ca học -->
+        <div class="form-group" id="CaHocContainer" style="display:none;">
+            <label>Chọn ca học</label><br />
+
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" name="SelectedCaHoc" value="1-3" id="ca1" />
+                <label class="form-check-label" for="ca1">1-3 (7h-9h)</label>
+            </div>
+
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" name="SelectedCaHoc" value="4-6" id="ca2" />
+                <label class="form-check-label" for="ca2">4-6 (9h-11h)</label>
+            </div>
+
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" name="SelectedCaHoc" value="7-9" id="ca3" />
+                <label class="form-check-label" for="ca3">7-9 (13h-15h)</label>
+            </div>
+
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" name="SelectedCaHoc" value="10-12" id="ca4" />
+                <label class="form-check-label" for="ca4">10-12 (15h-17h)</label>
+            </div>
+
+            <span class="text-danger" data-valmsg-for="SelectedCaHoc"></span>
         </div>
 
-        <div class="form-group">
-            <input type="submit" value="Tạo mới" class="btn btn-primary" />
-        </div>
+        <!-- Nút lưu -->
+        <button type="submit" name="action" value="Lưu và thêm tiếp" class="btn-save">
+            Lưu và thêm tiếp
+        </button>
     </form>
 
     <div class="text-center">
@@ -102,7 +175,64 @@
 </div>
 
 @section Scripts {
-    @{
-        await Html.RenderPartialAsync("_ValidationScriptsPartial");
-    }
+    @@await Html.RenderPartialAsync("_ValidationScriptsPartial")
+
+    <!-- Flatpickr JS -->
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+
+    <script>
+        const takenDates = @Html.Raw(ViewBag.TakenDatesJson ?? "{}");
+        const lopSelect = document.getElementById('MaLopHoc');
+        const ngayInput = document.getElementById('NgayHoc');
+        const caContainer = document.getElementById('CaHocContainer');
+        let fp = null;
+
+        function initFlatpickr(classId, minDate, maxDate) {
+            const disabled = takenDates[classId] || [];
+
+            if (fp) fp.destroy();
+
+            fp = flatpickr("#NgayHoc", {
+                dateFormat: "Y-m-d",
+                minDate: minDate || null,maxDate: maxDate || null,
+                disable: disabled,
+                onChange: function(selectedDates, dateStr) {
+                    if (dateStr) {
+                        caContainer.style.display = 'block';
+                    } else {
+                        caContainer.style.display = 'none';
+                    }
+                }
+            });
+        }
+
+        // Init nếu lớp đã chọn từ server
+        if (lopSelect && lopSelect.value) {
+            const opt = lopSelect.selectedOptions[0];
+            const start = opt?.getAttribute('data-start');
+            const end = opt?.getAttribute('data-end');
+            ngayInput.disabled = false;
+            initFlatpickr(lopSelect.value, start, end);
+        }
+
+        if (lopSelect) {
+            lopSelect.addEventListener('change', function() {
+                const opt = this.selectedOptions[0];
+                if (!opt || !opt.value) {
+                    if (fp) fp.destroy();
+                    ngayInput.disabled = true;
+                    ngayInput.value = '';
+                    caContainer.style.display = 'none';
+                    return;
+                }
+
+                const start = opt.getAttribute('data-start');
+                const end = opt.getAttribute('data-end');
+                ngayInput.disabled = false;
+                ngayInput.value = '';
+                caContainer.style.display = 'none';
+                initFlatpickr(this.value, start, end);
+            });
+        }
+    </script>
 }

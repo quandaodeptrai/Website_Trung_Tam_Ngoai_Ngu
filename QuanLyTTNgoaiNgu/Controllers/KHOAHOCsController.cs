@@ -24,10 +24,34 @@ namespace QuanLyTTNgoaiNgu.Controllers
         }
 
         // GET: KHOAHOCs
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string tenKhoaHoc, string hocPhiFrom, string hocPhiTo)
         {
-            return View(await _context.KHOAHOC.ToListAsync());
+            ViewData["TenKhoaHocFilter"] = tenKhoaHoc;
+            ViewData["HocPhiFrom"] = hocPhiFrom;
+            ViewData["HocPhiTo"] = hocPhiTo;
+
+            var query = _context.KHOAHOC.AsQueryable();
+
+            if (!string.IsNullOrEmpty(tenKhoaHoc))
+            {
+                query = query.Where(k => k.TenKhoaHoc.Contains(tenKhoaHoc));
+            }
+
+            if (!string.IsNullOrEmpty(hocPhiFrom) && double.TryParse(hocPhiFrom, out double from))
+            {
+                query = query.Where(k => k.MucHocPhi >= from);
+            }
+
+            if (!string.IsNullOrEmpty(hocPhiTo) && double.TryParse(hocPhiTo, out double to))
+            {
+                query = query.Where(k => k.MucHocPhi <= to);
+            }
+
+            return View(await query.ToListAsync());
         }
+
+
+
 
         // GET: KHOAHOCs/Details/5
         public async Task<IActionResult> Details(int? id)

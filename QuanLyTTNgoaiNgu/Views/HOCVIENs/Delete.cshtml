@@ -4,71 +4,105 @@
     Layout = "_LayoutAdmin";
 }
 
+
 @section Styles {
     <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
         h1 {
             font-size: 28px;
-            margin-bottom: 20px;
+            margin-bottom: 25px;
             color: #1d3557;
+            text-align: center;
         }
 
         .card {
             background-color: #fff;
-            padding: 25px;
-            border-radius: 10px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-            margin-bottom: 30px;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(204,0,0,0.15);
             max-width: 800px;
+            margin: 0 auto 20px;
+        }
+
+        dl.row {
+            margin: 0;
         }
 
         dt {
             font-weight: 600;
-            color: #333;
+            color: #660000;
         }
 
         dd {
             margin-bottom: 15px;
-            color: #555;
+            color: #333;
         }
 
         .warning-text {
             font-size: 18px;
-            color: #e63946;
+            color: #b30000;
             font-weight: bold;
-            margin-bottom: 20px;
+            text-align: center;
+            margin-bottom: 25px;
         }
 
         .form-actions {
+            text-align: center;
             margin-top: 20px;
         }
 
         .btn {
             display: inline-block;
-            padding: 10px 20px;
+            padding: 12px 28px;
             font-weight: 600;
             text-decoration: none;
-            border-radius: 6px;
-            transition: background-color 0.3s;
-            margin-right: 12px;
+            border-radius: 8px;
+            transition: 0.3s;
+            font-size: 16px;
         }
 
         .btn-danger {
-            background-color: #e63946;
+            background-color: #cc0000;
             color: white;
+            border: none;
+            box-shadow: 0 5px 12px rgba(204,0,0,0.3);
         }
 
             .btn-danger:hover {
-                background-color: #c1272d;
+                background-color: #990000;
+                transform: translateY(-2px);
             }
 
         .btn-secondary {
             background-color: #6c757d;
             color: white;
+            border: none;
         }
 
             .btn-secondary:hover {
                 background-color: #5a6268;
+                transform: translateY(-2px);
             }
+
+        @@media (max-width: 480px) {
+            .card {
+                padding: 20px;
+            }
+
+            .btn {
+                width: 100%;
+                margin-bottom: 10px;
+            }
+
+            .form-actions {
+                display: flex;
+                flex-direction: column;
+                align-items: stretch;
+            }
+        }
     </style>
 }
 

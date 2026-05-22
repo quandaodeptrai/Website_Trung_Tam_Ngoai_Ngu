@@ -1,167 +1,277 @@
 ﻿@model IEnumerable<QuanLyTTNgoaiNgu.Models.HOCVIEN>
 
+
 @{
     ViewData["Title"] = "Danh sách Học viên";
     Layout = "_LayoutAdmin";
 }
-
 @section Styles {
     <style>
+        body {
+            background: linear-gradient(to bottom, #ffe6e6, #fff);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
         h1 {
             font-size: 28px;
-            margin-bottom: 20px;
-            color: #1d3557;
+            margin-bottom: 25px;
+            color: #b30000;
+            text-align: center;
+            font-weight: 700;
+        }
+
+        .table-wrapper {
+            max-width: 1200px;
+            margin: 0 auto 60px;
+            overflow-x: auto;
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(204,0,0,0.2);
+            padding: 20px;
         }
 
         table {
             width: 100%;
             border-collapse: collapse;
-            background-color: white;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-            border-radius: 8px;
-            overflow: hidden;
-        }
-
-        th, td {
-            padding: 12px 15px;
-            text-align: left;
-            border-bottom: 1px solid #eee;
         }
 
         th {
-            background-color: #1d3557;
-            color: white;
+            background-color: #cc0000;
+            color: #fff;
+            padding: 12px;
+            text-align: center;
             font-weight: 600;
         }
 
-        tr:hover {
-            background-color: #f1f1f1;
+        td {
+            padding: 10px;
+            text-align: center;
+            border-bottom: 1px solid #eee;
+            font-size: 15px;
+            color: #333;
+        }
+
+        tbody tr:hover {
+            background-color: #ffe6e6;
         }
 
         .action-buttons {
             display: flex;
-            gap: 8px;
+            justify-content: center;
+            gap: 10px;
             flex-wrap: wrap;
         }
 
-        .action-buttons a {
-            padding: 6px 12px;
-            font-size: 14px;
-            border-radius: 6px;
-            text-decoration: none;
-            font-weight: 600;
-            color: white;
-            transition: background-color 0.3s;
-        }
+            .action-buttons a {
+                padding: 10px 18px;
+                font-size: 14px;
+                border-radius: 8px;
+                text-decoration: none;
+                font-weight: 600;
+                color: white;
+                transition: background-color 0.3s ease, transform 0.2s ease;
+                display: inline-block;
+            }
 
         .btn-info {
-            background-color: #457b9d;
+            background-color: #cc0000;
         }
+
+            .btn-info:hover {
+                background-color: #990000;
+                transform: scale(1.05);
+            }
 
         .btn-secondary {
             background-color: #6c757d;
         }
 
+            .btn-secondary:hover {
+                background-color: #5a6268;
+                transform: scale(1.05);
+            }
+
         .btn-primary {
-            background-color: #2a9d8f;
+            background-color: #990000;
         }
+
+            .btn-primary:hover {
+                background-color: #800000;
+                transform: scale(1.05);
+            }
 
         .btn-danger {
             background-color: #e63946;
         }
 
-        .btn-info:hover {
-            background-color: #35607a;
-        }
+            .btn-danger:hover {
+                background-color: #b30000;
+                transform: scale(1.05);
+            }
 
-        .btn-secondary:hover {
-            background-color: #5a6268;
-        }
-
-        .btn-primary:hover {
-            background-color: #21867a;
-        }
-
-        .btn-danger:hover {
-            background-color: #c1272d;
-        }
-
-        <style >
         .search-box {
             max-width: 500px;
             margin: 0 auto 20px;
             display: flex;
-            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-            border-radius: 8px;
+            border-radius: 12px;
             overflow: hidden;
+            box-shadow: 0 5px 12px rgba(204,0,0,0.2);
         }
 
-        .search-box input[type="text"] {
-            flex: 1;
-            padding: 10px 14px;
-            border: none;
-            border-right: 1px solid #ddd;
-            font-size: 16px;
-        }
-
-        .search-box button {
-            padding: 10px 16px;
-            background-color: #2a9d8f;
-            color: white;
-            border: none;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-        }
-
-            .search-box button:hover {
-                background-color: #21867a;
+            .search-box input[type="text"] {
+                flex: 1;
+                padding: 12px 14px;
+                border: none;
+                font-size: 16px;
             }
-    </style>
 
+            .search-box button {
+                padding: 12px 18px;
+                background-color: #cc0000;
+                color: white;
+                border: none;
+                font-weight: 600;
+                cursor: pointer;
+                transition: background-color 0.3s ease, transform 0.2s ease;
+            }
+
+                .search-box button:hover {
+                    background-color: #990000;
+                    transform: scale(1.05);
+                }
+
+        @@media (max-width: 768px) {
+            .table-wrapper {
+                padding: 10px;
+            }
+
+            th, td {
+                padding: 8px;
+                font-size: 14px;
+            }
+
+            .action-buttons a, .search-box button {
+                width: 100%;
+                padding: 10px 0;
+            }
+
+            .search-box {
+                flex-direction: column;
+            }
+        }
+
+        /* FORM LỌC */
+        .filter-box {
+            background: #fff;
+            padding: 15px 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(178, 34, 34, 0.15);
+            margin-bottom: 25px;
+        }
+
+        .filter-row {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .filter-input {
+            flex: 1;
+            min-width: 180px;
+            padding: 10px 14px;
+            border: 1px solid #e6b3b3;
+            border-radius: 6px;
+            font-size: 14px;
+            transition: all 0.2s ease;
+        }
+
+            .filter-input:focus {
+                border-color: #b22222;
+                box-shadow: 0 0 5px rgba(178, 34, 34, 0.3);
+                outline: none;
+            }
+
+        .filter-btn {
+            background-color: #b22222;
+            color: white;
+            padding: 10px 18px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: 0.25s;
+        }
+
+            .filter-btn:hover {
+                background-color: #8b0000;
+            }
     </style>
 }
 
+
 <h1>@ViewData["Title"]</h1>
-<form asp-action="Index" method="get" class="search-box">
-    <input type="text" name="searchString" value="@ViewData["CurrentFilter"]" placeholder="Tìm học viên theo tên, email, SĐT" />
-    <button type="submit">Tìm</button>
+
+<form method="get" asp-action="Index" class="filter-box">
+    <div class="filter-row">
+
+        <input type="text" name="hoTen" value="@ViewData["HoTenFilter"]"
+               placeholder="Tìm theo họ tên..."
+               class="filter-input" />
+
+        <input type="text" name="soDienThoai" value="@ViewData["SoDienThoaiFilter"]"
+               placeholder="Tìm theo SĐT..."
+               class="filter-input" />
+
+        <input type="text" name="email" value="@ViewData["EmailFilter"]"
+               placeholder="Tìm theo email..."
+               class="filter-input" />
+
+        <button type="submit" class="filter-btn">
+            <i class="fas fa-search"></i> Lọc
+        </button>
+    </div>
 </form>
 
 
 
-<table>
-    <thead>
-        <tr>
-            <th>Mã HV</th>
-            <th>Họ tên</th>
-            <th>Ngày sinh</th>
-            <th>Điện thoại</th>
-            <th>Địa chỉ</th>
-            <th>Email</th>
-            <th>Mã TK</th>
-            <th>Mã QTV</th>
-            <th>Thao tác</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model)
-        {
+<div class="table-wrapper">
+    <table>
+        <thead>
             <tr>
-                <td>@item.MaHocVien</td>
-                <td>@item.DANGKYMOI?.HoTen</td>
-                <td>@(item.DANGKYMOI?.NgaySinh?.ToString("dd/MM/yyyy"))</td>
-                <td>@item.DANGKYMOI?.SoDienThoai</td>
-                <td>@item.DANGKYMOI?.DiaChi</td>
-                <td>@item.DANGKYMOI?.Email</td>
-                <td>@item.TAIKHOAN?.MaTaiKhoan</td>
-                <td>@item.DANGKYMOI?.MaQuanTriVien</td>
-                <td class="action-buttons">
-                    <a asp-action="Details" asp-route-id="@item.MaHocVien" class="btn-info">Xem</a>
-                    <a asp-action="History" asp-route-id="@item.MaHocVien" class="btn-secondary">Lịch sử</a>
-                    <a asp-action="Edit" asp-route-id="@item.MaHocVien" class="btn-primary">Sửa</a>
-                    <a asp-action="Delete" asp-route-id="@item.MaHocVien" class="btn-danger">Xóa</a>
-                </td>
+                <th>Mã HV</th>
+                <th>Họ tên</th>
+                <th>Ngày sinh</th>
+                <th>Điện thoại</th>
+                <th>Địa chỉ</th>
+                <th>Email</th>
+                <th>Mã TK</th>
+                <th>Mã QTV</th>
+                <th>Thao tác</th>
             </tr>
-        }
-    </tbody>
-</table>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.MaHocVien</td>
+                    <td>@item.DANGKYMOI?.HoTen</td>
+                    <td>@(item.DANGKYMOI?.NgaySinh?.ToString("dd/MM/yyyy"))</td>
+                    <td>@item.DANGKYMOI?.SoDienThoai</td>
+                    <td>@item.DANGKYMOI?.DiaChi</td>
+                    <td>@item.DANGKYMOI?.Email</td>
+                    <td>@item.TAIKHOAN?.MaTaiKhoan</td>
+                    <td>@item.DANGKYMOI?.MaQuanTriVien</td>
+                    <td class="action-buttons">
+                        <a asp-action="Details" asp-route-id="@item.MaHocVien" class="btn-info">Xem</a>
+                        <a asp-action="History" asp-route-id="@item.MaHocVien" class="btn-secondary">Lịch sử</a>
+                        <a asp-action="Edit" asp-route-id="@item.MaHocVien" class="btn-primary">Sửa</a>
+                        <a asp-action="Delete" asp-route-id="@item.MaHocVien" class="btn-danger">Xóa</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

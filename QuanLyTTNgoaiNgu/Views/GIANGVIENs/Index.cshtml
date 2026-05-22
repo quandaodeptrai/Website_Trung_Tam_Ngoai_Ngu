@@ -7,142 +7,290 @@
 
 @section Styles {
     <style>
-        h1 {
-            font-size: 28px;
-            margin-bottom: 20px;
-            color: #1d3557;
+        body {
+            font-family: "Segoe UI", Arial, sans-serif;
+            background-color: #fdf3f3; /* nền đỏ nhạt tinh tế */
+            margin: 0;
+            padding: 20px;
         }
 
+        /* Tiêu đề trang */
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+            .page-header h1 {
+                font-size: 28px;
+                color: #b22222;
+                font-weight: 700;
+                text-transform: uppercase;
+                letter-spacing: 1px;
+                margin: 0;
+            }
+
         .btn-add {
-            display: inline-block;
-            background-color: #2a9d8f;
-            color: white;
+            background-color: #b22222;
+            color: #fff;
             padding: 10px 18px;
             border-radius: 6px;
+            font-weight: 600;
             text-decoration: none;
-            font-weight: bold;
-            margin-bottom: 20px;
+            transition: all 0.3s ease;
+            box-shadow: 0 3px 6px rgba(178, 34, 34, 0.3);
         }
 
             .btn-add:hover {
-                background-color: #21867a;
+                background-color: #8b0000;
+                box-shadow: 0 4px 8px rgba(178, 34, 34, 0.4);
             }
+
+        /* Bảng dữ liệu */
+        .table-container {
+            background-color: #fff;
+            border-radius: 12px;
+            box-shadow: 0 6px 20px rgba(178, 34, 34, 0.1);
+            overflow: hidden;
+        }
 
         table {
             width: 100%;
             border-collapse: collapse;
-            background-color: white;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-            border-radius: 8px;
-            overflow: hidden;
+        }
+
+        thead {
+            background-color: #b22222;
+            color: #fff;
         }
 
         th, td {
-            padding: 12px 15px;
+            padding: 14px 16px;
             text-align: left;
-            border-bottom: 1px solid #eee;
+            font-size: 15px;
         }
 
         th {
-            background-color: #1d3557;
-            color: white;
             font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
-        tr:hover {
-            background-color: #f8f9fa;
+        tbody tr {
+            border-bottom: 1px solid #f2dede;
+            transition: background-color 0.25s ease;
         }
 
-        .action-buttons a {
-            margin-right: 8px;
-            display: inline-block;
-            padding: 6px 12px;
-            font-size: 14px;
-            border-radius: 5px;
-            text-decoration: none;
-            color: white;
+            tbody tr:hover {
+                background-color: #fff5f5;
+            }
+
+        /* Cột thao tác */
+        .action-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+
+            .action-buttons a {
+                padding: 6px 12px;
+                border-radius: 5px;
+                color: #fff;
+                font-size: 14px;
+                text-decoration: none;
+                transition: all 0.25s ease;
+                font-weight: 500;
+            }
+
+        .btn-details {
+            background-color: #c74e4e;
         }
 
         .btn-edit {
-            background-color: #3a86ff;
-        }
-
-        .btn-details {
-            background-color: #43aa8b;
+            background-color: #d65a5a;
         }
 
         .btn-delete {
             background-color: #e63946;
         }
 
-        .btn-edit:hover {
-            background-color: #2b6ed3;
+        .btn-details:hover {
+            background-color: #a63636;
         }
 
-        .btn-details:hover {
-            background-color: #2f8f72;
+        .btn-edit:hover {
+            background-color: #b34040;
         }
 
         .btn-delete:hover {
             background-color: #c1272d;
         }
 
+        /* Nút phân công */
         .btn-excel {
-            background-color: #28a745; /* Màu xanh lá dịu */
+            display: inline-flex;
+            align-items: center;
+            background-color: #b22222;
             color: white;
-            padding: 8px 18px;
+            padding: 10px 22px;
             font-size: 14px;
             font-weight: 500;
-            border: none;
             border-radius: 6px;
             text-decoration: none;
-            display: inline-block;
+            margin-top: 25px;
             transition: background-color 0.3s ease;
         }
 
             .btn-excel i {
-                margin-right: 6px;
+                margin-right: 8px;
             }
 
             .btn-excel:hover {
-                background-color: #218838;
+                background-color: #8b0000;
             }
+
+
+        @@media (max-width: 768px) {
+            .page-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+
+            th, td {
+                padding: 10px;
+                font-size: 14px;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+                gap: 4px;
+            }
+        }
+        /* FORM LỌC */
+        .filter-box {
+            background: #fff;
+            padding: 15px 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(178, 34, 34, 0.15);
+            margin-bottom: 25px;
+        }
+
+        .filter-row {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .filter-input {
+            flex: 1;
+            min-width: 180px;
+            padding: 10px 14px;
+            border: 1px solid #e6b3b3;
+            border-radius: 6px;
+            font-size: 14px;
+            transition: all 0.2s ease;
+        }
+
+            .filter-input:focus {
+                border-color: #b22222;
+                box-shadow: 0 0 5px rgba(178, 34, 34, 0.3);
+                outline: none;
+            }
+
+        .filter-btn {
+            background-color: #b22222;
+            color: white;
+            padding: 10px 18px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: 0.25s;
+        }
+
+            .filter-btn:hover {
+                background-color: #8b0000;
+            }
+
     </style>
 }
 
-<h1>@ViewData["Title"]</h1>
-
-<a asp-action="Create" class="btn-add">Thêm Giảng viên</a>
-
-<table>
-    <thead>
-        <tr>
-            <th>Họ tên</th>
-            <th>Chuyên môn</th>
-            <th>Email</th>
-            <th>Điện thoại</th>
-            <th>Tài khoản</th>
-            <th>Thao tác</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model)
-        {
-            <tr>
-                <td>@item.HoTen</td>
-                <td>@item.ChuyenMon</td>
-                <td>@item.Email</td>
-                <td>@item.SoDienThoai</td>
-                <td>@item.TAIKHOAN?.TenDangNhap</td>
-                <td class="action-buttons">
-                    <a asp-action="Details" asp-route-id="@item.MaGiangVien" class="btn-details">Chi tiết</a>
-                    <a asp-action="Edit" asp-route-id="@item.MaGiangVien" class="btn-edit">Sửa</a>
-                    <a asp-action="Delete" asp-route-id="@item.MaGiangVien" class="btn-delete">Xóa</a>
-                </td>
-            </tr>
-        }
-    </tbody>
-    <a asp-controller="PhanCongGiangVien" asp-action="PhanCong" class="btn btn-excel">
-        <i class="fas fa-file-excel"></i> Phân công giảng viên
+<div class="page-header">
+    <h1>@ViewData["Title"]</h1>
+    <a asp-action="Create" class="btn-add">
+        <i class="fas fa-plus-circle"></i> Thêm Giảng viên
     </a>
-</table>
+</div>
+<!-- FORM LỌC -->
+<form method="get" asp-action="Index" class="filter-box">
+    <div class="filter-row">
+
+        <input type="text" name="hoTen" value="@ViewBag.HoTen"
+               placeholder="Tìm theo họ tên..."
+               class="filter-input" />
+
+        <input type="text" name="chuyenMon" value="@ViewBag.ChuyenMon"
+               placeholder="Tìm theo chuyên môn..."
+               class="filter-input" />
+
+        <input type="text" name="soDienThoai" value="@ViewBag.SoDienThoai"
+               placeholder="Tìm theo SĐT..."
+               class="filter-input" />
+
+        <input type="text" name="email" value="@ViewBag.Email"
+               placeholder="Tìm theo email..."
+               class="filter-input" />
+
+        <button type="submit" class="filter-btn">
+            <i class="fas fa-search"></i> Lọc
+        </button>
+    </div>
+</form>
+
+
+<div class="table-container">
+    <table>
+        <thead>
+            <tr>
+                <th>Họ tên</th>
+                <th>Chuyên môn</th>
+                <th>Email</th>
+                <th>Điện thoại</th>
+                <th>Tài khoản</th>
+                <th>Thao tác</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.HoTen</td>
+                    <td>@item.ChuyenMon</td>
+                    <td>@item.Email</td>
+                    <td>@item.SoDienThoai</td>
+                    <td>@item.TAIKHOAN?.TenDangNhap</td>
+                    <td class="action-buttons">
+                        <a asp-action="Details" asp-route-id="@item.MaGiangVien" class="btn-details">
+                            <i class="fas fa-eye"></i> Chi tiết
+                        </a>
+                        <a asp-action="Edit" asp-route-id="@item.MaGiangVien" class="btn-edit">
+                            <i class="fas fa-edit"></i> Sửa
+                        </a>
+                        <a asp-action="Delete" asp-route-id="@item.MaGiangVien" class="btn-delete">
+                            <i class="fas fa-trash-alt"></i> Xóa
+                        </a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<a asp-controller="PhanCongGiangVien" asp-action="PhanCong" class="btn-excel">
+    <i class="fas fa-tasks"></i> Phân công giảng viên
+</a>

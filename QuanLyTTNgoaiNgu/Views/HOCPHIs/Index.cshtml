@@ -6,149 +6,230 @@
 }
 
 @section Styles {
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
     <style>
+        body {
+            font-family: 'Segoe UI', Roboto, sans-serif;
+            background-color: #fefefe;
+            color: #333;
+        }
+
         h1 {
             font-size: 28px;
+            font-weight: 700;
+            color: #c62828;
             margin-bottom: 25px;
-            color: #1d3557;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
+
+            h1 i {
+                color: #c62828;
+            }
 
         table {
             width: 100%;
             border-collapse: collapse;
-            background-color: white;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-            border-radius: 8px;
+            background-color: #fff;
+            border-radius: 10px;
             overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+        }
+
+        thead {
+            background: linear-gradient(90deg, #c62828, #e53935);
+            color: white;
         }
 
         th, td {
-            padding: 12px 15px;
-            border-bottom: 1px solid #eee;
+            padding: 14px 16px;
             text-align: left;
+            border-bottom: 1px solid #f0f0f0;
         }
 
         th {
-            background-color: #1d3557;
-            color: white;
-            font-weight: bold;
-        }
-
-        tr:hover {
-            background-color: #f8f9fa;
-        }
-
-        .action-buttons a,
-        .action-buttons button {
-            margin-right: 8px;
-            padding: 6px 12px;
+            font-weight: 600;
+            text-transform: uppercase;
             font-size: 14px;
-            border-radius: 5px;
-            text-decoration: none;
-            color: white;
-            border: none;
-            cursor: pointer;
+            letter-spacing: 0.5px;
         }
 
-        .btn-edit {
-            background-color: #3a86ff;
+        tbody tr:hover {
+            background-color: #fff5f5;
+            transition: background 0.3s;
         }
+
+        .action-buttons {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+            .action-buttons a,
+            .action-buttons button {
+                padding: 6px 12px;
+                font-size: 13px;
+                border-radius: 6px;
+                text-decoration: none;
+                color: white;
+                border: none;
+                display: inline-flex;
+                align-items: center;
+                gap: 5px;
+                transition: all 0.3s ease;
+            }
 
         .btn-details {
-            background-color: #43aa8b;
+            background-color: #ef5350;
         }
+
+            .btn-details:hover {
+                background-color: #c62828;
+            }
 
         .btn-pay {
-            background-color: #ff9f1c;
+            background-color: #f9a825;
         }
 
-        .btn-details:hover {
-            background-color: #2f8f72;
-        }
+            .btn-pay:hover {
+                background-color: #f57f17;
+            }
 
         .paid {
-            color: green;
-            font-weight: bold;
+            color: #2e7d32;
+            font-weight: 600;
         }
 
         .unpaid {
-            color: red;
-            font-weight: bold;
+            color: #c62828;
+            font-weight: 600;
         }
 
         .pay-form {
-            margin-top: 10px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
         }
 
             .pay-form input[type="number"] {
-                width: 100px;
-                padding: 5px;
-                margin-right: 5px;
-                border-radius: 5px;
+                width: 120px;
+                padding: 6px 8px;
+                border-radius: 6px;
                 border: 1px solid #ccc;
+                font-size: 13px;
             }
+
+        .alert {
+            border-radius: 6px;
+            padding: 10px 15px;
+            margin-bottom: 20px;
+            font-size: 15px;
+        }
+
+        .alert-success {
+            background-color: #e8f5e9;
+            border-left: 5px solid #2e7d32;
+            color: #2e7d32;
+        }
+
+        .alert-danger {
+            background-color: #ffebee;
+            border-left: 5px solid #c62828;
+            color: #c62828;
+        }
     </style>
 }
 
-<h1>@ViewData["Title"]</h1>
+<h1><i class="fa-solid fa-money-check-dollar"></i> @ViewData["Title"]</h1>
 
 @if (TempData["Success"] != null)
 {
-    <div class="alert alert-success">@TempData["Success"]</div>
+    <div class="alert alert-success">
+        <i class="fa-solid fa-circle-check"></i> @TempData["Success"]
+    </div>
 }
 @if (TempData["Error"] != null)
 {
-    <div class="alert alert-danger">@TempData["Error"]</div>
+    <div class="alert alert-danger">
+        <i class="fa-solid fa-triangle-exclamation"></i> @TempData["Error"]
+    </div>
 }
 
-<table>
-    <thead>
-        <tr>
-            <th>Mã Đăng ký</th>
-            <th>Mã Học viên</th>
-            <th>Họ tên Học viên</th>
-            <th>Ngày nộp</th>
-            <th>Số tiền</th>
-            <th>Trạng thái</th>
-            <th>Thao tác</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model)
-        {
+<form asp-action="ConfirmPayment" method="post">
+    <table>
+        <thead>
             <tr>
+                <th><i class="fa-solid fa-id-card"></i> Mã Đăng ký</th>
+                <th><i class="fa-solid fa-user"></i> Mã Học viên</th>
+                <th><i class="fa-solid fa-user-graduate"></i> Họ tên Học viên</th>
+                <th><i class="fa-solid fa-calendar-day"></i> Ngày nộp</th>
+                <th><i class="fa-solid fa-coins"></i> Số tiền</th>
+                <th><i class="fa-solid fa-clipboard-check"></i> Trạng thái</th>
+                <th><i class="fa-solid fa-gear"></i> Thao tác</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
                 <td>@item.PHIEUDANGKY?.MaPhieu</td>
                 <td>@item.PHIEUDANGKY?.HOCVIEN?.MaHocVien</td>
                 <td>@item.PHIEUDANGKY?.HOCVIEN?.DANGKYMOI?.HoTen</td>
+
                 <td>
                     @(item.NgayNop.HasValue
-                        ? item.NgayNop.Value.ToString("dd/MM/yyyy")
-                        : " ")
+                                        ? item.NgayNop.Value.ToString("dd/MM/yyyy")
+                                        : "-")
                 </td>
-                <td>@item.PHIEUDANGKY?.LOPHOC?.KHOAHOC?.MucHocPhi.ToString("N0") VNĐ</td>
-                <td>
-                    @if (item.TrangThai)
-                    {
-                        <span class="paid">Đã thanh toán</span>
-                    }
-                    else
-                    {
-                        <span class="unpaid">Chưa thanh toán</span>
-                    }
-                </td>
-                <td class="action-buttons">
-                    <a asp-action="Details" asp-route-id="@item.MaHocPhi" class="btn-details">Chi tiết</a>
 
-                    @if (!item.TrangThai)
-                    {
-                        <form asp-action="ThanhToan" method="post" class="pay-form d-inline">
-                            <input type="hidden" name="MaHocPhi" value="@item.MaHocPhi" />
-                            <input type="number" step="1000" name="SoTienNhap" placeholder="Nhập số tiền" required />
-                            <button type="submit" class="btn-pay">Xác nhận thanh toán</button>
-                        </form>
-                    }
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
+                    <td>@item.PHIEUDANGKY?.LOPHOC?.KHOAHOC?.MucHocPhi.ToString("N0") VNĐ</td>
+
+                    <td>
+                    @if (item.TrangThai)
+                        {
+                            <span class="paid">
+                                <i class="fa-solid fa-circle-check"></i> Đã thanh toán
+                            </span>
+                        }
+                        else if (item.NgayNop != null)
+                        {
+                            <span class="pending" style="color:#f9a825; font-weight:600;">
+                                <i class="fa-solid fa-clock"></i> Chờ xác nhận
+                            </span>
+                        }
+                        else
+                        {
+                            <span class="unpaid">
+                                <i class="fa-solid fa-circle-xmark"></i> Chưa nộp
+                            </span>
+                        }
+                    </td>
+
+                    <td class="action-buttons">
+                        <a asp-action="Details" asp-route-id="@item.MaHocPhi" class="btn-details">
+                            <i class="fa-solid fa-eye"></i> Chi tiết
+                        </a>
+
+                        @* ✅ Hiển thị nút Xác nhận chỉ khi chưa nộp hoặc chờ xác nhận *@
+                        @if (!item.TrangThai && item.NgayNop != null)
+                        {
+                            <button type="submit" name="selectedIds" value="@item.MaHocPhi"
+                                    class="btn-pay">
+                                <i class="fa-solid fa-check"></i> Xác nhận
+                            </button>
+                        }
+                    </td>
+
+                </tr>
+            }
+        </tbody>
+    </table>
+
+
+</form>
+

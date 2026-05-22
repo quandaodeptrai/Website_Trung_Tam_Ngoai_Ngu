@@ -16,10 +16,18 @@ namespace QuanLyTTNgoaiNgu.Controllers
         public ReportsController(QuanLyTTNgoaiNguContext context)
             => _context = context;
 
-        // GET: Reports
-        // Tham số startDate/endDate để lọc doanh thu theo kỳ
-        public async Task<IActionResult> Index(DateTime? startDate, DateTime? endDate)
+        // Trang danh sách báo cáo
+        public IActionResult Index()
         {
+            return View(); // => Views/Reports/Index.cshtml
+        }
+
+        // Trang chi tiết từng loại
+        public async Task<IActionResult> Detail(string type)
+        {
+            if (string.IsNullOrEmpty(type))
+                return RedirectToAction(nameof(Index));
+
             var vm = new ReportViewModel();
 
             // 1. Tổng số lượng
@@ -62,7 +70,7 @@ namespace QuanLyTTNgoaiNgu.Controllers
 
             // 6. Tổng doanh thu
             var payments = _context.HOCPHI
-                .Where(hp => hp.TrangThai); // chỉ những học phí đã nộp
+                .Where(hp => hp.TrangThai);
 
             // Theo lớp
             vm.RevenuePerClass = await payments
@@ -84,7 +92,8 @@ namespace QuanLyTTNgoaiNgu.Controllers
                 })
                 .ToListAsync();
 
-            return View(vm);
+            ViewBag.Type = type;
+            return View(vm); // => Views/Reports/Detail.cshtml
         }
     }
 }

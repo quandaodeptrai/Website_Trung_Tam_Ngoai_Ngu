@@ -1,13 +1,17 @@
 ﻿using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using QuanLyTTNgoaiNgu.Data;
+using System;
+using System.Configuration;
 using System.Linq;
 using System.Security.Claims;
-using System;
 using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Authorization;
+using System.Net.Mail;
+using System.Net;
+
 
 namespace QuanLyTTNgoaiNgu.Controllers
 {
@@ -17,9 +21,11 @@ namespace QuanLyTTNgoaiNgu.Controllers
     public class AccountController : Controller
     {
         private readonly QuanLyTTNgoaiNguContext _ctx;
-        public AccountController(QuanLyTTNgoaiNguContext ctx)
+        private readonly IConfiguration _configuration;
+        public AccountController(QuanLyTTNgoaiNguContext ctx, IConfiguration configuration)
         {
             _ctx = ctx;
+            _configuration = configuration;
         }
 
         [HttpGet]
@@ -92,40 +98,97 @@ namespace QuanLyTTNgoaiNgu.Controllers
         {
             return View();
         }
-
         [HttpPost]
-        public IActionResult QuenMatKhau(string username, string email)
+        public async Task<IActionResult> QuenMatKhau(string email)
         {
-            if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(email))
+            if (string.IsNullOrWhiteSpace(email))
             {
-                ViewBag.Error = "Vui lòng nhập đầy đủ tên đăng nhập và email!";
+                ViewBag.Error = "Vui lòng nhập email!";
                 return View();
             }
 
-            var taikhoan = _ctx.TAIKHOAN.FirstOrDefault(t => t.TenDangNhap == username);
-            if (taikhoan == null)
-            {
-                ViewBag.Error = "Không tìm thấy tài khoản này!";
-                return View();
-            }
-
-            var hocvien = _ctx.HOCVIEN
-                .Where(hv => hv.MaTaiKhoan == taikhoan.MaTaiKhoan)
-                .FirstOrDefault(hv => hv.DANGKYMOI != null && hv.DANGKYMOI.Email == email);
+            // Tìm tài khoản qua học viên
+            var hocvien = await _ctx.HOCVIEN
+                .Include(h => h.DANGKYMOI)
+                .FirstOrDefaultAsync(h => h.DANGKYMOI != null && h.DANGKYMOI.Email == email);
 
             if (hocvien == null)
             {
-                ViewBag.Error = "Email không khớp với tài khoản!";
+                ViewBag.Error = "Không tìm thấy email này trong hệ thống!";
                 return View();
             }
 
-            taikhoan.MatKhau = "111111";
-            _ctx.Update(taikhoan);
-            _ctx.SaveChanges();
+            var taikhoan = await _ctx.TAIKHOAN
+                .FirstOrDefaultAsync(t => t.MaTaiKhoan == hocvien.MaTaiKhoan);
 
-            ViewBag.Message = "Khôi phục mật khẩu thành công! Mật khẩu mới là: 111111";
+            if (taikhoan == null)
+            {
+                ViewBag.Error = "Tài khoản liên kết với email không tồn tại!";
+                return View();
+            }
+
+            // Tạo mật khẩu ngẫu nhiên
+            string newPass = GenerateRandomPassword();
+            taikhoan.MatKhau = newPass;
+            _ctx.Update(taikhoan);
+            await _ctx.SaveChangesAsync();
+
+            try
+            {
+                await SendResetPasswordEmail(email, taikhoan.TenDangNhap, newPass);
+                ViewBag.Message = "Mật khẩu mới đã được gửi về email của bạn!";
+            }
+            catch
+            {
+                ViewBag.Error = "Gửi email thất bại! Vui lòng thử lại.";
+            }
+
             return View();
         }
+
+        // Hàm random password
+        private string GenerateRandomPassword()
+        {
+            var chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*";
+            var random = new Random();
+            return new string(Enumerable.Repeat(chars, 10)
+                                        .Select(s => s[random.Next(s.Length)]).ToArray());
+        }
+
+        // Hàm gửi email
+        private async Task SendResetPasswordEmail(string toEmail, string username, string newPass)
+        {
+            var emailConfig = _configuration.GetSection("Smtp");
+            var fromEmail = emailConfig["Email"];
+            var fromPass = emailConfig["Password"];
+
+            var subject = "Khôi phục mật khẩu - Trung tâm Ngoại ngữ";
+            var body = $@"
+        <p>Xin chào,</p>
+        <p>Bạn vừa yêu cầu khôi phục mật khẩu.</p>
+        <p><b>Tên đăng nhập:</b> {username}</p>
+        <p><b>Mật khẩu mới:</b> {newPass}</p>
+        <p>Vui lòng đăng nhập và đổi mật khẩu ngay sau khi vào hệ thống.</p>
+        <p>Trân trọng,<br/>Trung tâm Ngoại ngữ</p>";
+
+            using (var mail = new MailMessage())
+            {
+                mail.From = new MailAddress(fromEmail);
+                mail.To.Add(toEmail);
+                mail.Subject = subject;
+                mail.Body = body;
+                mail.IsBodyHtml = true;
+
+                using (var smtp = new SmtpClient("smtp.gmail.com", 587))
+                {
+                    smtp.Credentials = new NetworkCredential(fromEmail, fromPass);
+                    smtp.EnableSsl = true;
+                    await smtp.SendMailAsync(mail);
+                }
+            }
+        }
+
+
         [HttpGet]
         public async Task<IActionResult> Logout()
         {

@@ -1,14 +1,73 @@
-﻿@{
-    Layout = "_LayoutHocVien";
-    ViewData["Title"] = "Học viên Dashboard";
-    var fullName = User.FindFirst("FullName")?.Value ?? User.Identity.Name;
-    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
-    <meta http-equiv="Pragma" content="no-cache" />
-    <meta http-equiv="Expires" content="-1" />
+﻿﻿@{
+Layout = "_LayoutHocVien";
+ViewData["Title"] = "Học viên Dashboard";
+var fullName = User.FindFirst("FullName")?.Value ?? User.Identity.Name;
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+<meta http-equiv="Pragma" content="no-cache" />
+<meta http-equiv="Expires" content="-1" />
 }
-    <link rel="stylesheet" href="~/css/Home.css" />
+
+<style>
+    body {
+        background-color: #fff2f2; /* đỏ nhạt chủ đạo */
+        font-family: "Segoe UI", Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        color: #333;
+    }
+
+    .welcome-card {
+        max-width: 800px;
+        margin: 100px auto;
+        background: #ffffff;
+        border-radius: 18px;
+        padding: 45px 55px;
+        text-align: center;
+        box-shadow: 0 8px 25px rgba(178, 34, 34, 0.15);
+        border-top: 6px solid #b22222; /* đỏ đậm */
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+        .welcome-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(178, 34, 34, 0.25);
+        }
+
+        .welcome-card h1 {
+            color: #b22222;
+            font-size: 2rem;
+            margin-bottom: 18px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .welcome-card p {
+            font-size: 1.05rem;
+            line-height: 1.7;
+            margin-bottom: 12px;
+        }
+
+        .welcome-card strong {
+            color: #8b0000;
+        }
+
+    /* Hiệu ứng nền nhẹ nhàng */
+    .page-bg {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(135deg, #fff2f2 0%, #ffe6e6 100%);
+        z-index: -1;
+    }
+</style>
+
+<div class="page-bg"></div>
+
 <div class="welcome-card">
     <h1>Trang Học viên</h1>
     <p>Chào mừng bạn <strong>@fullName</strong> đến với hệ thống quản lý Trung tâm Ngoại ngữ 5AE.</p>
-    <p>Vui lòng chọn chức năng từ thanh menu bên trái để tiếp tục công việc quản lý.</p>
+    <p>Vui lòng chọn chức năng từ thanh menu bên trái để bắt đầu học tập và quản lý thông tin của bạn.</p>
 </div>

@@ -1,85 +1,66 @@
 ﻿@model IEnumerable<QuanLyTTNgoaiNgu.Models.TAIKHOAN>
+
 @{
     ViewData["Title"] = "Quản lý Tài khoản";
     Layout = "_LayoutAdmin";
 }
 
-<h1>Quản lý Tài khoản</h1>
-
-<p>
-    <div class="create-button-container">
-        <a asp-action="Create" class="btn-create">Tạo tài khoản mới</a>
-    </div>
-
-</p>
-
-<table>
-    <thead>
-        <tr>
-            <th>@Html.DisplayNameFor(model => model.TenDangNhap)</th>
-            <th>@Html.DisplayNameFor(model => model.MatKhau)</th>
-            <th>@Html.DisplayNameFor(model => model.VaiTro)</th>
-            <th>Thao tác</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model)
-        {
-            <tr>
-                <td>@item.TenDangNhap</td>
-                <td>@item.MatKhau</td>
-                <td>@item.VaiTro</td>
-                <td class="action-buttons">
-                    <a asp-action="Edit" asp-route-id="@item.MaTaiKhoan" class="btn-edit">Sửa</a>
-                    <a asp-action="Details" asp-route-id="@item.MaTaiKhoan" class="btn-details">Chi tiết</a>
-                    <a asp-action="Delete" asp-route-id="@item.MaTaiKhoan" class="btn-delete">Xóa</a>
-                </td>
-
-            </tr>
-        }
-    </tbody>
-</table>
-
 @section Styles {
     <style>
-        h1 {
+        body {
+            background: linear-gradient(to bottom, #ffe6e6, #fff);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        h2 {
+            text-align: center;
             font-size: 28px;
-            margin-bottom: 25px;
-            color: #1d3557;
+            color: #b30000;
+            margin-bottom: 30px;
+            font-weight: 700;
+        }
+
+        .table-wrapper {
+            max-width: 1000px;
+            margin: 0 auto 60px;
+            overflow-x: auto;
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(204,0,0,0.2);
+            padding: 20px;
         }
 
         table {
             width: 100%;
             border-collapse: collapse;
-            background-color: white;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-            border-radius: 8px;
-            overflow: hidden;
-        }
-
-        th, td {
-            padding: 12px 15px;
-            border-bottom: 1px solid #eee;
-            text-align: left;
         }
 
         th {
-            background-color: #1d3557;
-            color: white;
-            font-weight: bold;
+            background-color: #cc0000;
+            color: #fff;
+            padding: 12px;
+            text-align: center;
         }
 
-        tr:hover {
-            background-color: #f8f9fa;
+        td {
+            padding: 10px;
+            text-align: center;
+            border-bottom: 1px solid #eee;
+        }
+
+        tbody tr:hover {
+            background-color: #ffe6e6;
         }
 
         .action-buttons a {
-            margin-right: 8px;
-            padding: 6px 12px;
-            font-size: 14px;
-            border-radius: 5px;
+            padding: 10px 18px;
+            font-weight: 600;
+            border-radius: 8px;
+            color: #fff;
             text-decoration: none;
-            color: white;
+            display: inline-block;
+            margin: 2px;
+            transition: background-color 0.3s ease, transform 0.2s ease;
         }
 
         .btn-edit {
@@ -88,6 +69,7 @@
 
             .btn-edit:hover {
                 background-color: #2b6ed3;
+                transform: scale(1.05);
             }
 
         .btn-details {
@@ -96,6 +78,16 @@
 
             .btn-details:hover {
                 background-color: #2f8f72;
+                transform: scale(1.05);
+            }
+
+        .btn-delete {
+            background-color: #e63946;
+        }
+
+            .btn-delete:hover {
+                background-color: #d62828;
+                transform: scale(1.05);
             }
 
         .create-button-container {
@@ -104,33 +96,69 @@
         }
 
         .btn-create {
-            background-color: #1d3557;
+            background-color: #cc0000;
             color: white;
-            padding: 10px 20px;
-            font-size: 15px;
-            border: none;
+            padding: 12px 28px;
+            font-size: 16px;
             border-radius: 8px;
+            font-weight: 600;
             text-decoration: none;
-            font-weight: 500;
-            transition: background-color 0.3s ease;
+            transition: background-color 0.3s ease, transform 0.2s ease;
         }
 
             .btn-create:hover {
-                background-color: #16324c;
+                background-color: #990000;
+                transform: scale(1.05);
             }
 
-        .btn-delete {
-            background-color: #e63946;
-            color: white;
-            padding: 6px 12px;
+        @@media (max-width: 768px) {
+            table th, table td
+
+        {
+            padding: 8px;
             font-size: 14px;
-            border-radius: 5px;
-            text-decoration: none;
         }
 
-            .btn-delete:hover {
-                background-color: #d62828;
-            }
+        .action-buttons a, .btn-create {
+            width: 100%;
+            padding: 10px 0;
+            margin-bottom: 5px;
+        }
 
+        }
     </style>
 }
+
+<h2>@ViewData["Title"]</h2>
+
+<div class="create-button-container">
+    <a asp-action="Create" class="btn-create">Tạo tài khoản mới</a>
+</div>
+
+<div class="table-wrapper">
+    <table>
+        <thead>
+            <tr>
+                <th>@Html.DisplayNameFor(model => model.TenDangNhap)</th>
+                <th>@Html.DisplayNameFor(model => model.MatKhau)</th>
+                <th>@Html.DisplayNameFor(model => model.VaiTro)</th>
+                <th>Thao tác</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.TenDangNhap</td>
+                    <td>@item.MatKhau</td>
+                    <td>@item.VaiTro</td>
+                    <td class="action-buttons">
+                        <a asp-action="Edit" asp-route-id="@item.MaTaiKhoan" class="btn-edit">Sửa</a>
+                        <a asp-action="Details" asp-route-id="@item.MaTaiKhoan" class="btn-details">Chi tiết</a>
+                        <a asp-action="Delete" asp-route-id="@item.MaTaiKhoan" class="btn-delete">Xóa</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

@@ -10,6 +10,7 @@
             font-size: 28px;
             margin-bottom: 25px;
             color: #1d3557;
+            text-align: center;
         }
 
         form {
@@ -17,7 +18,8 @@
             padding: 30px;
             border-radius: 12px;
             max-width: 700px;
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+            margin: 0 auto;
+            box-shadow: 0 10px 25px rgba(204,0,0,0.15);
         }
 
         .form-group {
@@ -28,52 +30,72 @@
             font-weight: bold;
             display: block;
             margin-bottom: 6px;
-            color: #1d3557;
+            color: #660000;
         }
 
         input[type="text"],
         input[type="date"],
         select {
             width: 100%;
-            padding: 10px;
+            padding: 12px;
             border: 1px solid #ccc;
             border-radius: 8px;
             font-size: 16px;
+            transition: 0.3s;
         }
+
+            input[type="text"]:focus,
+            input[type="date"]:focus {
+                border-color: #cc0000;
+                box-shadow: 0 0 5px rgba(204,0,0,0.3);
+                outline: none;
+            }
 
         .text-danger {
             color: #e63946;
             font-size: 14px;
         }
 
-        button,
         .btn {
             display: inline-block;
-            padding: 10px 18px;
-            text-decoration: none;
+            padding: 12px 28px;
             font-weight: 600;
-            border-radius: 6px;
-            transition: background-color 0.3s ease;
+            text-decoration: none;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: 0.3s;
+            margin-right: 10px;
         }
 
         .btn-success {
-            background-color: #2a9d8f;
+            background-color: #cc0000;
             color: white;
             border: none;
+            box-shadow: 0 5px 12px rgba(204,0,0,0.3);
         }
 
             .btn-success:hover {
-                background-color: #21867a;
+                background-color: #990000;
+                transform: translateY(-2px);
             }
 
         .btn-secondary {
             background-color: #6c757d;
             color: white;
+            border: none;
         }
 
             .btn-secondary:hover {
                 background-color: #5a6268;
+                transform: translateY(-2px);
             }
+
+        @@media (max-width: 480px) {
+            .btn {
+                width: 100%;
+                margin-bottom: 10px;
+            }
+        }
     </style>
 }
 
@@ -91,8 +113,7 @@
     </div>
 
     <div class="form-group">
-        <label asp-for="DANGKYMOI.NgaySinh"></label>
-        @Html.EditorFor(m => m.DANGKYMOI.NgaySinh, new { htmlAttributes = new { @class = "form-control", type = "date" } })
+        <label asp-for="DANGKYMOI.NgaySinh"></label>@Html.EditorFor(m => m.DANGKYMOI.NgaySinh, new { htmlAttributes = new { @class = "form-control", type = "date" } })
         <span asp-validation-for="DANGKYMOI.NgaySinh" class="text-danger"></span>
     </div>
 
@@ -120,13 +141,10 @@
         <input type="hidden" asp-for="MaTaiKhoan" />
     </div>
 
-
     <button type="submit" class="btn btn-success">Lưu</button>
     <a asp-action="Index" class="btn btn-secondary">Hủy</a>
 </form>
 
 @section Scripts {
-    @{
-        await Html.RenderPartialAsync("_ValidationScriptsPartial");
-    }
+        @@await Html.RenderPartialAsync("_ValidationScriptsPartial")
 }

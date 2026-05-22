@@ -7,104 +7,165 @@
 
 @section Styles {
     <style>
+        /* Màu chủ đạo: Đỏ Đô (#800000) */
         h1 {
-            font-size: 28px;
-            color: #1d3557;
             text-align: center;
-            margin-bottom: 20px;
+            font-size: 32px;
+            margin-top: 30px;
+            margin-bottom: 30px;
+            color: #800000; /* Tiêu đề màu Đỏ Đô */
+            font-weight: 700;
         }
 
         .form-container {
-            max-width: 600px;
-            margin: 0 auto;
-            background: #fff;
+            max-width: 500px; /* Chiều rộng hẹp hơn vì form ngắn */
+            margin: 30px auto;
             padding: 35px;
+            background: #fff;
             border-radius: 12px;
-            box-shadow: 0 0 20px rgba(0, 0, 0, 0.05);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+            border: 1px solid #eee;
         }
 
-        label {
+        label.control-label {
             font-weight: 600;
             color: #333;
+            margin-bottom: 15px;
+            display: block;
+            font-size: 18px;
+            border-bottom: 2px solid #f0f0f0;
+            padding-bottom: 8px;
         }
 
-        .form-control {
-            border-radius: 8px;
-            padding: 10px;
-            margin-bottom: 10px;
-            border: 1px solid #ccc;
+        .form-group {
+            margin-bottom: 25px;
         }
 
+        /* Checkbox/Radio Styling */
+        .form-check {
+            padding-left: 0; /* Đặt lại padding */
+            margin-bottom: 12px;
+        }
+
+        .form-check-input {
+            margin-top: 0.35em;
+            margin-right: 10px; /* Tạo khoảng cách giữa radio và label */
+            float: none; /* Bỏ float để dễ dàng căn chỉnh */
+            width: 1.25em;
+            height: 1.25em;
+            border-color: #A52A2A; /* Viền radio màu đỏ thẫm */
+        }
+
+        /* Khi radio được chọn */
+        .form-check-input:checked {
+            background-color: #800000; /* Màu Đỏ Đô */
+            border-color: #800000;
+            box-shadow: none;
+        }
+        
+        /* Khi radio hover/focus */
+        .form-check-input:hover:not(:checked), .form-check-input:focus:not(:checked) {
+            border-color: #800000;
+            box-shadow: 0 0 0 0.25rem rgba(128, 0, 0, 0.25);
+        }
+
+        .form-check-label {
+            font-size: 16px;
+            color: #444;
+            cursor: pointer;
+        }
+
+        /* Nút Lưu thay đổi (Chính) */
         .btn-primary {
-            background: linear-gradient(135deg, #1d3557, #457b9d);
+            width: 100%;
+            background-color: #800000; /* Màu Đỏ Đô */
             border: none;
-            border-radius: 12px;
-            padding: 12px 28px;
+            padding: 12px 0;
+            font-size: 17px;
+            border-radius: 8px;
+            color: white;
             font-weight: 600;
-            color: #fff;
-            transition: all 0.3s ease;
-            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+            transition: background-color 0.2s, box-shadow 0.2s;
         }
 
             .btn-primary:hover {
-                background: linear-gradient(135deg, #16324f, #2b6c8c);
-                box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
-                transform: translateY(-2px);
+                background-color: #660000; /* Đỏ Đô đậm hơn khi hover */
+                box-shadow: 0 4px 8px rgba(128, 0, 0, 0.3);
             }
 
+        /* Nút Quay lại */
+        .back-link a {
+            display: inline-block;
+            background: #f8f9fa;
+            color: #800000; /* Chữ màu Đỏ Đô */
+            border: 1px solid #800000;padding: 10px 20px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+
+            .back-link a:hover {
+                background: #800000;
+                color: white;
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            }
 
         .text-danger {
             font-size: 14px;
+            color: #DC3545;
+            margin-top: 4px;
+            display: block; /* Đảm bảo lỗi hiển thị trên dòng riêng */
         }
-
-        .back-link {
-            text-align: center;
-            margin-top: 20px;
-        }
-
-            .back-link a {
-                color: #1d3557;
-                font-weight: 500;
-                text-decoration: none;
-            }
-
-                .back-link a:hover {
-                    text-decoration: underline;
-                }
     </style>
 }
 
-<h1>Cập nhật Thời khóa biểu</h1>
+<h1><i class="fas fa-edit"></i> Cập nhật Thời khóa biểu</h1>
 
 <div class="form-container">
-    <form asp-action="Edit">
-        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <div style="text-align: center; margin-bottom: 25px; padding: 10px; background-color: #ffebeb; border-radius: 6px; border: 1px solid #A52A2A;">
+        <p style="margin: 0; color: #800000; font-weight: bold;">
+            Lớp: @Model.LOPHOC?.TenLopHoc <br />
+            Ngày học: @(Model.NgayHoc.HasValue ? Model.NgayHoc.Value.ToString("dd/MM/yyyy") : "N/A")
+        </p>
+    </div>
+    <form asp-action="Edit" asp-route-id="@Model.MaLichHoc" method="post" id="editTkbForm">
+        @Html.AntiForgeryToken()
         <input type="hidden" asp-for="MaLichHoc" />
+        <input type="hidden" asp-for="MaLopHoc" />
+        <input type="hidden" asp-for="NgayHoc" /> @* Giữ lại NgayHoc để gửi lên server *@
 
-        <div class="form-group">
-            <label asp-for="CaHoc" class="control-label"></label>
-            <input asp-for="CaHoc" class="form-control" />
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+        <div class="form-group" id="CaHocContainer">
+            <label class="control-label">Chọn ca học mới</label><br />
+
+            <div class="form-check">
+                <input asp-for="CaHoc" class="form-check-input" type="radio" value="1-3" id="ca1" />
+                <label class="form-check-label" for="ca1">1-3 (7h-9h)</label>
+            </div>
+            <div class="form-check">
+                <input asp-for="CaHoc" class="form-check-input" type="radio" value="4-6" id="ca2" />
+                <label class="form-check-label" for="ca2">4-6 (9h-11h)</label>
+            </div>
+            <div class="form-check">
+                <input asp-for="CaHoc" class="form-check-input" type="radio" value="7-9" id="ca3" />
+                <label class="form-check-label" for="ca3">7-9 (13h-15h)</label>
+            </div>
+            <div class="form-check">
+                <input asp-for="CaHoc" class="form-check-input" type="radio" value="10-12" id="ca4" />
+                <label class="form-check-label" for="ca4">10-12 (15h-17h)</label>
+            </div>
+
             <span asp-validation-for="CaHoc" class="text-danger"></span>
         </div>
 
-        <div class="form-group">
-            <label asp-for="NgayHoc" class="control-label"></label>
-            <input asp-for="NgayHoc" class="form-control" type="date" />
-            <span asp-validation-for="NgayHoc" class="text-danger"></span>
-        </div>
-
-        <div class="form-group">
-            <label asp-for="MaLopHoc" class="control-label"></label>
-            <select asp-for="MaLopHoc" class="form-control" asp-items="ViewBag.MaLopHoc"></select>
-            <span asp-validation-for="MaLopHoc" class="text-danger"></span>
-        </div>
-
-        <div class="form-group text-center">
-            <input type="submit" value="Lưu thay đổi" class="btn btn-primary" />
+        <div style="margin-top:25px; text-align:center;">
+            <button type="submit" class="btn btn-primary">Lưu thay đổi</button>
         </div>
     </form>
 
-    <div class="back-link">
+    <div class="back-link" style="margin-top:25px; text-align:center;">
         <a asp-action="Index">← Quay lại danh sách</a>
     </div>
 </div>
@@ -113,4 +174,29 @@
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
+    <script>
+        (function(){
+            var editForm = document.getElementById('editTkbForm');
+            if (!editForm) return;
+
+            // Script client-side kiểm tra radio button có được chọn không
+            editForm.addEventListener('submit', function(e){
+                var checked = document.querySelector('input[name="CaHoc"]:checked');
+                // Nếu không có ca học nào được chọn, và nếu không có validation message
+                // (validation server-side sẽ bắt lỗi này, nhưng client-side thêm trải nghiệm tốt hơn)
+                if (!checked) {
+                    // Hiển thị lỗi tùy chỉnh
+                    var caHocValidation = document.querySelector('span[asp-validation-for="CaHoc"]');
+                    if (caHocValidation) {
+                        caHocValidation.textContent = 'Vui lòng chọn ca học trước khi lưu.';
+                    } else {
+                        alert('Vui lòng chọn ca học trước khi lưu.');
+                    }
+
+                    e.preventDefault();
+                    return false;
+                }
+            });
+        })();
+    </script>
 }

@@ -1,0 +1,146 @@
+﻿@model QuanLyTTNgoaiNgu.Models.ReportViewModel
+@{
+    ViewData["Title"] = "Chi tiết Báo cáo";
+    Layout = "_LayoutAdmin";
+}
+
+@section Styles {
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        .report-container {
+            max-width: 1000px;
+            margin: 40px auto;
+            background-color: #fff;
+            padding: 40px;
+            border-radius: 16px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.05);
+        }
+
+        h2 {
+            text-align: center;
+            color: #c62828;
+            font-weight: 700;
+            margin-bottom: 30px;
+        }
+
+        canvas {
+            margin-top: 30px;
+            max-width: 100%;
+        }
+
+        .back-button {
+            display: inline-block;
+            margin-top: 40px;
+            padding: 10px 18px;
+            background-color: #c62828;
+            color: white;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+            .back-button:hover {
+                background-color: #b71c1c;
+            }
+    </style>
+}
+
+<div class="report-container">
+    <h2>Báo cáo – @ViewBag.Type</h2>
+    <a asp-action="Index" class="back-button">← Quay lại danh sách</a>
+
+    <canvas id="reportChart" height="150"></canvas>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const ctx = document.getElementById('reportChart').getContext('2d');
+
+            let labels = [], data = [], labelName = '', chartType = 'bar';
+
+            // Cầu vồng 7 sắc
+            const rainbowColors = [
+                '#FF0000', // đỏ
+                '#FF7F00', // cam
+                '#FFFF00', // vàng
+                '#00FF00', // lục
+                '#0000FF', // lam
+                '#4B0082', // chàm
+                '#8B00FF'  // tím
+            ];
+
+            // Gán màu tuần tự nếu số phần tử > 7
+            function getColors(count) {
+                let result = [];
+                for(let i=0; i<count; i++) {
+                    result.push(rainbowColors[i % rainbowColors.length]);
+                }
+                return result;
+            }
+
+            if ("@ViewBag.Type" === "HocVien") {
+                labels = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.StudentsPerClass.Select(x => x.ClassName)));
+                data = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.StudentsPerClass.Select(x => x.Count)));
+                labelName = "Số học viên theo lớp";
+                chartType = 'bar';
+            }
+            else if ("@ViewBag.Type" === "KhoaHoc") {
+                labels = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.StudentsPerCourse.Select(x => x.CourseName)));
+                data = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.StudentsPerCourse.Select(x => x.Count)));
+                labelName = "Số học viên theo khóa";
+                chartType = 'pie';
+            }
+            else if ("@ViewBag.Type" === "DoanhThu") {
+                labels = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.RevenuePerCourse.Select(x => x.Key)));
+                data = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.RevenuePerCourse.Select(x => x.Amount)));
+                labelName = "Doanh thu theo khóa (VND)";
+                chartType = 'bar';
+            }
+            else if ("@ViewBag.Type" === "LopHoc") {
+                labels = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.StudentsPerClass.Select(x => x.ClassName)));
+                data = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.StudentsPerClass.Select(x => x.Count)));
+                labelName = "Số học viên theo lớp";
+                chartType = 'pie';
+            }
+
+            new Chart(ctx, {
+                type: chartType,
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: labelName,
+                        data: data,
+                        backgroundColor: getColors(data.length),
+                        borderColor: '#fff',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: { position: 'top' },
+                        tooltip: { enabled: true },
+                        // Hiển thị tổng số trong Pie chart
+                        datalabels: chartType === 'pie' ? {
+                            color: '#fff',
+                            formatter: (value, context) => {
+                                let sum = context.chart.data.datasets[0].data.reduce((a,b)=>a+b,0);
+                                let percentage = (value*100/sum).toFixed(1)+"%";
+                                return `${value} (${percentage})`;
+                            }
+                        } : null
+                    },
+                    scales: chartType === 'bar' ? { y: { beginAtZero: true } } : {}
+                },
+                plugins: chartType === 'pie' ? [ChartDataLabels] : []
+            });
+        });
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
+}

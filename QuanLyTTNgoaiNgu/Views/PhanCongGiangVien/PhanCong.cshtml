@@ -10,65 +10,84 @@
             max-width: 1000px;
             margin: 50px auto;
             padding: 40px;
-            background: #ffffff;
+            background: #fff5f5; /* tone đỏ nhạt nền */
             border-radius: 12px;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+            box-shadow: 0 8px 20px rgba(200,35,51,0.1);
+        }
+
+        h2, h4 {
+            color: #c82333;
         }
 
         h2 {
             font-size: 32px;
             margin-bottom: 30px;
-            color: #1d3557;
             text-align: center;
+            font-weight: 700;
+            text-shadow: 1px 1px #f8d7da;
         }
 
         .form-label {
             font-weight: 600;
-            color: #333;
+            color: #a71d2a;
         }
 
         .form-control, .form-select {
             border-radius: 8px;
             padding: 10px 14px;
-            box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
+            border: 1.5px solid #c82333;
+            transition: all 0.3s;
         }
 
-        .btn-primary, .btn-success {
+            .form-control:focus, .form-select:focus {
+                border-color: #a71d2a;
+                box-shadow: 0 0 8px rgba(200, 35, 51, 0.2);
+            }
+
+        .btn-primary, .btn-success, .btn-danger {
             border-radius: 8px;
             padding: 10px 20px;
             font-size: 16px;
             font-weight: 600;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 12px rgba(200,35,51,0.2);
             transition: all 0.3s;
+            color: #fff;
+            border: none;
         }
 
         .btn-primary {
-            background-color: #2a9d8f;
-            border: none;
-            color: #fff;
+            background-color: #c82333;
         }
 
             .btn-primary:hover {
-                background-color: #21867a;
+                background-color: #a71d2a;
+                box-shadow: 0 6px 14px rgba(200,35,51,0.4);
             }
 
         .btn-success {
-            background-color: #457b9d;
-            border: none;
-            color: #fff;
+            background-color: #e76f51;
         }
 
             .btn-success:hover {
-                background-color: #35607a;
+                background-color: #d65c40;
+            }
+
+        .btn-danger {
+            background-color: #c82333;
+        }
+
+            .btn-danger:hover {
+                background-color: #a71d2a;
             }
 
         table {
             width: 100%;
             border-collapse: collapse;
             background-color: white;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 12px rgba(200,35,51,0.1);
             border-radius: 8px;
             overflow: hidden;
+            margin-top: 20px;
         }
 
         th, td {
@@ -78,13 +97,13 @@
         }
 
         th {
-            background-color: #1d3557;
+            background-color: #c82333;
             color: white;
             font-weight: 600;
         }
 
         tr:hover {
-            background-color: #f9f9f9;
+            background-color: #ffe6e6;
         }
 
         .badge-ca {
@@ -97,10 +116,15 @@
 
         .validation-summary-errors {
             margin-bottom: 20px;
-            color: #e63946;
+            color: #a71d2a;
+        }
+
+        .table-responsive {
+            overflow-x: auto;
         }
     </style>
 }
+
 
 <div class="phancong-container">
     <h2>Phân công giảng viên</h2>
@@ -115,45 +139,64 @@
     }
     <div asp-validation-summary="All" class="validation-summary-errors"></div>
 
+    <!-- FORM CHỈ CHỌN LỚP -->
     <form asp-action="ThucHienPhanCong" method="post" class="row g-4 mb-4">
-        <div class="col-md-4">
-            <label asp-for="NgayHoc" class="form-label">Ngày học</label>
-            <input asp-for="NgayHoc" type="date" class="form-control" />
-            <span asp-validation-for="NgayHoc" class="text-danger"></span>
-        </div>
-        <div class="col-md-4">
-            <label asp-for="CaHoc" class="form-label">Ca học</label>
-            <select asp-for="CaHoc" class="form-select">
-                <option value="">-- Chọn ca học --</option>
-                <option>1-3</option>
-                <option>4-6</option>
-                <option>7-9</option>
-                <option>3-5</option>
-                <option>5-7</option>
-            </select>
-            <span asp-validation-for="CaHoc" class="text-danger"></span>
-        </div>
-        <div class="col-md-4">
+        <div class="col-md-8">
             <label asp-for="MaLopHoc" class="form-label">Lớp học</label>
             <select asp-for="MaLopHoc" class="form-select" asp-items="ViewBag.LopHocList">
                 <option value="">-- Chọn lớp --</option>
             </select>
             <span asp-validation-for="MaLopHoc" class="text-danger"></span>
         </div>
-        <div class="col-12 text-end">
-            <button type="submit" class="btn btn-primary">Xem danh sách giảng viên</button>
+
+        <div class="col-md-4 d-flex align-items-end">
+            <button type="submit" class="btn btn-primary w-100">Xem danh sách giảng viên</button>
         </div>
     </form>
 
-    @* Luôn hiển thị dropdown giảng viên, nhưng chỉ khi đã load model.DanhSachGiangVienPhuHop *@
-    @if (Model != null && Model.DanhSachGiangVienPhuHop != null)
+    @if (Model?.DanhSachGiangVienPhuHop != null)
     {
         <div class="mb-4">
-            <h4 style="color:#1d3557;">Chọn giảng viên để phân công</h4>
-            <form asp-action="ThucHienPhanCong" method="post" class="row g-4">
-                <input type="hidden" asp-for="NgayHoc" />
-                <input type="hidden" asp-for="CaHoc" />
+            <h4>Danh sách giảng viên phù hợp</h4>
+
+            <p>
+                <strong>Lớp:</strong>
+                @(
+                            (Model.MaLopHoc != 0)
+                            ? ((ViewBag.LopHocList as SelectList)?.FirstOrDefault(i => Convert.ToInt32(i.Value) == Model.MaLopHoc)?.Text ?? "")
+                            : ""
+                            )
+        </p>
+
+            @* Show schedule selector (all schedules of the class) *@
+        @if (ViewBag.Schedules != null)
+            {
+                var schedules = ViewBag.Schedules as List<QuanLyTTNgoaiNgu.Models.THOIKHOABIEU>;
+                <div class="mb-3">
+                    <label class="form-label">Chọn ngày / ca để phân công</label>
+                    <select id="scheduleSelect" class="form-select filter-input" style="min-width:260px;">
+                        @foreach (var s in schedules)
+                        {
+                            var display = s.NgayHoc?.ToString("dd/MM/yyyy") + " - " + s.CaHoc;
+                            // value format: yyyy-MM-dd|CaHoc (JS sẽ parse)
+                            var val = s.NgayHoc?.ToString("yyyy-MM-dd") + "|" + s.CaHoc;
+                            <option value="@val">@display</option>
+                        }
+                    </select>
+                </div>
+            }
+
+            <p>
+                <strong>Ngày đã chọn:</strong> <span id="selectedDate">@Model.NgayHoc != default(DateTime) ? Model.NgayHoc.ToString("dd/MM/yyyy") : ""</span>
+                &nbsp;|&nbsp;
+                <strong>Ca:</strong> <span id="selectedCa">@Model.CaHoc</span>
+            </p>
+
+            <form asp-action="ThucHienPhanCong" method="post" class="row g-3">
+                @* gửi ẩn ngày/ca/lop để action phân công dùng *@
                 <input type="hidden" asp-for="MaLopHoc" />
+                <input type="hidden" asp-for="NgayHoc" id="NgayHocHidden" />
+                <input type="hidden" asp-for="CaHoc" id="CaHocHidden" />
 
                 <div class="col-md-8">
                     <label asp-for="MaGiangVienDuocChon" class="form-label">Giảng viên</label>
@@ -166,14 +209,57 @@
                     </select>
                     <span asp-validation-for="MaGiangVienDuocChon" class="text-danger"></span>
                 </div>
+
                 <div class="col-md-4 d-flex align-items-end">
                     <button type="submit" class="btn btn-success w-100">Phân công</button>
                 </div>
             </form>
         </div>
+
+        <script>
+            (function(){
+                const sel = document.getElementById('scheduleSelect');
+                const dateSpan = document.getElementById('selectedDate');
+                const caSpan = document.getElementById('selectedCa');
+                const ngayHidden = document.getElementById('NgayHocHidden');
+                const caHidden = document.getElementById('CaHocHidden');
+
+                if (!sel) return;
+
+                function applySelection() {
+                    const v = sel.value; // "yyyy-MM-dd|Ca"
+                    const parts = v.split('|');
+                    const d = parts[0];
+                    const ca = parts[1] || '';
+                    // set hidden inputs in format bindable by model (DateTime)
+                    ngayHidden.value = d;
+                    caHidden.value = ca;
+
+                    // show friendly text
+                    const partsD = d.split('-');
+                    if (partsD.length === 3) {
+                        dateSpan.textContent = partsD[2] + '/' + partsD[1] + '/' + partsD[0];
+                    } else {
+                        dateSpan.textContent = d;
+                    }
+                    caSpan.textContent = ca;
+                }
+
+                // init
+                applySelection();
+
+                sel.addEventListener('change', applySelection);
+            })();
+        </script>
     }
 
-    <h4 style="color:#1d3557;">Lịch đã phân công</h4>
+    else if (Model?.DanhSachGiangVienPhuHop != null && !Model.DanhSachGiangVienPhuHop.Any())
+    {
+        <div class="alert alert-warning">Không tìm thấy giảng viên phù hợp cho ngày/ca này.</div>
+    }
+
+    <!-- Lịch đã phân công giữ nguyên phần bạn đang có -->
+    <h4>Lịch đã phân công</h4>
     <div class="table-responsive">
         <table>
             <thead>

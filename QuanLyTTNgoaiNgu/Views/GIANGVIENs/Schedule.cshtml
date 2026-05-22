@@ -5,22 +5,30 @@
 }
 
 <style>
+    body {
+        font-family: 'Segoe UI', sans-serif;
+        background-color: #f4f6f9;
+        padding: 30px;
+    }
+
     h2 {
         text-align: center;
         font-size: 28px;
-        color: #2c3e50;
+        color: #c0392b;
         margin-bottom: 30px;
+        font-weight: 600;
     }
 
     .alert {
-        background-color: #e9f7ef;
-        border-left: 5px solid #28a745;
-        padding: 16px;
+        background-color: #fdecea;
+        border-left: 6px solid #e74c3c;
+        padding: 15px 20px;
+        color: #922b21;
         font-size: 16px;
-        color: #155724;
+        max-width: 900px;
         margin: 20px auto;
-        max-width: 800px;
-        border-radius: 8px;
+        border-radius: 10px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
     }
 
     .table {
@@ -29,46 +37,47 @@
         margin: 0 auto 40px auto;
         border-collapse: collapse;
         background-color: #fff;
-        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
-        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        border-radius: 10px;
         overflow: hidden;
     }
 
         .table thead {
-            background-color: #3498db;
+            background-color: #e74c3c;
             color: white;
         }
 
         .table th, .table td {
-            padding: 14px 18px;
+            padding: 12px 16px;
             text-align: center;
-            border-bottom: 1px solid #ddd;
+            border-bottom: 1px solid #f2f2f2;
+            font-size: 15px;
         }
 
         .table tbody tr:hover {
-            background-color: #f2f2f2;
+            background-color: #fff5f5;
         }
 
     .btn-back {
         display: inline-block;
-        background-color: #6c757d;
+        background-color: #e74c3c;
         color: white;
         text-decoration: none;
-        padding: 10px 20px;
-        font-size: 16px;
-        border-radius: 6px;
-        transition: background-color 0.3s ease;
-        margin-left: 20px;
+        padding: 10px 22px;
+        font-size: 15px;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.1);
     }
 
         .btn-back:hover {
-            background-color: #5a6268;
+            background-color: #c0392b;
+            transform: translateY(-1px);
         }
 
     .btn-container {
-        text-align: left;
-        max-width: 900px;
-        margin: 0 auto 20px auto;
+        text-align: center;
+        margin-top: 25px;
     }
 </style>
 
@@ -76,7 +85,9 @@
 
 @if (!Model.Any())
 {
-    <div class="alert">Chưa có thời khóa biểu cho lớp này.</div>
+    <div class="alert">
+        Chưa có thời khóa biểu cho lớp này.
+    </div>
 }
 else
 {

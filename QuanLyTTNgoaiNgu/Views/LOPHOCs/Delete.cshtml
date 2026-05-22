@@ -6,34 +6,48 @@
 }
 
 @section Styles {
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
     <style>
-        h1 {
-            font-size: 28px;
-            color: #d90429;
+        .page-title {
+            font-size: 32px;
+            font-weight: 800;
+            color: #b60000;
+            display: flex;
+            align-items: center;
+            gap: 12px;
             margin-bottom: 10px;
         }
 
-        h3 {
+            .page-title i {
+                color: #ff0000;
+            }
+
+        .sub-title {
+            font-size: 18px;
             color: #6c757d;
-            margin-bottom: 20px;
+            margin-bottom: 25px;
         }
 
         .confirm-box {
-            background-color: #fff3f3;
-            border: 1px solid #e63946;
-            padding: 25px 30px;
-            border-radius: 12px;
-            box-shadow: 0 6px 14px rgba(0, 0, 0, 0.1);
-            max-width: 800px;
+            background: #fffafa;
+            border: 1px solid #ffc9c9;
+            border-left: 6px solid #d10000;
+            padding: 30px 35px;
+            border-radius: 16px;
+            box-shadow: 0 8px 18px rgba(255, 0, 0, 0.15);
+            max-width: 850px;
+            animation: fadeIn 0.4s ease;
         }
 
         dt {
-            font-weight: 600;
-            color: #1d3557;
+            font-weight: 700;
+            color: #9c0000;
         }
 
         dd {
             margin-bottom: 16px;
+            color: #333;
         }
 
         .form-actions {
@@ -41,63 +55,85 @@
         }
 
         .btn-danger {
-            background-color: #e63946;
+            background: linear-gradient(45deg, #ff0000, #b30000);
             border: none;
             color: white;
-            padding: 10px 20px;
-            font-weight: bold;
-            border-radius: 6px;
+            padding: 12px 26px;
+            font-weight: 700;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(255, 0, 0, 0.3);
+            transition: 0.2s;
         }
 
             .btn-danger:hover {
-                background-color: #c82333;
+                background: linear-gradient(45deg, #cc0000, #990000);
             }
 
         .btn-secondary {
-            background-color: #6c757d;
-            color: white;
-            padding: 10px 20px;
-            font-weight: bold;
-            border-radius: 6px;
+            background: #6c757d;
+            padding: 12px 24px;
+            font-weight: 600;
+            border-radius: 10px;
             margin-left: 10px;
-            text-decoration: none;
+            color: white;
         }
 
             .btn-secondary:hover {
-                background-color: #5a6268;
+                background: #5a6268;
             }
+
+        @@keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
     </style>
 }
 
-<h1>@ViewData["Title"]</h1>
-<h3>Bạn có chắc chắn muốn xóa lớp học này không?</h3>
+<h1 class="page-title">
+    <i class="fa-solid fa-trash-can"></i> @ViewData["Title"]
+</h1>
+<div class="sub-title">
+    Bạn có chắc chắn muốn xóa lớp học này không?
+</div>
 
 <div class="confirm-box">
     <dl class="row">
-        <dt class="col-sm-3">Tên lớp học</dt>
+        <dt class="col-sm-3"><i class="fa-solid fa-chalkboard"></i> Tên lớp học</dt>
         <dd class="col-sm-9">@Html.DisplayFor(m => m.TenLopHoc)</dd>
 
-        <dt class="col-sm-3">Số lượng tối đa</dt>
+        <dt class="col-sm-3"><i class="fa-solid fa-users"></i> Số lượng tối đa</dt>
         <dd class="col-sm-9">@Html.DisplayFor(m => m.SLHocVienToiDa)</dd>
 
-        <dt class="col-sm-3">Ngày bắt đầu</dt>
+        <dt class="col-sm-3"><i class="fa-solid fa-calendar-days"></i> Ngày bắt đầu</dt>
         <dd class="col-sm-9">@Model.NgayBatDau.ToString("dd/MM/yyyy")</dd>
 
-        <dt class="col-sm-3">Ngày kết thúc</dt>
+        <dt class="col-sm-3"><i class="fa-solid fa-calendar-check"></i> Ngày kết thúc</dt>
         <dd class="col-sm-9">@Model.NgayKetThuc.ToString("dd/MM/yyyy")</dd>
 
-        <dt class="col-sm-3">Khóa học</dt>
+        <dt class="col-sm-3"><i class="fa-solid fa-graduation-cap"></i> Khóa học</dt>
         <dd class="col-sm-9">@Model.KHOAHOC?.TenKhoaHoc</dd>
 
-        <dt class="col-sm-3">Giảng viên</dt>
+        <dt class="col-sm-3"><i class="fa-solid fa-person-chalkboard"></i> Giảng viên</dt>
         <dd class="col-sm-9">@Model.GIANGVIEN?.HoTen</dd>
     </dl>
 
     <form asp-action="Delete" method="post">
         <input type="hidden" asp-for="MaLopHoc" />
         <div class="form-actions">
-            <input type="submit" value="Xóa" class="btn btn-danger" />
-            <a asp-action="Index" class="btn btn-secondary">Hủy</a>
+            <button type="submit" class="btn btn-danger">
+                <i class="fa-solid fa-check"></i> Xóa
+            </button>
+
+            <a asp-action="Index" class="btn btn-secondary">
+                <i class="fa-solid fa-xmark"></i> Hủy
+            </a>
         </div>
     </form>
 </div>

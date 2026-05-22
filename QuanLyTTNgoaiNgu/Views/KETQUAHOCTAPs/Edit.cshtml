@@ -7,20 +7,26 @@
 
 @section Styles {
     <style>
-        h1 {
-            font-size: 28px;
-            margin-bottom: 25px;
-            color: #1d3557;
-            text-align: center;
+        body {
+            background: linear-gradient(to bottom, #ffe6e6, #fff);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
-        form {
-            background-color: #ffffff;
-            padding: 30px;
-            margin: 0 auto;
+        h2 {
+            text-align: center;
+            font-size: 28px;
+            color: #b30000;
+            margin-bottom: 30px;
+            font-weight: 700;
+        }
+
+        .edit-container {
             max-width: 600px;
+            margin: 0 auto 50px;
+            background-color: #fff;
+            padding: 35px;
             border-radius: 12px;
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 10px 30px rgba(204,0,0,0.2);
         }
 
         .form-group {
@@ -28,54 +34,62 @@
         }
 
         label {
-            font-weight: 700;
-            color: #1d3557;
+            font-weight: 600;
+            color: #343a40;
             margin-bottom: 8px;
             display: block;
         }
 
-        input[type="number"],
+        input[type="text"],
         input[readonly] {
             width: 100%;
-            padding: 12px 14px;
-            font-size: 16px;
+            padding: 10px 12px;
+            font-size: 15px;
             border: 1px solid #ccc;
             border-radius: 8px;
-            box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
+            background-color: #ffe6e6;
+        }
+
+        input[readonly] {
+            background-color: #f8f9fa;
         }
 
         .text-danger {
-            color: #e63946;
             font-size: 14px;
+            margin-top: 4px;
+            display: block;
         }
 
         .btn {
             padding: 12px 24px;
             font-weight: 600;
             border-radius: 8px;
-            transition: background-color 0.3s ease;
+            transition: background-color 0.3s ease, transform 0.2s ease;
             box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            display: inline-block;
+            min-width: 120px;
+            text-align: center;
+            text-decoration: none;
+            color: white;
         }
 
         .btn-primary {
-            background-color: #3a86ff;
-            color: #fff;
-            border: none;
+            background-color: #cc0000;
         }
 
-            .btn-primary:hover {
-                background-color: #2b6ed3;
-            }
+        .btn-primary:hover {
+            background-color: #990000;
+            transform: scale(1.03);
+        }
 
         .btn-secondary {
             background-color: #6c757d;
-            color: #fff;
-            border: none;
         }
 
-            .btn-secondary:hover {
-                background-color: #5a6268;
-            }
+        .btn-secondary:hover {
+            background-color: #5a6268;
+            transform: scale(1.03);
+        }
 
         .validation-summary-errors {
             margin-bottom: 20px;
@@ -85,36 +99,42 @@
             color: #842029;
             border-radius: 6px;
         }
+
+        .text-center {
+            text-align: center;
+        }
+
+        @@media (max-width: 768px) {
+            .edit-container { padding: 25px 20px; }
+            .btn { width: 100%; margin-bottom: 10px; }
+        }
     </style>
 }
 
-<h1>@ViewData["Title"]</h1>
+<div class="edit-container">
+    <h2>@ViewData["Title"]</h2>
 
-<form asp-action="Edit" method="post">
-    @Html.AntiForgeryToken()
-    <div asp-validation-summary="All" class="validation-summary-errors"></div>
-    <input type="hidden" asp-for="MaKetQua" />
+    <form asp-action="Edit" method="post">
+        @Html.AntiForgeryToken()
+        <div asp-validation-summary="All" class="validation-summary-errors"></div>
+        <input type="hidden" asp-for="MaKetQua" /><div class="form-group">
+            <label asp-for="Diem"></label>
+            <input asp-for="Diem" type="text" />
+            <span asp-validation-for="Diem" class="text-danger"></span>
+        </div>
 
-    <div class="form-group">
-        <label asp-for="Diem"></label>
-        <input asp-for="Diem" type="text" class="form-control" />
-        <span asp-validation-for="Diem" class="text-danger"></span>
-    </div>
+        <div class="form-group">
+            <label asp-for="MaPhieu">Mã phiếu đăng ký</label>
+            <input asp-for="MaPhieu" type="text" readonly />
+        </div>
 
-
-    <div class="form-group">
-        <label asp-for="MaPhieu">Mã phiếu đăng ký</label>
-        <input asp-for="MaPhieu" type="text" readonly class="" />
-    </div>
-
-    <div class="text-center">
-        <button type="submit" class="btn btn-primary">Lưu thay đổi</button>
-        <a asp-action="Index" class="btn btn-secondary">Hủy</a>
-    </div>
-</form>
+        <div class="text-center">
+            <button type="submit" class="btn btn-primary">Lưu thay đổi</button>
+            <a asp-action="Index" class="btn btn-secondary">Hủy</a>
+        </div>
+    </form>
+</div>
 
 @section Scripts {
-    @{
-        await Html.RenderPartialAsync("_ValidationScriptsPartial");
-    }
+    @await Html.PartialAsync("_ValidationScriptsPartial")
 }

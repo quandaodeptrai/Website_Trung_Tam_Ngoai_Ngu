@@ -26,21 +26,34 @@ namespace QuanLyTTNgoaiNgu.Controllers
         }
 
         // GET: Danh sách tất cả đăng ký
-        public async Task<IActionResult> Index()
+            public async Task<IActionResult> Index(string hoTen, string dienThoai, string email)
         {
-            var list = await _context.DANGKYMOI.ToListAsync();
-            return View(list);
+            var query = _context.DANGKYMOI.AsQueryable();
+
+            if (!string.IsNullOrEmpty(hoTen))
+                query = query.Where(x => x.HoTen.Contains(hoTen));
+
+            if (!string.IsNullOrEmpty(dienThoai))
+                query = query.Where(x => x.SoDienThoai.Contains(dienThoai));
+
+            if (!string.IsNullOrEmpty(email))
+                query = query.Where(x => x.Email.Contains(email));
+
+            var danhSach = await query.ToListAsync();
+            return View(danhSach);
         }
+
+        
 
         // GET: Pending - danh sách đăng ký chưa duyệt
         public async Task<IActionResult> Pending()
         {
             var list = await _context.DANGKYMOI
-                                     .Include(d => d.HOCVIEN)
-                                     .Where(d => d.HOCVIEN == null)
+                                     .Where(d => d.DaDuyet == false)
                                      .ToListAsync();
             return View(list);
         }
+
 
         // GET: Approve - hiển thị form duyệt
         public async Task<IActionResult> Approve(int? id)

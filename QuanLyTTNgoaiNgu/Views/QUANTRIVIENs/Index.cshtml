@@ -4,38 +4,89 @@
     ViewData["Title"] = "Index";
 }
 
-<h1>Index</h1>
+<h1 class="page-title">Danh Sách Quản Trị Viên</h1>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.TenQuanTriVien)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.TaiKhoan)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.TenQuanTriVien)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.TaiKhoan.MatKhau)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.MaQuanTriVien">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.MaQuanTriVien">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.MaQuanTriVien">Delete</a>
-            </td>
-        </tr>
+<div class="mb-3 text-end">
+    <a asp-action="Create" class="btn btn-danger btn-lg custom-btn">Tạo Mới</a>
+</div>
+
+<div class="table-responsive">
+    <table class="table table-striped custom-table">
+        <thead class="table-danger">
+            <tr>
+                <th>@Html.DisplayNameFor(model => model.TenQuanTriVien)</th>
+                <th>@Html.DisplayNameFor(model => model.TaiKhoan)</th>
+                <th>Hành Động</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@Html.DisplayFor(modelItem => item.TenQuanTriVien)</td>
+                    <td>@Html.DisplayFor(modelItem => item.TaiKhoan.MatKhau)</td>
+                    <td>
+                        <a asp-action="Edit" asp-route-id="@item.MaQuanTriVien" class="btn btn-sm btn-danger me-1">Chỉnh sửa</a>
+                        <a asp-action="Details" asp-route-id="@item.MaQuanTriVien" class="btn btn-sm btn-outline-danger me-1">Chi tiết</a>
+                        <a asp-action="Delete" asp-route-id="@item.MaQuanTriVien" class="btn btn-sm btn-outline-danger">Xóa</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+@section Styles {
+    <style>
+        body {
+            background-color: #fff5f5;
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        .page-title {
+            text-align: center;
+            color: #c82333;
+            margin-bottom: 30px;
+            font-weight: 700;
+            text-shadow: 1px 1px #f8d7da;
+        }
+
+        .custom-btn {
+            background-color: #c82333;
+            border: none;
+            transition: all 0.3s;
+        }
+
+            .custom-btn:hover {
+                background-color: #a71d2a;
+                box-shadow: 0 4px 12px rgba(200, 35, 51, 0.4);
+            }
+
+        .custom-table th, .custom-table td {
+            vertical-align: middle;
+        }
+
+        .custom-table th {
+            color: #a71d2a;
+            font-weight: 600;
+        }
+
+        .table-striped > tbody > tr:nth-of-type(odd) {
+            background-color: #ffe6e6;
+        }
+
+        .btn-outline-danger {
+            border-color: #c82333;
+            color: #c82333;
+        }
+
+            .btn-outline-danger:hover {
+                background-color: #f8d7da;
+                color: #a71d2a;
+            }
+
+        .me-1 {
+            margin-right: 0.25rem;
+        }
+    </style>
 }
-    </tbody>
-</table>

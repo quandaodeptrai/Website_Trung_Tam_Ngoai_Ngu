@@ -24,12 +24,33 @@ namespace QuanLyTTNgoaiNgu.Controllers
             _context = context;
         }
 
-        // GET: GIANGVIENs
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string hoTen, string chuyenMon, string soDienThoai, string email)
         {
-            var quanLyTTNgoaiNguContext = _context.GIANGVIEN.Include(g => g.TAIKHOAN);
-            return View(await quanLyTTNgoaiNguContext.ToListAsync());
+            var query = _context.GIANGVIEN
+                .Include(g => g.TAIKHOAN)
+                .AsQueryable();
+
+            if (!string.IsNullOrEmpty(hoTen))
+                query = query.Where(g => g.HoTen.Contains(hoTen));
+
+            if (!string.IsNullOrEmpty(chuyenMon))
+                query = query.Where(g => g.ChuyenMon.Contains(chuyenMon));
+
+            if (!string.IsNullOrEmpty(soDienThoai))
+                query = query.Where(g => g.SoDienThoai.Contains(soDienThoai));
+
+            if (!string.IsNullOrEmpty(email))
+                query = query.Where(g => g.Email.Contains(email));
+
+            // Đẩy giá trị lại View để giữ nguyên text người dùng nhập
+            ViewBag.HoTen = hoTen;
+            ViewBag.ChuyenMon = chuyenMon;
+            ViewBag.SoDienThoai = soDienThoai;
+            ViewBag.Email = email;
+
+            return View(await query.ToListAsync());
         }
+
 
         // GET: GIANGVIENs/Details/5
         public async Task<IActionResult> Details(int? id)
@@ -50,29 +71,46 @@ namespace QuanLyTTNgoaiNgu.Controllers
             return View(gIANGVIEN);
         }
 
-        // GET: GIANGVIENs/Create
         public IActionResult Create()
         {
-            ViewData["MaTaiKhoan"] = new SelectList(_context.Set<TAIKHOAN>(), "MaTaiKhoan", "MatKhau");
+            // Không cần ViewData["MaTaiKhoan"] nữa vì chúng ta bỏ select trên form
             return View();
         }
 
         // POST: GIANGVIENs/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("MaGiangVien,HoTen,ChuyenMon,Email,SoDienThoai,MaTaiKhoan")] GIANGVIEN gIANGVIEN)
+        public async Task<IActionResult> Create([Bind("MaGiangVien,HoTen,ChuyenMon,Email,SoDienThoai")] GIANGVIEN gIANGVIEN)
         {
             if (ModelState.IsValid)
             {
+                // đảm bảo có placeholder account với MaTaiKhoan = 1
+                var placeholder = await _context.TAIKHOAN.FindAsync(1);
+                if (placeholder == null)
+                {
+                    // Nếu bạn đã chạy SQL tạo placeholder thì điều này sẽ không xảy ra.
+                    // Tùy chọn: tạo one-time placeholder tự động (không đảm bảo id = 1 nếu là IDENTITY).
+                    // Để an toàn, ta có thể trả lỗi để bạn chạy SQL insert thủ công:
+                    ModelState.AddModelError("", "Không tìm thấy tài khoản placeholder (MaTaiKhoan = 1). Vui lòng tạo bản ghi TAIKHOAN với MaTaiKhoan = 1 trước khi tạo giảng viên.");
+                    return View(gIANGVIEN);
+                }
+
+                // gán tạm mã tài khoản = 1 trước khi lưu
+                gIANGVIEN.MaTaiKhoan = 1;
                 _context.Add(gIANGVIEN);
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+
+                // chuyển sang trang tạo tài khoản, kèm giangVienId và gợi ý
+                return RedirectToAction("Create", "TAIKHOANs", new
+                {
+                    giangVienId = gIANGVIEN.MaGiangVien,
+                    suggestedUser = gIANGVIEN.Email,
+                    suggestedDisplayName = gIANGVIEN.HoTen
+                });
             }
-            ViewData["MaTaiKhoan"] = new SelectList(_context.Set<TAIKHOAN>(), "MaTaiKhoan", "MatKhau", gIANGVIEN.MaTaiKhoan);
             return View(gIANGVIEN);
         }
+
 
         // GET: GIANGVIENs/Edit/5
         public async Task<IActionResult> Edit(int? id)

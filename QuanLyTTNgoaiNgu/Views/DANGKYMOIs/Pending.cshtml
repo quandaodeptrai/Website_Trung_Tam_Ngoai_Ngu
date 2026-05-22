@@ -6,40 +6,52 @@
 
 @section Styles {
     <style>
+        body {
+            background: linear-gradient(to bottom, #ffe6e6, #fff);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
         h2 {
             margin-bottom: 25px;
-            color: #1d3557;
+            color: #b30000;
             font-weight: bold;
             text-align: center;
+            font-size: 28px;
+        }
+
+        .table-wrapper {
+            max-width: 1000px;
+            margin: 0 auto 60px;
+            overflow-x: auto;
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(204,0,0,0.2);
+            padding: 20px;
         }
 
         .custom-table {
             width: 100%;
             border-collapse: collapse;
-            border-radius: 12px;
-            overflow: hidden;
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
-            background-color: #ffffff;
         }
 
             .custom-table thead {
-                background-color: #1d3557;
-                color: #ffffff;
+                background-color: #cc0000;
+                color: #fff;
             }
 
             .custom-table th,
             .custom-table td {
-                padding: 14px;
+                padding: 12px;
                 text-align: center;
                 border-bottom: 1px solid #ddd;
             }
 
             .custom-table tbody tr:hover {
-                background-color: #f9f9f9;
+                background-color: #ffe6e6;
             }
 
         .btn-approve {
-            background-color: #4CAF50;
+            background-color: #cc0000;
             color: white;
             padding: 8px 16px;
             font-size: 14px;
@@ -47,43 +59,60 @@
             border-radius: 6px;
             cursor: pointer;
             font-weight: bold;
-            transition: background-color 0.3s ease;
+            transition: background-color 0.3s ease, transform 0.2s ease;
         }
 
             .btn-approve:hover {
-                background-color: #3e8e41;
+                background-color: #990000;
+                transform: scale(1.05);
             }
+
+        @@media (max-width: 768px) {
+            .table-wrapper {
+                padding: 10px;
+            }
+
+            .custom-table th,
+            .custom-table td {
+                padding: 8px;
+                font-size: 14px;
+            }
+        }
     </style>
 }
 
 <h2>@ViewData["Title"]</h2>
 
-<table class="custom-table">
-    <thead>
-        <tr>
-            <th>Mã</th>
-            <th>Họ tên</th>
-            <th>Ngày sinh</th>
-            <th>Điện thoại</th>
-            <th>Địa chỉ</th>
-            <th>Email</th>
-            <th>Hành động</th> <!-- Thêm cột hành động -->
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var d in Model)
-        {
+<div class="table-wrapper">
+    <table class="custom-table">
+        <thead>
             <tr>
-                <td>@d.MaDangKy</td>
-                <td>@d.HoTen</td>
-                <td>@d.NgaySinh?.ToString("dd/MM/yyyy")</td>
-                <td>@d.SoDienThoai</td>
-                <td>@d.DiaChi</td>
-                <td>@d.Email</td>
-                <td>
-                    <a asp-action="Approve" asp-route-id="@d.MaDangKy" class="btn-approve">Duyệt</a>
-                </td>
+                <th>Mã</th>
+                <th>Họ tên</th>
+                <th>Ngày sinh</th>
+                <th>Điện thoại</th>
+                <th>Địa chỉ</th>
+                <th>Email</th>
+                <th>Duyệt</th>
             </tr>
-        }
-    </tbody>
-</table>
+        </thead>
+        <tbody>
+            @foreach (var d in Model)
+            {
+                <tr>
+                    <td>@d.MaDangKy</td>
+                    <td>@d.HoTen</td>
+                    <td>@d.NgaySinh?.ToString("dd/MM/yyyy")</td>
+                    <td>@d.SoDienThoai</td>
+                    <td>@d.DiaChi</td>
+                    <td>@d.Email</td>
+                    <td>
+                        <a asp-action="Approve" asp-route-id="@d.MaDangKy" class="btn-approve">
+                            Duyệt
+                        </a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

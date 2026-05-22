@@ -5,19 +5,30 @@
 }
 
 @section Styles {
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
     <style>
-        h2 {
-            font-size: 28px;
+        .page-title {
+            font-size: 32px;
+            font-weight: 800;
+            color: #b60000;
+            display: flex;
+            align-items: center;
+            gap: 12px;
             margin-bottom: 25px;
-            color: #1d3557;
         }
 
+            .page-title i {
+                color: #ff0000;
+            }
+
         form {
-            background-color: #ffffff;
-            padding: 30px;
-            border-radius: 12px;
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
-            max-width: 700px;
+            background: #ffffff;
+            padding: 32px;
+            border-radius: 18px;
+            max-width: 750px;
+            border: 1px solid #ffd4d4;
+            box-shadow: 0 8px 20px rgba(255, 0, 0, 0.1);
+            animation: fadeIn 0.35s ease;
         }
 
         .mb-3 {
@@ -25,94 +36,109 @@
         }
 
         label {
-            font-weight: 600;
-            margin-bottom: 5px;
-            color: #1d3557;
+            font-weight: 700;
+            margin-bottom: 6px;
+            color: #9c0000;
         }
 
         input, select {
             font-size: 16px;
             border-radius: 8px;
+            border: 1px solid #d0d0d0;
         }
 
-        .btn-success {
-            background-color: #2a9d8f;
-            color: white;
+            input:focus, select:focus {
+                border-color: #ff4d4d;
+                box-shadow: 0 0 5px rgba(255,0,0,0.35);
+            }
+
+        .btn-save {
+            background: linear-gradient(45deg, #ff3b3b, #b30000);
             border: none;
-            padding: 10px 20px;
-            font-weight: bold;
-        }
-
-            .btn-success:hover {
-                background-color: #21867a;
-            }
-
-        .btn-secondary {
-            background-color: #6c757d;
             color: white;
-            padding: 10px 20px;
+            padding: 12px 22px;
+            border-radius: 10px;
+            font-weight: 700;
+            box-shadow: 0 4px 12px rgba(255, 0, 0, 0.25);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: 0.25s ease;
         }
 
-            .btn-secondary:hover {
-                background-color: #5a6268;
+            .btn-save:hover {
+                background: linear-gradient(45deg, #cc0000, #8b0000);
             }
+
+        .btn-cancel {
+            background: #6c757d;
+            color: white;
+            padding: 12px 20px;
+            font-weight: 700;
+            border-radius: 10px;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+            .btn-cancel:hover {
+                background: #5a6268;
+            }
+
+        @@keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
     </style>
 }
 
-<h2>@ViewData["Title"]</h2>
+<h1 class="page-title">
+    <i class="fa-solid fa-pen-to-square"></i> @ViewData["Title"]
+</h1>
 
 @Html.ValidationSummary(true, "", new { @class = "alert alert-danger" })
 
 <form asp-action="Edit" method="post">
     @Html.AntiForgeryToken()
     <input type="hidden" asp-for="MaLopHoc" />
+    <input type="hidden" asp-for="TenLopHoc" />
+    <input type="hidden" asp-for="NgayBatDau" />
+    <input type="hidden" asp-for="NgayKetThuc" />
+    <input type="hidden" asp-for="MaKhoaHoc" />
+    <input type="hidden" asp-for="MaGiangVien" />
 
     <div class="mb-3">
-        <label asp-for="TenLopHoc" class="form-label"></label>
+        <label asp-for="TenLopHoc"></label>
         <input asp-for="TenLopHoc" class="form-control" />
         <span asp-validation-for="TenLopHoc" class="text-danger"></span>
     </div>
 
     <div class="mb-3">
-        <label asp-for="SLHocVienToiDa" class="form-label"></label>
+        <label asp-for="SLHocVienToiDa"></label>
         <input asp-for="SLHocVienToiDa" type="number" class="form-control" />
         <span asp-validation-for="SLHocVienToiDa" class="text-danger"></span>
     </div>
 
-    <div class="mb-3">
-        <label asp-for="NgayBatDau" class="form-label"></label>
-        <input asp-for="NgayBatDau" type="date" class="form-control" />
-        <span asp-validation-for="NgayBatDau" class="text-danger"></span>
-    </div>
+  
 
-    <div class="mb-3">
-        <label asp-for="NgayKetThuc" class="form-label"></label>
-        <input asp-for="NgayKetThuc" type="date" class="form-control" />
-        <span asp-validation-for="NgayKetThuc" class="text-danger"></span>
-    </div>
 
-    <div class="mb-3">
-        <label asp-for="MaKhoaHoc" class="form-label">Khóa học</label>
-        <select asp-for="MaKhoaHoc" class="form-select" asp-items="ViewBag.MaKhoaHoc">
-            <option value="">-- Chọn khóa học --</option>
-        </select>
-        <span asp-validation-for="MaKhoaHoc" class="text-danger"></span>
-    </div>
+    <button type="submit" class="btn-save">
+        <i class="fa-solid fa-floppy-disk"></i> Lưu thay đổi
+    </button>
 
-    <div class="mb-3">
-        <label asp-for="MaGiangVien" class="form-label">Giảng viên</label>
-        <select asp-for="MaGiangVien" class="form-select" asp-items="ViewBag.MaGiangVien">
-            <option value="">-- Chọn giảng viên --</option>
-        </select>
-        <span asp-validation-for="MaGiangVien" class="text-danger"></span>
-    </div>
-
-    <button type="submit" class="btn btn-success">Lưu</button>
-    <a asp-action="Index" class="btn btn-secondary ms-2">Hủy</a>
+    <a asp-action="Index" class="btn-cancel">
+        <i class="fa-solid fa-arrow-left"></i> Hủy
+    </a>
 </form>
 
 @section Scripts {
-    @{
-        await Html.RenderPartialAsync("_ValidationScriptsPartial");
-    }
+    @await Html.PartialAsync("_ValidationScriptsPartial")
 }

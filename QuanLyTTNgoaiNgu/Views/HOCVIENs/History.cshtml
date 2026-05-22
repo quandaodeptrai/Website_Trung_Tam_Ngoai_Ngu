@@ -6,19 +6,30 @@
 
 @section Styles {
     <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
         h2 {
-            font-size: 26px;
+            font-size: 28px;
             margin-bottom: 25px;
             color: #1d3557;
+            text-align: center;
+        }
+
+        .card {
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(204,0,0,0.15);
+            max-width: 1000px;
+            margin: 0 auto 20px;
+            overflow-x: auto;
         }
 
         table {
             width: 100%;
             border-collapse: collapse;
-            background-color: #fff;
-            border-radius: 8px;
-            overflow: hidden;
-            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
         }
 
         th, td {
@@ -27,16 +38,16 @@
         }
 
         thead {
-            background-color: #1d3557;
+            background-color: #cc0000; /* đỏ nổi bật */
             color: white;
         }
 
         tbody tr:nth-child(even) {
-            background-color: #f1f1f1;
+            background-color: #fdf0f0; /* đỏ nhạt */
         }
 
         tbody tr:hover {
-            background-color: #e0f0ff;
+            background-color: #ffe6e6;
         }
 
         td {
@@ -46,49 +57,63 @@
 
         .btn-back {
             display: inline-block;
-            margin-top: 30px;
-            padding: 10px 20px;
-            background-color: #6c757d;
+            margin-top: 25px;
+            padding: 12px 28px;
+            background-color: #6c757d; /* xám */
             color: white;
-            text-decoration: none;
             font-weight: 600;
-            border-radius: 6px;
-            transition: background 0.3s;
+            text-decoration: none;
+            border-radius: 8px;
+            box-shadow: 0 5px 12px rgba(108,117,125,0.3);
+            transition: 0.3s;
         }
 
             .btn-back:hover {
                 background-color: #5a6268;
+                transform: translateY(-2px);
             }
+
+        @@media (max-width: 480px) {
+            .card {
+                padding: 20px;
+            }
+
+            .btn-back {
+                width: 100%;
+                margin-bottom: 10px;
+            }
+        }
     </style>
 }
 
 <h2>@ViewData["Title"] – @Model.DANGKYMOI?.HoTen</h2>
 
-<table>
-    <thead>
-        <tr>
-            <th>Lớp học</th>
-            <th>Ngày đăng ký</th>
-            <th>Học phí (VND)</th>
-            <th>Trạng thái nộp</th>
-            <th>Ngày nộp</th>
-            <th>Điểm</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var ph in Model.PHIEUDANGKies)
-        {
+<div class="card">
+    <table>
+        <thead>
             <tr>
-                <td>@ph.LOPHOC?.TenLopHoc</td>
-                <td>@ph.NgayDangKy?.ToString("dd/MM/yyyy")</td>
-                <td>@ph.LOPHOC?.KHOAHOC?.MucHocPhi.ToString("N0")</td>
-                <td>@(ph.HOCPHI?.TrangThai == true ? "Đã nộp" : "Chưa nộp")</td>
-                <td>@(ph.HOCPHI?.NgayNop?.ToString("dd/MM/yyyy") ?? "-")</td>
-                <td>@(ph.KETQUAHOCTAP != null ? ph.KETQUAHOCTAP.Diem.ToString("0.0") : "-")</td>
+                <th>Lớp học</th>
+                <th>Ngày đăng ký</th>
+                <th>Học phí (VND)</th>
+                <th>Trạng thái nộp</th>
+                <th>Ngày nộp</th>
+                <th>Điểm</th>
             </tr>
-        }
-    </tbody>
-</table>
+        </thead>
+        <tbody>
+            @foreach (var ph in Model.PHIEUDANGKies)
+            {
+                <tr>
+                    <td>@ph.LOPHOC?.TenLopHoc</td>
+                    <td>@ph.NgayDangKy?.ToString("dd/MM/yyyy")</td>
+                    <td>@ph.LOPHOC?.KHOAHOC?.MucHocPhi.ToString("N0")</td>
+                    <td>@(ph.HOCPHI?.TrangThai == true ? "Đã nộp" : "Chưa nộp")</td>
+                    <td>@(ph.HOCPHI?.NgayNop?.ToString("dd/MM/yyyy") ?? "-")</td>
+                    <td>@(ph.KETQUAHOCTAP != null ? ph.KETQUAHOCTAP.Diem.ToString("0.0") : "-")</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
 
-<!-- Nút Quay lại -->
-<a  asp-action="Index" class="btn-back">← Quay lại</a>
+<a asp-action="Index" class="btn-back">← Quay lại</a>

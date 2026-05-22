@@ -1,157 +1,97 @@
-﻿@model QuanLyTTNgoaiNgu.Models.ReportViewModel
-@{
-    ViewData["Title"] = "Báo cáo – Thống kê";
-    Layout = "_LayoutAdmin";
+﻿﻿@{
+ViewData["Title"] = "Báo cáo – Thống kê";
+Layout = "_LayoutAdmin";
 }
 
 @section Styles {
     <style>
         body {
             font-family: 'Segoe UI', sans-serif;
-            background: linear-gradient(to right, #f8f9fa, #e9ecef);
         }
 
-        .report-container {
-            max-width: 1000px;
+        .report-dashboard {
+            max-width: 1100px;
             margin: 40px auto;
-            background-color: white;
-            padding: 40px;
-            border-radius: 16px;
-            box-shadow: 0 0 20px rgba(0,0,0,0.05);
         }
 
         h2 {
             text-align: center;
-            color: #2c3e50;
+            color: #c62828;
+            font-weight: 700;
             margin-bottom: 30px;
         }
 
-        h4, h5 {
-            color: #1d3557;
-            margin-top: 30px;
+        .report-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 25px;
         }
 
-        ul {
-            list-style: none;
-            padding-left: 0;
+        .report-card {
+            background: #fff5f5;
+            border-left: 6px solid #c62828;
+            border-radius: 12px;
+            padding: 30px 20px;
+            text-align: center;
+            box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+            transition: transform 0.3s ease, background 0.3s ease;
+            cursor: pointer;
         }
 
-            ul li {
-                background-color: #f1f1f1;
-                margin: 6px 0;
-                padding: 10px 14px;
-                border-radius: 8px;
+            .report-card:hover {
+                background: #ffeaea;
+                transform: translateY(-5px);
             }
 
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 10px;
-            font-size: 15px;
-        }
+            .report-card i {
+                font-size: 40px;
+                color: #c62828;
+                margin-bottom: 12px;
+            }
 
-        th, td {
-            padding: 10px;
-            border: 1px solid #ccc;
-            text-align: left;
-        }
+            .report-card h4 {
+                margin-bottom: 8px;
+                color: #c62828;
+                font-weight: 600;
+            }
 
-        th {
-            background-color: #6c757d;
-            color: white;
-        }
-
-        tr:nth-child(even) {
-            background-color: #f8f9fa;
-        }
-
-        tr:hover {
-            background-color: #e2e6ea;
-        }
-
-        .back-button {
-            display: inline-block;
-            margin-top: 40px;
-            padding: 10px 18px;
-            background-color: #1d3557;
-            color: white;
-            border-radius: 8px;
-            text-decoration: none;
-            transition: background 0.3s ease;
-        }
-
-            .back-button:hover {
-                background-color: #457b9d;
+            .report-card p {
+                font-size: 14px;
+                color: #555;
             }
     </style>
 }
 
-<div class="report-container">
-    <h2>@ViewData["Title"]</h2>
+<div class="report-dashboard">
+    <h2>Báo cáo – Thống kê</h2>
 
-    <h4>Tổng quan</h4>
-    <ul>
-        <li>Học viên: @Model.TotalStudents</li>
-        <li>Giảng viên: @Model.TotalTeachers</li>
-        <li>Lớp học: @Model.TotalClasses</li>
-        <li>HV chưa đăng ký lớp: @Model.UnenrolledStudents</li>
-    </ul>
+    <div class="report-grid">
+        <a asp-action="Detail" asp-route-type="HocVien" class="report-card">
+            <i class="fas fa-user-graduate"></i>
+            <h4>Học viên</h4>
+            <p>Số lượng học viên, học viên chưa đăng ký lớp</p>
+        </a>
 
-    <h4>Số HV theo lớp</h4>
-    <table>
-        <thead><tr><th>Lớp</th><th>Số HV</th></tr></thead>
-        <tbody>
-            @foreach (var c in Model.StudentsPerClass)
-            {
-                <tr><td>@c.ClassName</td><td>@c.Count</td></tr>
-            }
-        </tbody>
-    </table>
+        <a asp-action="Detail" asp-route-type="LopHoc" class="report-card">
+            <i class="fas fa-chalkboard-teacher"></i>
+            <h4>Lớp học</h4>
+            <p>Số học viên theo lớp, giảng viên phụ trách</p>
+        </a>
 
-    <h4>Số lớp theo khóa</h4>
-    <table>
-        <thead><tr><th>Khóa</th><th>Số lớp</th></tr></thead>
-        <tbody>
-            @foreach (var c in Model.ClassesPerCourse)
-            {
-                <tr><td>@c.CourseName</td><td>@c.Count</td></tr>
-            }
-        </tbody>
-    </table>
+        <a asp-action="Detail" asp-route-type="KhoaHoc" class="report-card">
+            <i class="fas fa-book"></i>
+            <h4>Khóa học</h4>
+            <p>Số lớp, số học viên, doanh thu theo khóa</p>
+        </a>
 
-    <h4>Số HV theo khóa</h4>
-    <table>
-        <thead><tr><th>Khóa</th><th>Số HV</th></tr></thead>
-        <tbody>
-            @foreach (var c in Model.StudentsPerCourse)
-            {
-                <tr><td>@c.CourseName</td><td>@c.Count</td></tr>
-            }
-        </tbody>
-    </table>
-
-    <h4>Tổng doanh thu</h4>
-    <h5>Theo lớp</h5>
-    <table>
-        <thead><tr><th>Lớp</th><th>Doanh thu</th></tr></thead>
-        <tbody>
-            @foreach (var r in Model.RevenuePerClass)
-            {
-                <tr><td>@r.Key</td><td>@($"{r.Amount:N0} VND")</td></tr>
-            }
-        </tbody>
-    </table>
-
-    <h5>Theo khóa</h5>
-    <table>
-        <thead><tr><th>Khóa</th><th>Doanh thu</th></tr></thead>
-        <tbody>
-            @foreach (var r in Model.RevenuePerCourse)
-            {
-                <tr><td>@r.Key</td><td>@($"{r.Amount:N0} VND")</td></tr>
-            }
-        </tbody>
-    </table>
-
-    <a href="javascript:history.back()" class="back-button">← Quay lại</a>
+        <a asp-action="Detail" asp-route-type="DoanhThu" class="report-card">
+            <i class="fas fa-coins"></i>
+            <h4>Doanh thu</h4>
+            <p>Tổng doanh thu, theo lớp, theo khóa học</p>
+        </a>
+    </div>
 </div>
+
+@section Scripts {
+    <script src="https://kit.fontawesome.com/a2d04d4f1d.js" crossorigin="anonymous"></script>
+}

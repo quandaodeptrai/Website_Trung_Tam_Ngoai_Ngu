@@ -48,22 +48,52 @@ namespace QuanLyTTNgoaiNgu.Controllers
         }
 
         // GET: TAIKHOANs/Create
-        public IActionResult Create()
+        // GET: TAIKHOANs/Create
+        public IActionResult Create(int? giangVienId, string suggestedUser, string suggestedDisplayName)
         {
-            return View();
+            var model = new TAIKHOAN();
+
+            if (!string.IsNullOrEmpty(suggestedUser))
+            {
+                model.TenDangNhap = suggestedUser;
+            }
+
+            // Đưa các thông tin phụ lên ViewBag để hiển thị / dùng hidden field
+            ViewBag.GiangVienId = giangVienId;
+            ViewBag.SuggestedDisplayName = suggestedDisplayName;
+
+            return View(model);
         }
 
         // POST: TAIKHOANs/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("MaTaiKhoan,TenDangNhap,MatKhau,VaiTro")] TAIKHOAN tAIKHOAN)
+        public async Task<IActionResult> Create([Bind("MaTaiKhoan,TenDangNhap,MatKhau,VaiTro")] TAIKHOAN tAIKHOAN, int? giangVienId)
         {
             if (ModelState.IsValid)
             {
                 _context.Add(tAIKHOAN);
                 await _context.SaveChangesAsync();
+
+                if (giangVienId.HasValue)
+                {
+                    var gv = await _context.GIANGVIEN.FindAsync(giangVienId.Value);
+                    if (gv != null)
+                    {
+                        // Chỉ cập nhật nếu hiện đang trỏ tới placeholder = 1 (tránh ghi đè nếu đã có account khác)
+                        if (gv.MaTaiKhoan == 1)
+                        {
+                            gv.MaTaiKhoan = tAIKHOAN.MaTaiKhoan;
+                            _context.Update(gv);
+                            await _context.SaveChangesAsync();
+                        }
+                        else
+                        {
+                            // Tuỳ chọn: thêm log hoặc thông báo admin rằng gv đã có MaTaiKhoan khác
+                        }
+                    }
+                }
+
                 return RedirectToAction(nameof(Index));
             }
             return View(tAIKHOAN);

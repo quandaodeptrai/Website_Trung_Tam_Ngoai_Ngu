@@ -7,141 +7,178 @@
 
 @section Styles {
     <style>
-        .register-wrapper {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 80vh;
-            padding: 20px;
+        body {
+            background: linear-gradient(to bottom, #ffe6e6, #fff);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
-        .register-box {
-            background-color: #fff;
-            padding: 40px;
+        .register-container {
+            max-width: 900px;
+            margin: 40px auto 60px;
+            background: #fff;
             border-radius: 12px;
-            max-width: 600px;
-            width: 100%;
-            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
-        }
-
-            .register-box h2 {
-                text-align: center;
-                font-weight: 700;
-                color: #1d3557;
-                margin-bottom: 30px;
-            }
-
-        .form-group {
+            box-shadow: 0 10px 30px rgba(204, 0, 0, 0.2);
             display: flex;
-            align-items: center;
-            margin-bottom: 20px;
+            overflow: hidden;
         }
 
-            .form-group label {
-                width: 130px;
-                margin-bottom: 0;
-                font-weight: 600;
-                color: #333;
-            }
-
-            .form-group input {
-                flex: 1;
-                padding: 12px;
-                border-radius: 8px;
-                border: 1px solid #ccc;
-                font-size: 16px;
-            }
-
-        .form-actions {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-top: 30px;
-        }
-
-        .btn-submit {
+        /* Cột ảnh bên trái */
+        .register-image {
             flex: 1;
-            background-color: #2a9d8f;
-            color: white;
-            font-weight: bold;
-            padding: 14px;
-            border: none;
-            border-radius: 8px;
-            transition: background 0.3s;
+            min-width: 320px;
+            background: url('https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&w=800&q=80') center/cover no-repeat;
         }
 
-            .btn-submit:hover {
-                background-color: #21867a;
+        /* Cột form bên phải */
+        .register-form {
+            flex: 1;
+            padding: 48px 60px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+            .register-form h2 {
+                font-size: 28px;
+                font-weight: 700;
+                margin-bottom: 28px;
+                color: #b30000;
+                text-align: center;
+            }
+
+        label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #660000;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        input[type="date"] {
+            width: 100%;
+            padding: 12px 14px;
+            font-size: 16px;
+            border-radius: 8px;
+            border: 1.8px solid #cc0000;
+            margin-bottom: 18px;
+            transition: 0.3s ease;
+            outline: none;
+        }
+
+            input[type="text"]:focus,
+            input[type="email"]:focus,
+            input[type="date"]:focus {
+                border-color: #990000;
+                box-shadow: 0 0 6px rgba(204, 0, 0, 0.5);
+            }
+
+        .btn-register {
+            width: 100%;
+            background: #cc0000;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            padding: 12px;
+            font-weight: 600;
+            font-size: 16px;
+            cursor: pointer;
+            transition: 0.3s;
+            box-shadow: 0 5px 10px rgba(204, 0, 0, 0.3);
+        }
+
+            .btn-register:hover {
+                background: #990000;
             }
 
         .btn-cancel {
-            flex: 1;
-            margin-left: 15px;
-            background-color: #e63946;
-            color: #fff;
-            font-weight: bold;
-            padding: 14px;
-            border: none;
-            border-radius: 8px;
+            display: block;
+            width: 100%;
             text-align: center;
+            margin-top: 12px;
+            padding: 12px;
+            background: #e63946;
+            color: #fff;
+            border-radius: 6px;
             text-decoration: none;
-            transition: background 0.3s;
+            font-weight: 600;
+            transition: 0.3s;
         }
 
             .btn-cancel:hover {
-                background-color: #c92a35;
-                text-decoration: none;
+                background: #c92a35;
             }
 
         .text-danger {
-            font-size: 14px;
-            color: red;
-            margin-top: 5px;
+            background: #ffe6e6;
+            color: #b30000;
+            padding: 10px 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-weight: 600;
+            box-shadow: 0 2px 5px rgba(204, 0, 0, 0.3);
+        }
+
+        @@media (max-width: 768px) {
+            .register-container {
+                flex-direction: column;
+                margin: 20px auto 40px;
+            }
+
+            .register-image {
+                height: 200px;
+            }
+
+            .register-form {
+                padding: 32px 24px;
+            }
         }
     </style>
 }
 
-<div class="register-wrapper">
-    <div class="register-box">
+<div class="register-container">
+
+    <!-- Cột ảnh bên trái -->
+    <div class="register-image"></div>
+
+    <!-- Cột form bên phải -->
+    <div class="register-form">
         <h2>Đăng ký học viên mới</h2>
 
-        <form asp-action="Create" method="post">
-            <div class="form-group">
-                <label asp-for="HoTen"></label>
-                <input asp-for="HoTen" class="form-control" />
+        @if (!ViewData.ModelState.IsValid)
+        {
+            <div class="text-danger">
+                @ViewData.ModelState[string.Empty]?.Errors.FirstOrDefault()?.ErrorMessage
             </div>
+        }
+
+        <form asp-action="Create" method="post">
+            <label asp-for="HoTen">Họ và tên <span style="color: red;">*</span></label>
+            <input asp-for="HoTen" placeholder="Nhập họ và tên..." required />
             <span asp-validation-for="HoTen" class="text-danger"></span>
 
-            <div class="form-group">
-                <label asp-for="NgaySinh"></label>
-                <input asp-for="NgaySinh" type="date" class="form-control" />
-            </div>
+            <label asp-for="NgaySinh">Ngày sinh <span style="color: red;">*</span></label>
+            <input asp-for="NgaySinh" type="date" required />
             <span asp-validation-for="NgaySinh" class="text-danger"></span>
 
-            <div class="form-group">
-                <label asp-for="SoDienThoai"></label>
-                <input asp-for="SoDienThoai" class="form-control" />
-            </div>
+            <label asp-for="SoDienThoai">Số điện thoại <span style="color: red;">*</span></label>
+            <input asp-for="SoDienThoai" placeholder="Số điện thoại..." required />
             <span asp-validation-for="SoDienThoai" class="text-danger"></span>
 
-            <div class="form-group">
-                <label asp-for="DiaChi"></label>
-                <input asp-for="DiaChi" class="form-control" />
-            </div>
+            <label asp-for="DiaChi">Địa chỉ <span style="color: red;">*</span></label>
+            <input asp-for="DiaChi" placeholder="Địa chỉ..." required />
             <span asp-validation-for="DiaChi" class="text-danger"></span>
 
-            <div class="form-group">
-                <label asp-for="Email"></label>
-                <input asp-for="Email" class="form-control" />
-            </div>
+            <label asp-for="Email">Email <span style="color: red;">*</span></label>
+            <input asp-for="Email" placeholder="Email..." required />
             <span asp-validation-for="Email" class="text-danger"></span>
 
-            <div class="form-actions">
-                <button type="submit" class="btn-submit">Gửi đăng ký</button>
-                <a asp-controller="Home" asp-action="Index" class="btn-cancel">Hủy</a>
-            </div>
+            <button type="submit" class="btn-register">Gửi đăng ký</button>
+
+            <a asp-controller="Home" asp-action="Index" class="btn-cancel">Hủy</a>
         </form>
     </div>
+
 </div>
 
 @section Scripts {

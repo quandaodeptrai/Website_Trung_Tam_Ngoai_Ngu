@@ -10,107 +10,119 @@
             font-size: 28px;
             margin-bottom: 25px;
             color: #1d3557;
+            text-align: center;
         }
 
         .card {
             background-color: #fff;
             padding: 30px;
             border-radius: 12px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 10px 25px rgba(204,0,0,0.15);
             max-width: 800px;
+            margin: 0 auto 30px;
         }
 
-        .detail-row {
-            display: flex;
-            margin-bottom: 16px;
+        dl.row {
+            margin: 0;
         }
 
-        .detail-label {
+        dt {
+            font-weight: 600;
+            color: #660000;
             width: 200px;
-            font-weight: bold;
+            float: left;
+        }
+
+        dd {
+            margin: 0 0 15px 210px;
             color: #333;
         }
 
-        .detail-value {
-            flex: 1;
-            color: #555;
-        }
-
         .button-group {
-            display: flex;
-            gap: 16px;
+            text-align: center;
             margin-top: 30px;
         }
 
         .btn {
             display: inline-block;
-            padding: 10px 24px;
-            text-decoration: none;
-            border-radius: 6px;
+            padding: 12px 28px;
             font-weight: 600;
-            transition: background-color 0.3s;
-            text-align: center;
+            text-decoration: none;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: 0.3s;
+            margin: 0 10px;
         }
 
         .btn-primary {
-            background-color: #2a9d8f;
+            background-color: #cc0000;
             color: white;
+            border: none;
+            box-shadow: 0 5px 12px rgba(204,0,0,0.3);
         }
 
             .btn-primary:hover {
-                background-color: #21867a;
+                background-color: #990000;
+                transform: translateY(-2px);
             }
 
         .btn-secondary {
             background-color: #6c757d;
             color: white;
+            border: none;
         }
 
             .btn-secondary:hover {
                 background-color: #5a6268;
+                transform: translateY(-2px);
             }
+
+        @@media (max-width: 480px) {
+            dt, dd {
+                float: none;
+                margin-left: 0;
+            }
+
+            .btn {
+                width: 100%;
+                margin-bottom: 10px;
+            }
+
+            .button-group {
+                display: flex;
+                flex-direction: column;
+                align-items: stretch;
+            }
+        }
     </style>
 }
 
 <h1>@ViewData["Title"]</h1>
 
 <div class="card">
-    <div class="detail-row">
-        <div class="detail-label">Mã Học viên:</div>
-        <div class="detail-value">@Model.MaHocVien</div>
-    </div>
+    <dl class="row">
+        <dt>Mã Học viên:</dt>
+        <dd>@Model.MaHocVien</dd>
 
-    <div class="detail-row">
-        <div class="detail-label">Họ tên:</div>
-        <div class="detail-value">@Model.DANGKYMOI?.HoTen</div>
-    </div>
+        <dt>Họ tên:</dt>
+        <dd>@Model.DANGKYMOI?.HoTen</dd>
 
-    <div class="detail-row">
-        <div class="detail-label">Ngày sinh:</div>
-        <div class="detail-value">@(Model.DANGKYMOI?.NgaySinh?.ToString("dd/MM/yyyy") ?? "")</div>
-    </div>
+        <dt>Ngày sinh:</dt>
+        <dd>@(Model.DANGKYMOI?.NgaySinh?.ToString("dd/MM/yyyy") ?? "")</dd>
 
-    <div class="detail-row">
-        <div class="detail-label">Điện thoại:</div>
-        <div class="detail-value">@Model.DANGKYMOI?.SoDienThoai</div>
-    </div>
+        <dt>Điện thoại:</dt>
+        <dd>@Model.DANGKYMOI?.SoDienThoai</dd>
 
-    <div class="detail-row">
-        <div class="detail-label">Địa chỉ:</div>
-        <div class="detail-value">@Model.DANGKYMOI?.DiaChi</div>
-    </div>
+        <dt>Địa chỉ:</dt>
+        <dd>@Model.DANGKYMOI?.DiaChi</dd>
 
-    <div class="detail-row">
-        <div class="detail-label">Email:</div>
-        <div class="detail-value">@Model.DANGKYMOI?.Email</div>
-    </div>
+        <dt>Email:</dt>
+        <dd>@Model.DANGKYMOI?.Email</dd>
 
-    <div class="detail-row">
-        <div class="detail-label">Mã Tài khoản:</div>
-        <div class="detail-value">@Model.MaTaiKhoan</div>
-    </div>
+        <dt>Mã Tài khoản:</dt>
+        <dd>@Model.MaTaiKhoan</dd>
+    </dl>
 
-    <!-- Nhóm nút chức năng -->
     <div class="button-group">
         <a asp-action="Edit" asp-route-id="@Model.MaHocVien" class="btn btn-primary">Sửa</a>
         <a asp-action="Index" class="btn btn-secondary">Quay lại</a>

@@ -7,96 +7,128 @@
 
 @section Styles {
     <style>
-        h1 {
-            font-size: 28px;
-            margin-bottom: 20px;
-            color: #1d3557;
+        .title {
+            font-size: 32px;
+            font-weight: 700;
+            color: #B30000;
+            text-transform: uppercase;
+            margin-bottom: 25px;
         }
 
-        .card {
-            background-color: #fff;
-            padding: 30px;
-            border-radius: 12px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-            max-width: 800px;
+        .card-detail {
+            background: #ffffff;
+            padding: 35px;
+            border-radius: 18px;
+            max-width: 900px;
+            box-shadow: 0 8px 20px rgba(179,0,0,0.15);
+            animation: fadeIn 0.35s ease;
         }
 
         .detail-row {
             display: flex;
-            margin-bottom: 16px;
+            padding: 12px 0;
+            border-bottom: 1px solid #f3f3f3;
         }
 
         .detail-label {
-            width: 200px;
-            font-weight: bold;
-            color: #333;
+            width: 220px;
+            font-weight: 700;
+            color: #7a0a0a;
+            font-size: 16px;
         }
 
         .detail-value {
             flex: 1;
-            color: #555;
+            font-size: 16px;
+            color: #333;
         }
 
-        .btn {
-            display: inline-block;
-            padding: 10px 20px;
-            text-decoration: none;
-            border-radius: 6px;
+        /* Nút */
+        .btn-red {
+            background: #B30000;
+            color: white !important;
+            padding: 10px 22px;
+            border-radius: 8px;
             font-weight: 600;
-            margin-right: 10px;
-            transition: background-color 0.3s;
+            text-decoration: none;
+            transition: 0.25s;
+            display: inline-block;
         }
 
-        .btn-primary {
-            background-color: #2a9d8f;
-            color: white;
-        }
-
-            .btn-primary:hover {
-                background-color: #21867a;
+            .btn-red:hover {
+                background: #990000;
             }
 
-        .btn-secondary {
-            background-color: #6c757d;
-            color: white;
+        .btn-gray {
+            background: #6c757d;
+            color: white !important;
+            padding: 10px 22px;
+            border-radius: 8px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: 0.25s;
+            display: inline-block;
         }
 
-            .btn-secondary:hover {
-                background-color: #5a6268;
+            .btn-gray:hover {
+                background: #5a6268;
             }
 
         .btn-container {
-            margin-top: 25px;
+            margin-top: 30px;
+        }
+
+        @@keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
     </style>
 }
 
-<h1>@ViewData["Title"]</h1>
+<h1 class="title">@ViewData["Title"]</h1>
 
-<div class="card">
+<div class="card-detail">
+
     <div class="detail-row">
         <div class="detail-label">Họ tên:</div>
         <div class="detail-value">@Model.HoTen</div>
     </div>
+
     <div class="detail-row">
         <div class="detail-label">Chuyên môn:</div>
         <div class="detail-value">@Model.ChuyenMon</div>
     </div>
+
     <div class="detail-row">
         <div class="detail-label">Email:</div>
         <div class="detail-value">@Model.Email</div>
     </div>
+
     <div class="detail-row">
         <div class="detail-label">Điện thoại:</div>
         <div class="detail-value">@Model.SoDienThoai</div>
     </div>
+
     <div class="detail-row">
         <div class="detail-label">Mật khẩu tài khoản:</div>
         <div class="detail-value">@Model.TAIKHOAN?.MatKhau</div>
     </div>
+
 </div>
 
 <div class="btn-container">
-    <a asp-action="Edit" asp-route-id="@Model?.MaGiangVien" class="btn btn-primary">Sửa</a>
-    <a asp-action="Index" class="btn btn-secondary">Quay lại</a>
+    <a asp-action="Edit" asp-route-id="@Model.MaGiangVien" class="btn-red">
+        ✏️ Sửa
+    </a>
+
+    <a asp-action="Index" class="btn-gray">
+        ⬅️ Quay lại
+    </a>
 </div>

@@ -7,95 +7,130 @@
 
 @section Styles {
     <style>
+        /* Màu chủ đạo: Đỏ Đô (#800000) và Đỏ Thẫm (#A52A2A) */
+
         h1 {
-            font-size: 28px;
+            font-size: 32px; /* Tăng kích thước tiêu đề */
             margin-bottom: 25px;
-            color: #1d3557;
+            color: #800000; /* Tiêu đề màu Đỏ Đô */
             text-align: left;
+            border-bottom: 2px solid #eee; /* Thêm đường viền nhẹ */
+            padding-bottom: 10px;
         }
 
         .table-container {
             background-color: #fff;
-            padding: 25px;
-            border-radius: 10px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            padding: 30px; /* Tăng padding */
+            border-radius: 12px; /* Bo góc mềm mại hơn */
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1); /* Tăng độ sâu đổ bóng */
             margin-top: 20px;
         }
 
         table {
             width: 100%;
             border-collapse: collapse;
+            margin-top: 15px;
         }
 
         th, td {
-            padding: 12px 15px;
-            border-bottom: 1px solid #eee;
+            padding: 15px 18px; /* Tăng padding ô */
+            border-bottom: 1px solid #ddd;
             text-align: left;
+            font-size: 15px;
         }
 
         th {
-            background-color: #1d3557;
+            background-color: #A52A2A; /* Tiêu đề cột màu Đỏ Thẫm */
             color: white;
-            font-weight: bold;
+            font-weight: 600; /* Tăng độ đậm */
+            text-transform: uppercase; /* Viết hoa chữ cái đầu */
+        }
+
+        /* Làm tròn góc cho đầu bảng */
+        thead tr:first-child th:first-child {
+            border-top-left-radius: 8px;
+        }
+
+        thead tr:first-child th:last-child {
+            border-top-right-radius: 8px;
         }
 
         tr:hover {
-            background-color: #f8f9fa;
+            background-color: #fcebeb; /* Màu hồng nhạt khi hover */
+            transition: background-color 0.2s ease;
+        }
+        
+        /* Loại bỏ border-bottom cho hàng cuối cùng */
+        tbody tr:last-child td {
+            border-bottom: none;
         }
 
         .action-buttons a {
-            margin-right: 8px;
-            padding: 6px 12px;
+            margin-right: 10px; /* Tăng khoảng cách giữa các nút */
+            padding: 8px 15px;
             font-size: 14px;
             border-radius: 5px;
             text-decoration: none;
             color: white;
+            transition: background-color 0.2s ease, transform 0.1s ease;
+            display: inline-flex; /* Canh chỉnh biểu tượng nếu có */
+            align-items: center;
         }
 
+        /* Nút Sửa: Màu xanh dương nhẹ nhàng (giữ màu khác đỏ để phân biệt chức năng) */
         .btn-edit {
             background-color: #3a86ff;
         }
 
             .btn-edit:hover {
                 background-color: #2b6ed3;
+                transform: translateY(-1px);
             }
 
+        /* Nút Chi tiết: Màu xanh lá cây nhẹ nhàng (giữ màu khác đỏ để phân biệt chức năng) */
         .btn-details {
             background-color: #43aa8b;
         }
 
             .btn-details:hover {
                 background-color: #2f8f72;
+                transform: translateY(-1px);
             }
 
+        /* Nút Xóa: Màu Đỏ tươi/nguy hiểm */
         .btn-delete {
-            background-color: #f94144;
+            background-color: #DC3545; /* Đỏ tươi */
         }
 
             .btn-delete:hover {
-                background-color: #d62828;
+                background-color: #C82333;
+                transform: translateY(-1px);
             }
 
+        /* Nút Thêm mới */
         .btn-create {
             display: inline-block;
-            margin-bottom: 15px;
-            background-color: #1d3557;
+            margin-bottom: 20px;
+            background-color: #800000; /* Nút Tạo mới màu Đỏ Đô */
             color: white;
-            padding: 10px 18px;
-            border-radius: 6px;
+            padding: 12px 25px; /* Tăng kích thước nút */
+            border-radius: 8px; /* Bo góc mềm mại */
             text-decoration: none;
+            font-weight: 600;
+            letter-spacing: 0.5px; /* Thêm khoảng cách chữ */
+            box-shadow: 0 4px 6px rgba(128, 0, 0, 0.2); /* Đổ bóng nhẹ */
+            transition: background-color 0.2s ease, box-shadow 0.2s ease;
         }
 
             .btn-create:hover {
-                background-color: #16395e;
+                background-color: #660000; /* Đỏ Đô đậm hơn khi hover */
+                box-shadow: 0 6px 8px rgba(128, 0, 0, 0.3);
             }
     </style>
 }
 
 <div class="table-container">
-    <h1>Quản lý Thời khóa biểu</h1>
-
-    <a class="btn-create" asp-action="Create">Thêm mới lịch học</a>
+    <h1><i class="fas fa-calendar-alt"></i> Quản lý Thời khóa biểu</h1> <a class="btn-create" asp-action="Create">Thêm mới lịch học</a>
 
     <table>
         <thead>
@@ -111,7 +146,7 @@
             {
                 <tr>
                     <td>@item.CaHoc</td>
-                    <td>@(item.NgayHoc.HasValue ? item.NgayHoc.Value.ToString("dd/MM/yyyy") : "")</td>
+                    <td>@(item.NgayHoc.HasValue? item.NgayHoc.Value.ToString("dd/MM/yyyy") : "N/A")</td>
                     <td>@item.LOPHOC?.TenLopHoc</td>
                     <td class="action-buttons">
                         <a asp-action="Edit" asp-route-id="@item.MaLichHoc" class="btn-edit">Sửa</a>

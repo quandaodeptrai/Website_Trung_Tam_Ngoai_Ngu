@@ -167,6 +167,11 @@ namespace QuanLyTTNgoaiNgu.Data
                 new { MaLichHoc = 72, CaHoc = "7-9 (15h - 17h)", NgayHoc = new DateTime(2025, 9, 3), MaLopHoc = 7 },
                 new { MaLichHoc = 73, CaHoc = "1-3 (7h - 9h)", NgayHoc = new DateTime(2025, 9, 4), MaLopHoc = 7 }
                 );
+            modelBuilder.Entity<THONGBAO>()
+    .HasOne(t => t.TaiKhoan)
+    .WithMany() // nếu TaiKhoan không có ICollection<THONGBAO>
+    .HasForeignKey(t => t.MaTaiKhoan); // map chính xác cột FK
+
             // Thong Bao
             modelBuilder.Entity<THONGBAO>().HasData(
                 new { MaThongBao = 1, TieuDe = "Thông báo lịch học", NoiDung = "Lịch học sẽ bắt đầu từ ngày 1 tháng 9 năm 2025.", NgayThongBao = new DateTime(2025, 8, 20), MaTaiKhoan = 1 },

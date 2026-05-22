@@ -2,109 +2,166 @@
 @{
     ViewData["Title"] = "Lịch dạy của tôi";
     Layout = "_LayoutGiangVien";
-}
 
-@section Styles {
-    <style>
-        body {
-            background: #f0f4f8;
-            font-family: 'Segoe UI', sans-serif;
-        }
+    var selectedDate = ViewContext.HttpContext.Request.Query["date"].Count > 0
+        ? DateTime.Parse(ViewContext.HttpContext.Request.Query["date"])
+        : DateTime.Now;
 
-        .container {
-            max-width: 900px;
-            margin: 40px auto;
-            background: #fff;
-            padding: 30px;
-            border-radius: 12px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-        }
-
-        h2 {
-            text-align: center;
-            color: #1d3557;
-            margin-bottom: 30px;
-        }
-
-        .alert {
-            padding: 15px;
-            border-radius: 6px;
-            margin-bottom: 20px;
-            background-color: #e0f7fa;
-            color: #006064;
-            text-align: center;
-            font-size: 16px;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-        }
-
-            table thead {
-                background-color: #457b9d;
-                color: white;
-            }
-
-            table th, table td {
-                padding: 12px 15px;
-                text-align: center;
-                border-bottom: 1px solid #ddd;
-            }
-
-            table tr:hover {
-                background-color: #f1f1f1;
-            }
-
-        .back-btn {
-            display: inline-block;
-            margin-top: 30px;
-            padding: 10px 20px;
-            background: linear-gradient(to right, #457b9d, #1d3557);
-            color: white;
-            border-radius: 8px;
-            text-decoration: none;
-            font-weight: 500;
-            transition: background 0.3s;
-        }
-
-            .back-btn:hover {
-                background: linear-gradient(to right, #1d3557, #457b9d);
-            }
-    </style>
-}
-
-<div class="container">
-    <h2>@ViewData["Title"]</h2>
-
-    @if (!Model.Any())
+    DateTime StartOfWeek(DateTime dt)
     {
-        <div class="alert">Bạn chưa được phân công lớp nào, hoặc chưa có lịch học.</div>
+        int diff = (7 + (dt.DayOfWeek - DayOfWeek.Monday)) % 7;
+        return dt.AddDays(-diff).Date;
     }
-    else
-    {
-        <table>
+
+    var startOfWeek = StartOfWeek(selectedDate);
+    var endOfWeek = startOfWeek.AddDays(6);
+
+    var filtered = Model
+        .Where(s => s.NgayHoc.HasValue &&
+                    s.NgayHoc.Value.Date >= startOfWeek &&
+                    s.NgayHoc.Value.Date <= endOfWeek)
+        .ToList();
+
+    var scheduleDict = filtered
+        .GroupBy(s => (s.NgayHoc.Value.Date, s.CaHoc))
+        .ToDictionary(g => g.Key, g => g.ToList());
+
+    var caHocList = new List<string> { "1-3", "4-6", "7-9", "10-12" };
+
+    var daysOfWeek = Enumerable.Range(0, 7)
+                               .Select(d => startOfWeek.AddDays(d))
+                               .ToList();
+}
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
+<style>
+    .schedule-container {
+        background: #ffffff;
+        padding: 25px;
+        border-radius: 15px;
+        border-left: 6px solid #d00000;
+        border-right: 6px solid #d00000;
+        box-shadow: 0 6px 16px rgba(0,0,0,0.15);
+    }
+
+    .header-title {
+        color: #d00000;
+        font-weight: 700;
+    }
+
+    .btn-red {
+        background-color: #d00000 !important;
+        border-color: #d00000 !important;
+        color: white;
+    }
+
+        .btn-red:hover {
+            background-color: #a30000 !important;
+        }
+
+    .table thead {
+        background-color: #d00000;
+        color: white;
+    }
+
+    .schedule-item {
+        padding: 10px;
+        margin-bottom: 8px;
+        border-radius: 8px;
+        background-color: #ffe5e5;
+        border-left: 4px solid #d00000;
+        text-align: left;
+        font-size: 14px;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    }
+
+    th, td {
+        vertical-align: top;
+        min-width: 150px;
+    }
+
+    .date-cell {
+        font-size: 14px;
+        font-weight: bold;
+    }
+</style>
+
+<div class="schedule-container mt-3">
+
+    <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap">
+        <h3 class="header-title"><i class="fa-solid fa-calendar-days"></i> @ViewData["Title"]</h3>
+        <div class="d-flex gap-2 flex-wrap">
+            <button class="btn btn-red" id="btnPrevWeek"><i class="fa-solid fa-chevron-left"> </i></button>
+
+            <input type="date" id="weekPicker" class="form-control" style="width: 180px;"
+                   value="@selectedDate.ToString("yyyy-MM-dd")" />
+            <button class="btn btn-red" id="btnNextWeek"><i class="fa-solid fa-chevron-right"> </i></button>
+
+            <button class="btn btn-secondary" onclick="window.print()"><i class="fa-solid fa-print"></i> In lịch</button>
+        </div>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table table-bordered text-center">
             <thead>
                 <tr>
-                    <th>Ngày học</th>
                     <th>Ca học</th>
-                    <th>Lớp học</th>
-                    <th>Khóa học</th>
+                    @foreach (var day in daysOfWeek)
+                    {
+                        <th>
+                            <div class="date-cell">@day.ToString("dddd", new System.Globalization.CultureInfo("vi-VN"))</div>
+                            <div>@day.ToString("dd/MM/yyyy")</div>
+                        </th>
+                    }
+                   
                 </tr>
             </thead>
             <tbody>
-                @foreach (var t in Model)
+                @foreach (var ca in caHocList)
                 {
                     <tr>
-                        <td>@t.NgayHoc?.ToString("dd/MM/yyyy")</td>
-                        <td>@t.CaHoc</td>
-                        <td>@t.LOPHOC?.TenLopHoc</td>
-                        <td>@t.LOPHOC?.KHOAHOC?.TenKhoaHoc</td>
+                        <td class="fw-bold">@ca</td>
+
+                        @foreach (var day in daysOfWeek)
+                        {
+                            var key = (day.Date, ca);
+                            scheduleDict.TryGetValue(key, out var items);
+
+                            <td>
+                                @if (items != null && items.Any())
+                                {
+                                    foreach (var item in items)
+                                    {
+                                        <div class="schedule-item">
+                                            <strong>@item.LOPHOC?.KHOAHOC?.TenKhoaHoc</strong><br />
+                                            Lớp: @item.LOPHOC?.TenLopHoc <br />
+                                            Ca: @item.CaHoc
+                                        </div>
+                                    }
+                                }
+                            </td>
+                        }
                     </tr>
                 }
             </tbody>
         </table>
-    }
+    </div>
 
 </div>
+
+<script>
+    const picker = document.getElementById("weekPicker");
+
+    function updateWeek(days) {
+        let current = new Date(picker.value);
+        current.setDate(current.getDate() + days);
+        picker.value = current.toISOString().split('T')[0];
+        window.location.href = `?date=${picker.value}`;
+    }
+
+    document.getElementById("btnPrevWeek").addEventListener("click", () => updateWeek(-7));
+    document.getElementById("btnNextWeek").addEventListener("click", () => updateWeek(7));
+    picker.addEventListener("change", () => window.location.href = `?date=${picker.value}`);
+</script>

@@ -8,16 +8,26 @@
 
 @section Styles {
     <style>
-        h2 {
-            text-align: center;
-            color: #1d3557;
-            margin-top: 30px;
-            margin-bottom: 30px;
+        body {
+            background-color: #ffebee;
         }
 
+
+        h2 {
+            text-align: center;
+            color: #b71c1c;
+            margin-top: 30px;
+            margin-bottom: 15px;
+            font-weight: 800;
+            letter-spacing: 1px;
+            font-family: "Times New Roman", Times, serif;
+        }
+
+        /* Form tìm kiếm */
         .search-form {
             display: flex;
-            justify-content: center;
+            justify-content: flex-start;
+            margin-left: 20px;
             margin-bottom: 30px;
             gap: 10px;
         }
@@ -28,93 +38,162 @@
                 border: 1px solid #ccc;
                 border-radius: 8px;
                 width: 300px;
+                transition: border-color 0.3s ease;
             }
+
+                .search-form input[type="text"]:focus {
+                    border-color: #e53935;
+                    outline: none;
+                    box-shadow: 0 0 5px rgba(229, 57, 53, 0.5);
+                }
 
             .search-form button {
                 padding: 10px 20px;
-                background-color: #1d3557;
+                background-color: #c62828;
                 color: white;
                 border: none;
                 border-radius: 8px;
                 cursor: pointer;
                 font-weight: bold;
-                transition: background-color 0.3s ease;
+                transition: background-color 0.3s ease, transform 0.1s ease;
             }
 
                 .search-form button:hover {
-                    background-color: #0b2a4a;
+                    background-color: #b71c1c;
+                    transform: scale(1.05);
                 }
 
-        .course-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 20px;
-            max-width: 1200px;
-            margin: 0 auto;
-        }
 
-        .card {
-            background-color: #ffffff;
-            border-radius: 16px;
-            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
-            padding: 20px;
+        .course-list {
+            max-width: 1000px;
+            margin: 0 auto 40px auto;
             display: flex;
             flex-direction: column;
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            gap: 20px;
         }
 
-            .card:hover {
-                transform: translateY(-5px);
-                box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+        .course-item {
+            display: flex;
+            background-color: #fff;
+            border-radius: 16px;
+            border-left: 5px solid #e53935;
+            padding: 15px 20px;
+            align-items: center;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+            transition: transform 0.25s ease, box-shadow 0.25s ease;
+        }
+
+            .course-item:hover {
+                transform: translateY(-4px);
+                box-shadow: 0 6px 20px rgba(0,0,0,0.15);
             }
 
-        .card-title {
+        .course-image {
+            width: 180px;
+            height: 120px;
+            object-fit: cover;
+            border-radius: 12px;
+            margin-right: 20px;
+            flex-shrink: 0;
+        }
+
+        .course-info {
+            flex-grow: 1;
+        }
+
+        .course-title {
             font-size: 20px;
             font-weight: 700;
-            margin-bottom: 12px;
-            color: #1d3557;
+            color: #c62828;
+            margin-bottom: 8px;
         }
 
-        .card p {
-            flex-grow: 1;
-            margin-bottom: 10px;
+        .course-desc {
             color: #333;
+            line-height: 1.4;
+            margin-bottom: 8px;
         }
 
-        .card a {
-            margin-top: auto;
-            align-self: flex-start;
-            padding: 8px 16px;
-            background-color: #2a9d8f;
-            color: white;
-            border: none;
-            border-radius: 8px;
-            text-decoration: none;
-            font-weight: 600;
-            transition: background-color 0.3s ease;
+        .course-right {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 10px;
+            min-width: 150px;
         }
 
-            .card a:hover {
-                background-color: #21867a;
+            .course-right .price {
+                font-weight: 700;
+                color: #e53935;
+                font-size: 16px;
             }
+
+            .course-right a {
+                padding: 8px 16px;
+                background-color: #e53935;
+                color: white;
+                border-radius: 8px;
+                text-decoration: none;
+                font-weight: 600;
+                transition: all 0.3s ease;
+            }
+
+                .course-right a:hover {
+                    background-color: #c62828;
+                    transform: scale(1.05);
+                }
+
+        /* Responsive nhỏ */
+        @@media (max-width: 768px) {
+            .course-item {
+                flex-direction: column;
+                align-items: center;
+                text-align: center;
+            }
+
+            .course-image {
+                margin-right: 0;
+                margin-bottom: 12px;
+                width: 80%;
+                height: 180px;
+            }
+
+            .course-right {
+                flex-direction: row;
+                justify-content: center;
+                width: 100%;
+            }
+        }
     </style>
 }
 
 <h2>@ViewData["Title"]</h2>
+
 
 <form asp-action="Courses" method="get" class="search-form">
     <input type="text" name="searchString" value="@currentFilter" placeholder="Tìm theo tên khóa học..." />
     <button type="submit">Tìm</button>
 </form>
 
-<div class="course-grid">
+
+<div class="course-list">
     @foreach (var c in Model)
     {
-        <div class="card">
-            <div class="card-body">
-                <h5 class="card-title">@c.TenKhoaHoc</h5>
-                <p>@c.MoTa</p>
-                <p><strong>Học phí:</strong> @($"{c.MucHocPhi:N0} VND")</p>
+        string img = "default.jpg";
+        if (c.TenKhoaHoc.Contains("Anh")) img = "anh.jpg";
+        else if (c.TenKhoaHoc.Contains("Trung")) img = "trungquoc.jpg";
+        else if (c.TenKhoaHoc.Contains("Đức") || c.TenKhoaHoc.Contains("Duc")) img = "duc.jpg";
+        else if (c.TenKhoaHoc.Contains("Hàn") || c.TenKhoaHoc.Contains("Han")) img = "han.jpg";
+        else if (c.TenKhoaHoc.Contains("Nhật") || c.TenKhoaHoc.Contains("Nhat")) img = "nhat.jpg";
+
+        <div class="course-item">
+            <img src="~/images/@img" alt="@c.TenKhoaHoc" class="course-image" />
+            <div class="course-info">
+                <h5 class="course-title">@c.TenKhoaHoc</h5>
+                <p class="course-desc">@c.MoTa</p>
+            </div>
+            <div class="course-right">
+                <span class="price">@($"{c.MucHocPhi:N0} VND")</span>
                 <a asp-action="Classes" asp-route-courseId="@c.MaKhoaHoc">Xem lớp</a>
             </div>
         </div>

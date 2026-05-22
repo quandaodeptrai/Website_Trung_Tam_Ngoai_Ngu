@@ -5,82 +5,97 @@
 
 @section Styles {
     <style>
+        body {
+            background: #f0f4f8;
+            font-family: 'Segoe UI', sans-serif;
+        }
+
         .forgot-wrapper {
-            width: 100%;
             display: flex;
-            align-items: center;
             justify-content: center;
+            align-items: center;
             min-height: 80vh;
+            padding: 20px;
         }
 
         .forgot-box {
             background: #fff;
-            border-radius: 12px;
-            padding: 40px;
+            border-radius: 16px;
+            padding: 40px 30px;
             width: 100%;
-            max-width: 420px;
-            box-shadow: 0 8px 16px rgba(0,0,0,0.2);
-        }
-
-            .forgot-box h2 {
-                text-align: center;
-                margin-bottom: 25px;
-                font-weight: 700;
-                color: #1d3557;
-            }
-
-        .form-group input {
-            padding: 14px;
-            border-radius: 8px;
-            font-size: 16px;
-            width: 100%;
-            margin-bottom: 15px;
-            border: 1px solid #ddd;
-        }
-
-        .btn-forgot {
-            width: 100%;
-            background: #ff9933;
-            color: white;
-            padding: 14px;
-            font-size: 16px;
-            border: none;
-            border-radius: 8px;
-            font-weight: bold;
-            margin-top: 15px;
-            transition: background 0.3s;
-        }
-
-            .btn-forgot:hover {
-                background: #e28525;
-            }
-
-        .footer-link {
-            margin-top: 15px;
+            max-width: 400px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
             text-align: center;
         }
 
-            .footer-link a {
+            .forgot-box h2 {
+                font-size: 28px;
                 color: #1d3557;
-                font-weight: 600;
+                margin-bottom: 25px;
+                font-weight: 700;
+            }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+            .form-group input {
+                width: 100%;
+                padding: 14px;
+                border-radius: 8px;
+                border: 1px solid #ccc;
+                font-size: 16px;
+                transition: 0.3s;
+            }
+
+                .form-group input:focus {
+                    border-color: #457b9d;
+                    outline: none;
+                    box-shadow: 0 0 5px rgba(69,123,157,0.4);
+                }
+
+        .btn-forgot {
+            width: 100%;
+            padding: 14px;
+            font-size: 16px;
+            font-weight: 600;
+            color: #fff;
+            background: linear-gradient(to right, #457b9d, #1d3557);
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+            .btn-forgot:hover {
+                background: linear-gradient(to right, #1d3557, #457b9d);
+            }
+
+        .footer-link {
+            margin-top: 20px;
+        }
+
+            .footer-link a {
+                color: #457b9d;
                 text-decoration: none;
+                font-weight: 600;
             }
 
                 .footer-link a:hover {
                     text-decoration: underline;
                 }
-        .text-danger, .text-success {
-            text-align: center;
+
+        .alert {
             margin-bottom: 15px;
-            font-weight: bold;
+            font-weight: 600;
         }
 
         .text-danger {
-            color: red;
+            color: #e63946;
         }
 
         .text-success {
-            color: green;
+            color: #2a9d8f;
         }
     </style>
 }
@@ -91,25 +106,23 @@
 
         @if (ViewBag.Error != null)
         {
-            <div class="text-danger">@ViewBag.Error</div>
+            <div class="alert text-danger">@ViewBag.Error</div>
         }
         @if (ViewBag.Message != null)
         {
-            <div class="text-success">@ViewBag.Message</div>
+            <div class="alert text-success">@ViewBag.Message</div>
         }
 
         <form method="post" asp-action="QuenMatKhau">
             <div class="form-group">
-                <input type="text" name="username" placeholder="Tên đăng nhập" required />
+                <input type="email" name="email" placeholder="Nhập email đăng ký" required />
             </div>
-            <div class="form-group">
-                <input type="email" name="email" placeholder="Email đăng ký" required />
-            </div>
+
             <button type="submit" class="btn-forgot">Khôi phục mật khẩu</button>
+
             <div class="footer-link">
-                <a asp-action="Login">Quay lại trang đăng nhập</a>
+                <a asp-action="Login">← Quay lại trang đăng nhập</a>
             </div>
         </form>
-
     </div>
 </div>

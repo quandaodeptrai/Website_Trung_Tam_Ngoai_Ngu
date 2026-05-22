@@ -4,110 +4,164 @@
     Layout = "_LayoutGiangVien";
 }
 
-<style>
-    body {
-        font-family: 'Segoe UI', sans-serif;
-        background-color: #f4f6f9;
-        padding: 30px;
-    }
+@section Styles {
+    <style>
+        /* ===== Khung tổng ===== */
+        .page-container {
+            padding: 30px 50px;
+            background-color: #f5f7fa;
+            min-height: 100vh;
+        }
 
-    h2 {
-        text-align: center;
-        color: #2c3e50;
-        font-size: 28px;
-        margin-bottom: 30px;
-    }
+        h2 {
+            text-align: center;
+            color: #b22222;
+            font-size: 30px;
+            margin-bottom: 35px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 600;
+        }
 
-    h4 {
-        color: #2980b9;
-        font-size: 20px;
-        margin-top: 40px;
-        margin-bottom: 15px;
-    }
+        h4 {
+            color: #b22222;
+            font-size: 20px;
+            font-weight: 600;
+            margin-top: 40px;
+            margin-bottom: 15px;
+            border-left: 5px solid #b22222;
+            padding-left: 10px;
+        }
 
-    .alert {
-        padding: 15px;
-        background-color: #ecf0f1;
-        border-left: 6px solid #3498db;
-        margin-bottom: 20px;
-        font-size: 16px;
-        color: #2c3e50;
-    }
+        .alert {
+            padding: 15px 18px;
+            background-color: #fdecea;
+            border-left: 6px solid #b22222;
+            color: #7b241c;
+            font-size: 16px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+        }
 
-    table {
-        width: 100%;
-        border-collapse: collapse;
-        margin-bottom: 40px;
-        background-color: #fff;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-        border-radius: 10px;
-        overflow: hidden;
-    }
+        .table-container {
+            background-color: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            overflow: hidden;
+            margin-bottom: 45px;
+        }
 
-    th, td {
-        padding: 12px 16px;
-        text-align: center;
-        border-bottom: 1px solid #eee;
-        font-size: 15px;
-    }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
 
-    thead {
-        background-color: #3498db;
-        color: white;
-    }
+        thead {
+            background-color: #b22222;
+            color: #fff;
+        }
 
-    tbody tr:hover {
-        background-color: #f0f8ff;
-    }
+        th, td {
+            padding: 14px 16px;
+            text-align: center;
+            border-bottom: 1px solid #f0f0f0;
+            font-size: 15px;
+        }
 
-    .btn {
-        padding: 8px 16px;
-        background: #3498db;
-        color: white;
-        border: none;
-        border-radius: 8px;
-        text-decoration: none;
-        font-size: 14px;
-        cursor: pointer;
-        transition: 0.3s ease;
-        display: inline-block;
-    }
+        th {
+            text-transform: uppercase;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
 
-    .btn:hover {
-        background: #2980b9;
-    }
+        tbody tr:nth-child(even) {
+            background-color: #fff5f5;
+        }
 
-    .btn-sm {
-        font-size: 13px;
-        padding: 6px 12px;
-    }
-</style>
+        tbody tr:hover {
+            background-color: #fdecea;
+        }
 
-<h2>@ViewData["Title"]</h2>
+        /* ===== Nút thao tác ===== */
+        .btn {
+            display: inline-block;
+            padding: 8px 16px;
+            font-size: 14px;
+            font-weight: 500;
+            color: white;
+            background-color: #b22222;
+            border: none;
+            border-radius: 6px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
 
-<h4>Lớp sắp/đang dạy</h4>
-@if (!Model.UpcomingClasses.Any())
-{
+            .btn:hover {
+                background-color: #8b0000;
+                box-shadow: 0 3px 6px rgba(178, 34, 34, 0.3);
+            }
+
+        .btn-sm {
+            padding: 6px 12px;
+            font-size: 13px;
+        }
+
+        .btn-secondary {
+            background-color: #e74c3c;
+        }
+
+            .btn-secondary:hover {
+                background-color: #b22222;
+            }
+
+        /* ===== Responsive ===== */
+        @@media (max-width: 768px) {
+            .page-container {
+                padding: 20px;
+            }
+
+            h2 {
+                font-size: 24px;
+            }
+
+            th, td {
+                padding: 10px;
+                font-size: 14px;
+            }
+        }
+    </style>
+}
+
+<div class="page-container">
+    <h2>@ViewData["Title"]</h2>
+
+    <!-- Lớp sắp / đang dạy -->
+    <h4>Lớp sắp / đang dạy</h4>
+    @if (!Model.UpcomingClasses.Any())
+    {
         <div class="alert">Không có lớp nào đang hoặc sắp dạy.</div>
-}
-else
-{
-        <table>
-            <thead>
-                <tr>
-                    <th>Mã lớp</th>
-                    <th>Tên lớp</th>
-                    <th>Khóa học</th>
-                    <th>SL tối đa</th>
-                    <th>SL hiện tại</th>
-                    <th>Ngày bắt đầu</th>
-                    <th>Ngày kết thúc</th>
-                    <th>Thao tác</th>
-                </tr>
-            </thead>
-            <tbody>
-            @foreach (var l in Model.UpcomingClasses)
-            {
+    }
+    else
+    {
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Mã lớp</th>
+                        <th>Tên lớp</th>
+                        <th>Khóa học</th>
+                        <th>SL tối đa</th>
+                        <th>SL hiện tại</th>
+                        <th>Ngày bắt đầu</th>
+                        <th>Ngày kết thúc</th>
+                        <th>Thao tác</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var l in Model.UpcomingClasses)
+                    {
                         <tr>
                             <td>@l.MaLopHoc</td>
                             <td>@l.TenLopHoc</td>
@@ -117,43 +171,48 @@ else
                             <td>@l.NgayBatDau.ToString("dd/MM/yyyy")</td>
                             <td>@l.NgayKetThuc.ToString("dd/MM/yyyy")</td>
                             <td>
-                                <a asp-action="Schedule" asp-route-classId="@l.MaLopHoc" class="btn btn-sm">Lịch dạy</a>
-                                                <a asp-controller="GIANGVIENs"
-           asp-action="EnterScores"
-           asp-route-classId="@l.MaLopHoc"
-           class="btn btn-sm btn-primary ms-1">
-           Nhập điểm
-        </a>
+                                <a asp-action="Schedule" asp-route-classId="@l.MaLopHoc" class="btn btn-sm">
+                                    <i class="fas fa-calendar-alt"></i> Lịch dạy
+                                </a>
+                                <a asp-controller="GIANGVIENs"
+                                   asp-action="EnterScores"
+                                   asp-route-classId="@l.MaLopHoc"
+                                   class="btn btn-sm btn-secondary ms-1">
+                                    <i class="fas fa-pen-alt"></i> Nhập điểm
+                                </a>
                             </td>
                         </tr>
-            }
-            </tbody>
-        </table>
-}
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
 
-<h4>Lớp đã kết thúc</h4>
-@if (!Model.PastClasses.Any())
-{
+    <!-- Lớp đã kết thúc -->
+    <h4>Lớp đã kết thúc</h4>
+    @if (!Model.PastClasses.Any())
+    {
         <div class="alert">Chưa có lớp nào đã kết thúc.</div>
-}
-else
-{
-        <table>
-            <thead>
-                <tr>
-                    <th>Mã lớp</th>
-                    <th>Tên lớp</th>
-                    <th>Khóa học</th>
-                    <th>SL tối đa</th>
-                    <th>SL học viên</th>
-                    <th>Ngày bắt đầu</th>
-                    <th>Ngày kết thúc</th>
-                    <th>Thao tác</th>
-                </tr>
-            </thead>
-            <tbody>
-            @foreach (var l in Model.PastClasses)
-            {
+    }
+    else
+    {
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Mã lớp</th>
+                        <th>Tên lớp</th>
+                        <th>Khóa học</th>
+                        <th>SL tối đa</th>
+                        <th>SL học viên</th>
+                        <th>Ngày bắt đầu</th>
+                        <th>Ngày kết thúc</th>
+                        <th>Thao tác</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var l in Model.PastClasses)
+                    {
                         <tr>
                             <td>@l.MaLopHoc</td>
                             <td>@l.TenLopHoc</td>
@@ -163,10 +222,14 @@ else
                             <td>@l.NgayBatDau.ToString("dd/MM/yyyy")</td>
                             <td>@l.NgayKetThuc.ToString("dd/MM/yyyy")</td>
                             <td>
-                                <a asp-action="Schedule" asp-route-classId="@l.MaLopHoc" class="btn btn-sm">Lịch dạy</a>
+                                <a asp-action="Schedule" asp-route-classId="@l.MaLopHoc" class="btn btn-sm">
+                                    <i class="fas fa-calendar-alt"></i> Lịch dạy
+                                </a>
                             </td>
                         </tr>
-            }
-            </tbody>
-        </table>
-}
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+</div>

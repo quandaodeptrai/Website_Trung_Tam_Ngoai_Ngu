@@ -65,40 +65,45 @@ public async Task<IActionResult> Index()
             return View(hOCPHI);
         }
         [HttpPost]
-        public async Task<IActionResult> ThanhToan(ThanhToanViewModel model)
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ConfirmPayment(int[] selectedIds)
         {
-            var hocPhi = await _context.HOCPHI
-                .Include(h => h.PHIEUDANGKY)
-                    .ThenInclude(p => p.LOPHOC)
-                        .ThenInclude(l => l.KHOAHOC)
-                .FirstOrDefaultAsync(h => h.MaHocPhi == model.MaHocPhi);
-
-            if (hocPhi == null)
-                return NotFound();
-
-            var mucHocPhi = hocPhi.PHIEUDANGKY?.LOPHOC?.KHOAHOC?.MucHocPhi ?? 0;
-
-            if (hocPhi.TrangThai)
+            if (selectedIds == null || selectedIds.Length == 0)
             {
-                TempData["Error"] = "Học viên này đã thanh toán!";
-            }
-            else if (model.SoTienNhap != mucHocPhi)
-            {
-                TempData["Error"] = $"Số tiền không khớp với học phí ({mucHocPhi:N0} VND)";
-            }
-            else
-            {
-                // ✅ Cập nhật vào DB
-                hocPhi.TrangThai = true;
-                hocPhi.NgayNop = DateTime.Now;
-
-                await _context.SaveChangesAsync();
-
-                TempData["Success"] = "Thanh toán thành công!";
+                TempData["Error"] = "Vui lòng chọn ít nhất một khoản cần xác nhận.";
+                return RedirectToAction(nameof(Index));
             }
 
-            return RedirectToAction("Index");
+            var items = await _context.HOCPHI
+                .Include(hp => hp.PHIEUDANGKY)
+                .Where(hp => selectedIds.Contains(hp.MaHocPhi)
+                          && hp.TrangThai == false
+                          && hp.NgayNop != null) // chỉ khoản đã nộp mới được xác nhận
+                .ToListAsync();
+
+            if (!items.Any())
+            {
+                TempData["Error"] = "Không có khoản hợp lệ để xác nhận.";
+                return RedirectToAction(nameof(Index));
+            }
+
+            int count = 0;
+            var today = DateTime.Now;
+
+            foreach (var hp in items)
+            {
+                hp.TrangThai = true;   // ✅ chuyển sang ĐÃ THANH TOÁN
+                hp.NgayNop = today;    // cập nhật lại ngày xác nhận
+                count++;
+            }
+
+            await _context.SaveChangesAsync();
+
+            TempData["Success"] = $"Đã xác nhận thành công {count} khoản học phí.";
+
+            return RedirectToAction(nameof(Index));
         }
+
 
 
     }

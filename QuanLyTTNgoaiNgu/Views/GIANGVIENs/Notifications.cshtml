@@ -6,74 +6,99 @@
 
 @section Styles {
     <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background-color: #f8f6f6; /* đỏ nhạt nhẹ nền */
+        }
+
         h2 {
             font-size: 28px;
-            color: #1d3557;
+            color: #b22222;
             text-align: center;
             margin-bottom: 30px;
+            text-transform: uppercase;
+            font-weight: 600;
         }
 
         .notification-container {
             background-color: #ffffff;
             padding: 30px;
             border-radius: 12px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
             max-width: 1000px;
-            margin: auto;
+            margin: 40px auto;
         }
 
+        /* Bảng thông báo */
         .notification-table {
             width: 100%;
             border-collapse: collapse;
             margin-top: 20px;
+            border-radius: 10px;
+            overflow: hidden;
         }
 
             .notification-table thead {
-                background-color: #1d3557;
+                background-color: #e74c3c;
                 color: white;
             }
 
-            .notification-table th, .notification-table td {
+            .notification-table th,
+            .notification-table td {
                 padding: 12px 15px;
-                border: 1px solid #ddd;
+                border-bottom: 1px solid #f0f0f0;
                 text-align: left;
+                font-size: 15px;
             }
 
             .notification-table tbody tr:nth-child(even) {
-                background-color: #f9f9f9;
+                background-color: #fff5f5;
             }
 
+            .notification-table tbody tr:hover {
+                background-color: #fdecea;
+            }
+
+        /* Khi không có thông báo */
         .alert-info {
-            background-color: #e3f2fd;
-            color: #0d47a1;
-            padding: 15px;
+            background-color: #fdecea;
+            color: #7b241c;
+            padding: 15px 20px;
+            border-left: 6px solid #e74c3c;
             border-radius: 8px;
             max-width: 600px;
             margin: 20px auto;
             text-align: center;
+            font-size: 16px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+        }
+
+        /* Nút quay lại */
+        .btn-wrapper {
+            text-align: center;
+            margin-top: 30px;
         }
 
         .btn-back {
             display: inline-block;
-            margin-top: 25px;
-            padding: 10px 20px;
-            border-radius: 6px;
-            background-color: transparent;
-            color: #1d3557;
-            border: 2px solid #1d3557;
+            padding: 10px 22px;
+            background-color: #e74c3c;
+            color: white;
+            border-radius: 8px;
             text-decoration: none;
-            font-weight: 600;
+            font-weight: 500;
             transition: all 0.3s ease;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
         }
 
             .btn-back:hover {
-                background-color: #1d3557;
-                color: #fff;
+                background-color: #b22222;
+                transform: translateY(-1px);
             }
 
-        .btn-wrapper {
-            text-align: center;
-        }
+            .btn-back i {
+                margin-right: 6px;
+            }
     </style>
 }
 
@@ -82,7 +107,7 @@
 
     @if (!Model.Any())
     {
-        <div class="alert alert-info">Bạn chưa có thông báo nào.</div>
+        <div class="alert-info">Bạn chưa có thông báo nào.</div>
     }
     else
     {
@@ -107,4 +132,9 @@
         </table>
     }
 
+    <div class="btn-wrapper">
+        <a asp-action="Index" asp-controller="Home" class="btn-back">
+            <i class="bi bi-arrow-left"></i> Quay lại trang chính
+        </a>
+    </div>
 </div>

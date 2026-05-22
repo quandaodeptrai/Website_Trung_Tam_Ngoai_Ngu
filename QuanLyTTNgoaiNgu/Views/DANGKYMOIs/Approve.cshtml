@@ -5,103 +5,125 @@
     Layout = "_LayoutAdmin";
 }
 
-<style>
-    h2 {
-        color: #1d3557;
-        font-weight: bold;
-        margin-bottom: 30px;
-        text-align: center;
-    }
-
-    .card {
-        background-color: #ffffff;
-        border-radius: 8px;
-        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-        padding: 20px;
-        margin-bottom: 30px;
-    }
-
-    .card-body {
-        font-size: 16px;
-    }
-
-    .card p {
-        margin-bottom: 10px;
-    }
-
-    .form-label {
-        font-size: 16px;
-        color: #333;
-    }
-
-    .form-control {
-        padding: 12px;
-        border-radius: 8px;
-        border: 1px solid #ddd;
-        width: 100%;
-        margin-bottom: 15px;
-        font-size: 14px;
-    }
-
-        .form-control:disabled {
-            background-color: #f8f9fa;
-            cursor: not-allowed;
+@section Styles {
+    <style>
+        body {
+            background: linear-gradient(to bottom, #ffe6e6, #fff);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
-    .btn {
-        padding: 10px 20px;
-        font-size: 16px;
-        border-radius: 6px;
-        cursor: pointer;
-        transition: background-color 0.3s ease;
-    }
-
-    .btn-primary {
-        background-color: #4CAF50;
-        color: white;
-        border: none;
-    }
-
-        .btn-primary:hover {
-            background-color: #45a049;
+        .approve-container {
+            max-width: 900px;
+            margin: 40px auto 60px;
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(204, 0, 0, 0.2);
+            padding: 40px 50px;
         }
 
-    .btn-secondary {
-        background-color: #6c757d;
-        color: white;
-        border: none;
-    }
-
-        .btn-secondary:hover {
-            background-color: #5a6268;
+        h2 {
+            color: #b30000;
+            font-weight: 700;
+            margin-bottom: 30px;
+            text-align: center;
+            font-size: 28px;
         }
 
-    .ms-2 {
-        margin-left: 10px;
-    }
+        .info-row p {
+            font-size: 16px;
+            color: #333;
+            margin-bottom: 12px;
+        }
 
-</style>
+        .form-label {
+            font-weight: 600;
+            color: #660000;
+            margin-bottom: 8px;
+            display: block;
+        }
 
-<h2>@ViewData["Title"]</h2>
+        .form-control {
+            width: 100%;
+            padding: 12px 14px;
+            font-size: 16px;
+            border-radius: 8px;
+            border: 1.8px solid #cc0000;
+            margin-bottom: 20px;
+            outline: none;
+        }
 
-<div class="card mb-4">
-    <div class="card-body">
+            .form-control:disabled {
+                background-color: #f8f9fa;
+                color: #555;
+            }
+
+        .btn-approve {
+            background: #cc0000;
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            padding: 12px 20px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.3s;
+            box-shadow: 0 5px 10px rgba(204,0,0,0.3);
+        }
+
+            .btn-approve:hover {
+                background: #990000;
+            }
+
+        .btn-back {
+            background: #6c757d;
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            padding: 12px 20px;
+            font-size: 16px;
+            font-weight: 600;
+            margin-left: 12px;
+            text-decoration: none;
+            display: inline-block;
+            transition: 0.3s;
+        }
+
+            .btn-back:hover {
+                background: #5a6268;
+            }
+
+        @@media (max-width: 768px) {
+            .approve-container {
+                padding: 30px 20px;
+            }
+
+            .btn-back {
+                margin-left: 0;
+                margin-top: 12px;
+                display: block;
+            }
+        }
+    </style>
+}
+
+<div class="approve-container">
+    <h2>@ViewData["Title"]</h2>
+
+    <div class="info-row">
         <p><strong>Họ tên:</strong> @Model.HoTen</p>
         <p><strong>Ngày sinh:</strong> @Model.NgaySinh?.ToString("dd/MM/yyyy")</p>
         <p><strong>ĐT:</strong> @Model.SoDienThoai</p>
         <p><strong>Địa chỉ:</strong> @Model.DiaChi</p>
         <p><strong>Email:</strong> @Model.Email</p>
     </div>
-</div>
 
-<form asp-action="Approve" method="post">
-    <input type="hidden" name="MaDangKy" value="@Model.MaDangKy" />
+    <form asp-action="Approve" method="post">
+        <input type="hidden" name="MaDangKy" value="@Model.MaDangKy" />
 
-    <div class="mb-3">
         <label class="form-label">Tên đăng nhập được sinh</label>
         <input class="form-control" value="@Model.GeneratedUsername" disabled />
-    </div>
 
-    <button type="submit" class="btn btn-primary">Xác nhận duyệt</button>
-    <a asp-action="Pending" class="btn btn-secondary ms-2">Quay lại</a>
-</form>
+        <button type="submit" class="btn-approve">Xác nhận duyệt</button>
+        <a asp-action="Pending" class="btn-back">Quay lại</a>
+    </form>
+</div>

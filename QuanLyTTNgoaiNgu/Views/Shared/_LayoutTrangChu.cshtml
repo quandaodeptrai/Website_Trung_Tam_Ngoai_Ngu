@@ -1,6 +1,5 @@
-﻿@using Microsoft.AspNetCore.Http
+﻿﻿@using Microsoft.AspNetCore.Http
 @inject IHttpContextAccessor HttpContextAccessor
-
 <!DOCTYPE html>
 <html lang="vi">
 <head>
@@ -11,94 +10,359 @@
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
     <meta http-equiv="Pragma" content="no-cache" />
     <meta http-equiv="Expires" content="-1" />
-
     <style>
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: Arial, sans-serif;
+            font-family: 'Times New Roman', Times, serif
         }
 
         body {
-            background: linear-gradient(135deg, #f8f9fa, #c6e2ff);
             min-height: 100vh;
+            background: #f5f5f5;
+            overflow-x: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px
         }
 
+        /* KHUNG CHÍNH - FULL MÀN HÌNH */
+        .main-frame {
+            width: 100%;
+            max-width: 1400px;
+            min-height: 100vh;
+            background: #fff;
+            border-radius: 24px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.12);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* HEADER */
         header {
-            background-color: #1d3557;
-            color: white;
-            padding: 20px;
+            background: #b71c1c;
+            color: #fff;
+            padding: 24px 40px;
             display: flex;
             justify-content: space-between;
             align-items: center;
             flex-wrap: wrap;
+            border-bottom: 4px solid #ffca28;
         }
 
         .navbar-brand {
-            font-size: 30px;
+            font-size: 32px;
             font-weight: bold;
             text-decoration: none;
-            color: white;
+            color: #fff
         }
 
         .navbar-right {
             display: flex;
-            gap: 20px;
+            gap: 24px
         }
 
-            .navbar-right a, .navbar-text {
-                font-size: 22px;
+            .navbar-right a {
+                font-size: 19px;
                 font-weight: bold;
-                color: white;
+                color: #fff;
                 text-decoration: none;
                 padding: 10px 20px;
                 border-radius: 10px;
-                transition: 0.3s;
+                transition: .3s
             }
 
                 .navbar-right a:hover {
-                    background-color: #ffd166;
-                    color: #1d3557;
+                    background: #ffcdd2;
+                    color: #b71c1c
                 }
 
-        .container {
-            padding: 40px 20px;
+        /* NỘI DUNG CHÍNH */
+        .content {
+            flex: 1;
+            padding: 40px 40px 60px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
 
-        footer {
-            background-color: #1d3557;
-            color: white;
+        /* TIÊU ĐỀ */
+        .testimonial-title {
+            font-size: 32px;
+            font-weight: bold;
+            color: #b71c1c;
+            margin-bottom: 50px;
+            position: relative;
             text-align: center;
-            padding: 15px;
-            margin-top: 40px;
+        }
+
+            .testimonial-title::after {
+                content: '';
+                width: 90px;
+                height: 5px;
+                background: #ffca28;
+                display: block;
+                margin: 16px auto 0;
+                border-radius: 3px;
+            }
+
+        /* SLIDER FULL WIDTH */
+        .slider-container {
+            width: 100%;
+            overflow: hidden;
+            user-select: none;
+            padding: 20px 0;
+        }
+
+        .slider-wrapper {
+            display: flex;
+            transition: transform .7s cubic-bezier(.4,0,.2,1);
+            will-change: transform;
+        }
+
+        .achievement-card {
+            width: 340px;
+            background: #fff;
+            border-radius: 18px;
+            overflow: hidden;
+            margin: 0 16px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+            text-align: center;
+            flex-shrink: 0;
+        }
+
+            .achievement-card img {
+                width: 100%;
+                height: 380px;
+                object-fit: cover
+            }
+
+        .card-content {
+            padding: 24px
+        }
+
+        .ielts-badge {
+            display: inline-block;
+            background: #ffca28;
+            color: #b71c1c;
+            font-weight: bold;
+            font-size: 18px;
+            padding: 8px 18px;
+            border-radius: 50px;
+            margin-bottom: 14px
+        }
+
+        .student-name {
+            font-size: 20px;
+            font-weight: bold;
+            color: #b71c1c;
+            margin: 10px 0
+        }
+
+        .student-class {
+            font-size: 15px;
+            color: #666;
+            margin-bottom: 16px
+        }
+
+        .testimonial {
+            font-size: 15px;
+            line-height: 1.8;
+            color: #444;
+            font-style: italic
+        }
+
+        /* DOTS */
+        .slider-dots {
+            text-align: center;
+            padding: 30px 0
+        }
+
+        .dot {
+            display: inline-block;
+            width: 13px;
+            height: 13px;
+            margin: 0 8px;
+            background: #ddd;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: .4s
+        }
+
+            .dot.active {
+                background: #b71c1c;
+                transform: scale(1.6)
+            }
+
+        /* FOOTER */
+        footer {
+            background: #b71c1c;
+            color: #fff;
+            text-align: center;
+            padding: 24px;
+            font-size: 15px;
+            border-top: 4px solid #ffca28;
+        }
+
+        /* RESPONSIVE */
+        @@media (max-width:992px) {
+            .achievement-card {
+                width: 300px;
+                margin: 0 12px
+            }
+
+            .testimonial-title {
+                font-size: 28px
+            }
+        }
+
+        @@media (max-width:768px) {
+            .achievement-card {
+                width: 280px;
+                margin: 0 10px
+            }
+
+            header {
+                padding: 20px
+            }
+
+            .navbar-brand {
+                font-size: 28px
+            }
+
+            .content {
+                padding: 30px 20px
+            }
+
+            .testimonial-title {
+                font-size: 24px
+            }
+        }
+
+        @@media (max-width:480px) {
+            .achievement-card {
+                width: 260px;
+                margin: 0 8px
+            }
+
+            .navbar-right {
+                gap: 16px
+            }
+
+                .navbar-right a {
+                    font-size: 17px;
+                    padding: 8px 14px
+                }
         }
     </style>
     @RenderSection("Styles", required: false)
-
 </head>
 <body>
-
-    <header>
- 
-        <a class="navbar-brand" asp-controller="Home" asp-action="Index">TRUNG TÂM NGOẠI NGỮ 5AE</a>
-
-        <div class="navbar-right">
- 
+    <!-- KHUNG CHÍNH FULL MÀN HÌNH -->
+    <div class="main-frame">
+        <header>
+            <a class="navbar-brand" asp-controller="Home" asp-action="Index">TRUNG TÂM NGOẠI NGỮ 5AE</a>
+            <div class="navbar-right">
                 <a href="/Account/Login">Đăng nhập</a>
                 <a href="/DANGKYMOIs/Create">Đăng ký</a>
+            </div>
+        </header>
 
+        <div class="content">
+            @RenderBody()
+
+            <h2 class="testimonial-title">Học Viên cảm nhận gì khi học các khóa học</h2>
+            <div class="slider-container" id="sliderContainer">
+                <div class="slider-wrapper" id="testimonialSlider"></div>
+                <div class="slider-dots" id="sliderDots"></div>
+            </div>
         </div>
-    </header>
 
-    <div class="container">
-        @RenderBody()
+        <footer>&copy; 2025 - Trung tâm Ngoại ngữ 5AE. All rights reserved.</footer>
     </div>
 
-    <footer>
-        &copy; 2025 - Trung tâm Ngoại ngữ 5AE. All rights reserved.
-    </footer>
+    <!-- JAVASCRIPT - VÒNG LẶP MƯỢT 100% -->
+    <script>
+        const sliderWrapper=document.getElementById('testimonialSlider'),dotsContainer=document.getElementById('sliderDots'),container=document.getElementById('sliderContainer');
+        const testimonials=[
+            {img:"/images/anh.jpg",alt:"Nguyễn Hạnh Nhi - IELTS 8.0",badge:"IELTS 8.0",name:"Nguyễn Hạnh Nhi",class:"Học viên lớp IH/IA/I-1",text:"Em đã học ở ECE3 khóa IH, IA và I-1a, sau khi học xong em phải khẳng định rằng quyết định đi học tại ECE là quá đúng đắn..."},
+            {img:"/images/han.jpg",alt:"Đỗ Ngọc Trà - IELTS 8.0",badge:"IELTS 8.0",name:"Đỗ Ngọc Trà",class:"Học viên lớp IA105",text:"Em cảm thấy may mắn được là học trò của cô Nương, điểm số của em đã cải thiện nhiều..."},
+            {img:"/images/han.jpg",alt:"Đỗ Ngọc Trà - IELTS 8.0",badge:"IELTS 8.0",name:"Đỗ Ngọc Trà",class:"Học viên lớp IA105",text:"Em cảm thấy may mắn được là học trò của cô Nương, điểm số của em đã cải thiện nhiều..."},
+            {img:"/images/anh.jpg",alt:"Nguyễn Hạnh Nhi - IELTS 8.0",badge:"IELTS 8.0",name:"Nguyễn Hạnh Nhi",class:"Học viên lớp IH/IA/I-1",text:"Em đã học ở ECE3 khóa IH, IA và I-1a, sau khi học xong em phải khẳng định rằng quyết định đi học tại ECE là quá đúng đắn..."},
+            {img:"/images/anh.jpg",alt:"Nguyễn Hạnh Nhi - IELTS 8.0",badge:"IELTS 8.0",name:"Nguyễn Hạnh Nhi",class:"Học viên lớp IH/IA/I-1",text:"Em đã học ở ECE3 khóa IH, IA và I-1a, sau khi học xong em phải khẳng định rằng quyết định đi học tại ECE là quá đúng đắn..."},
+            {img:"/images/han.jpg",alt:"Đỗ Ngọc Trà - IELTS 8.0",badge:"IELTS 8.0",name:"Đỗ Ngọc Trà",class:"Học viên lớp IA105",text:"Em cảm thấy may mắn được là học trò của cô Nương, điểm số của em đã cải thiện nhiều..."}
+        ];
+        let currentIndex=1,cardWidth=372,autoSlideInterval;
 
+        function createCard(d){
+            return`<div class="achievement-card"><img src="${d.img}" alt="${d.alt}"/><div class="card-content"><div class="ielts-badge">${d.badge}</div><div class="student-name">${d.name}</div><div class="student-class">${d.class}</div><p class="testimonial">${d.text}</p></div></div>`;
+        }
+
+        function initSlider(){
+            sliderWrapper.innerHTML='';
+            sliderWrapper.insertAdjacentHTML('beforeend',createCard(testimonials[testimonials.length-1]));
+            testimonials.forEach(i=>sliderWrapper.insertAdjacentHTML('beforeend',createCard(i)));
+            sliderWrapper.insertAdjacentHTML('beforeend',createCard(testimonials[0]));
+            createDots();updateSlider();startAutoSlide();
+        }
+
+        function createDots(){
+            dotsContainer.innerHTML='';
+            for(let i=0;i<testimonials.length;i++){
+                const dot=document.createElement('span');dot.className='dot';
+                if(i===0)dot.classList.add('active');
+                dot.onclick=()=>goToSlide(i);
+                dotsContainer.appendChild(dot);
+            }
+        }
+
+        function updateSlider(){
+            sliderWrapper.style.transform=`translateX(${-currentIndex*cardWidth}px)`;
+            updateDots();
+        }
+
+        function updateDots(){
+            const dots=document.querySelectorAll('.dot');
+            const real=(currentIndex-1+testimonials.length)%testimonials.length;
+            dots.forEach((d,i)=>d.classList.toggle('active',i===real));
+        }
+
+        function goToSlide(i){
+            currentIndex=i+1;updateSlider();resetAutoSlide();
+        }
+
+        function nextSlide(){
+            currentIndex++;updateSlider();
+            if(currentIndex===testimonials.length+1){
+                requestAnimationFrame(()=>{
+                    sliderWrapper.style.transition='none';
+                    currentIndex=1;updateSlider();
+                    requestAnimationFrame(()=>{sliderWrapper.style.transition='transform .7s cubic-bezier(.4,0,.2,1)';});
+                });
+            }
+        }
+
+        function startAutoSlide(){stopAutoSlide();autoSlideInterval=setInterval(nextSlide,2000);}
+        function stopAutoSlide(){clearInterval(autoSlideInterval);}
+        function resetAutoSlide(){stopAutoSlide();startAutoSlide();}
+
+        window.addEventListener('resize',()=>{
+            const c=document.querySelector('.achievement-card');
+            if(c){cardWidth=c.offsetWidth+32;updateSlider();}
+        });
+
+        container.addEventListener('mouseenter',stopAutoSlide);
+        container.addEventListener('mouseleave',startAutoSlide);
+
+        window.onload=()=>{
+            const c=document.querySelector('.achievement-card');
+            if(c)cardWidth=c.offsetWidth+32;
+            initSlider();
+        };
+    </script>
     @RenderSection("Scripts", required: false)
 </body>
 </html>

@@ -27,28 +27,29 @@ namespace QuanLyTTNgoaiNgu.Controllers
             _context = context;
         }
 
-        // GET: HOCVIENs
-        // GET: HOCVIENs
-        public async Task<IActionResult> Index(string searchString)
+        public async Task<IActionResult> Index(string hoTen, string email, string soDienThoai)
         {
             var query = _context.HOCVIEN
                 .Include(h => h.DANGKYMOI)
                 .Include(h => h.TAIKHOAN)
                 .AsQueryable();
 
-            if (!string.IsNullOrWhiteSpace(searchString))
-            {
-                query = query.Where(h =>
-                    h.DANGKYMOI.HoTen.Contains(searchString) ||
-                    h.DANGKYMOI.Email.Contains(searchString) ||
-                    h.DANGKYMOI.SoDienThoai.Contains(searchString)
-                );
-            }
+            if (!string.IsNullOrEmpty(hoTen))
+                query = query.Where(h => h.DANGKYMOI.HoTen.Contains(hoTen));
 
-            ViewData["CurrentFilter"] = searchString;
+            if (!string.IsNullOrEmpty(email))
+                query = query.Where(h => h.DANGKYMOI.Email.Contains(email));
+
+            if (!string.IsNullOrEmpty(soDienThoai))
+                query = query.Where(h => h.DANGKYMOI.SoDienThoai.Contains(soDienThoai));
+
+            ViewData["HoTenFilter"] = hoTen;
+            ViewData["EmailFilter"] = email;
+            ViewData["SoDienThoaiFilter"] = soDienThoai;
 
             return View(await query.ToListAsync());
         }
+
 
 
         // GET: HOCVIENs/Details/5
@@ -357,11 +358,14 @@ namespace QuanLyTTNgoaiNgu.Controllers
         // GET: /HocVien/Debt
         public async Task<IActionResult> Debt()
         {
-            // 1. Tìm Học viên hiện tại
+            // 1. Tìm Học viên hiện tại (với TAIKHOAN kèm)
             var username = User.FindFirstValue(ClaimTypes.Name);
             var hv = await _context.HOCVIEN
+                .Include(h => h.TAIKHOAN)
                 .FirstOrDefaultAsync(h => h.TAIKHOAN.TenDangNhap == username);
-            if (hv == null) return RedirectToAction("Index", "Home");
+
+            if (hv == null)
+                return RedirectToAction("Index", "Home");
 
             // 2. Lấy danh sách HOCPHI kèm PHIEUDANGKY → LOPHOC → KHOAHOC
             var list = await _context.HOCPHI
@@ -373,18 +377,21 @@ namespace QuanLyTTNgoaiNgu.Controllers
                 {
                     MaHocPhi = hp.MaHocPhi,
                     TrangThai = hp.TrangThai,
+                    ChoXacNhan = !hp.TrangThai && hp.NgayNop.HasValue,
                     NgayNop = hp.NgayNop,
                     TenLopHoc = hp.PHIEUDANGKY.LOPHOC.TenLopHoc,
                     TenKhoaHoc = hp.PHIEUDANGKY.LOPHOC.KHOAHOC.TenKhoaHoc,
                     MucHocPhi = hp.PHIEUDANGKY.LOPHOC.KHOAHOC.MucHocPhi
                 })
+
                 .ToListAsync();
 
             return View(new DebtViewModel { Items = list });
         }
 
+
         [HttpPost, ValidateAntiForgeryToken]
-        public async Task<IActionResult> PayDebt(int[] selectedIds, Dictionary<int, double> soTienNhap)
+        public async Task<IActionResult> PayDebt(int[] selectedIds)
         {
             if (selectedIds == null || selectedIds.Length == 0)
             {
@@ -392,37 +399,100 @@ namespace QuanLyTTNgoaiNgu.Controllers
                 return RedirectToAction(nameof(Debt));
             }
 
-            var today = DateTime.Now;
+            // Xác nhận học viên đang đăng nhập
+            var username = User.FindFirstValue(ClaimTypes.Name);
+            var hv = await _context.HOCVIEN
+                .Include(h => h.TAIKHOAN)
+                .FirstOrDefaultAsync(h => h.TAIKHOAN.TenDangNhap == username);
+
+            if (hv == null)
+                return RedirectToAction("Index", "Home");
+
+            // Lấy các khoản học phí thuộc học viên và trong danh sách đã chọn
             var items = await _context.HOCPHI
                 .Include(hp => hp.PHIEUDANGKY)
                     .ThenInclude(p => p.LOPHOC)
                         .ThenInclude(l => l.KHOAHOC)
-                .Where(hp => selectedIds.Contains(hp.MaHocPhi))
+                .Where(hp => selectedIds.Contains(hp.MaHocPhi)
+                             && hp.PHIEUDANGKY.MaHocVien == hv.MaHocVien)
                 .ToListAsync();
 
             var errors = new List<string>();
             int successCount = 0;
+            var today = DateTime.Now;
 
+            // Xử lý từng khoản: dùng MucHocPhi từ DB, cập nhật trạng thái & ngày nộp
             foreach (var hp in items)
             {
                 var mucHocPhi = hp.PHIEUDANGKY?.LOPHOC?.KHOAHOC?.MucHocPhi ?? 0;
-                if (!soTienNhap.TryGetValue(hp.MaHocPhi, out var soTien) || soTien != mucHocPhi)
+
+                if (hp.TrangThai)
                 {
-                    errors.Add($"Khoản học phí {hp.MaHocPhi} không hợp lệ (yêu cầu {mucHocPhi:N0} VND).");
+                    errors.Add($"Khoản học phí (ID={hp.MaHocPhi}) đã được nộp trước đó.");
                     continue;
                 }
 
+                if (mucHocPhi <= 0)
+                {
+                    errors.Add($"Khoản học phí (ID={hp.MaHocPhi}) có số tiền không hợp lệ.");
+                    continue;
+                }
+
+                // Ghi nhận là đã nộp (ở đây giả định người dùng nộp đủ; nếu cần ghi chi tiết số tiền, tạo bảng PHIEUTHANHTOAN)
                 hp.TrangThai = true;
                 hp.NgayNop = today;
                 successCount++;
             }
 
-            await _context.SaveChangesAsync();
+            // Lưu thay đổi (nếu có)
+            if (successCount > 0)
+                await _context.SaveChangesAsync();
 
             if (successCount > 0)
                 TempData["DebtSuccess"] = $"Đã thanh toán thành công {successCount} khoản.";
             if (errors.Any())
                 TempData["DebtError"] = string.Join("<br>", errors);
+
+            return RedirectToAction(nameof(Debt));
+        }
+
+        [HttpPost, ValidateAntiForgeryToken]
+        public async Task<IActionResult> RequestPayDebt(int[] selectedIds)
+        {
+            if (selectedIds == null || selectedIds.Length == 0)
+            {
+                TempData["DebtError"] = "Vui lòng chọn ít nhất một khoản học phí.";
+                return RedirectToAction(nameof(Debt));
+            }
+
+            var username = User.FindFirstValue(ClaimTypes.Name);
+            var hv = await _context.HOCVIEN
+                .Include(h => h.TAIKHOAN)
+                .FirstOrDefaultAsync(h => h.TAIKHOAN.TenDangNhap == username);
+
+            if (hv == null)
+                return RedirectToAction("Index", "Home");
+
+            var items = await _context.HOCPHI
+                .Where(hp => selectedIds.Contains(hp.MaHocPhi)
+                          && hp.PHIEUDANGKY.MaHocVien == hv.MaHocVien
+                          && hp.TrangThai == false)
+                .ToListAsync();
+
+            var today = DateTime.Now;
+            int count = 0;
+
+            foreach (var hp in items)
+            {
+                // chỉ set ngày nộp — KHÔNG xác nhận
+                hp.NgayNop = today;
+                count++;
+            }
+
+            if (count > 0)
+                await _context.SaveChangesAsync();
+
+            TempData["DebtSuccess"] = $"Đã ghi nhận {count} khoản học phí, vui lòng chờ xác nhận.";
 
             return RedirectToAction(nameof(Debt));
         }

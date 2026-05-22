@@ -10,10 +10,10 @@
         .form-container {
             max-width: 500px;
             margin: 40px auto;
-            background: #ffffff;
+            background: #fff;
             padding: 30px;
             border-radius: 16px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
         }
 
         h1 {
@@ -43,7 +43,7 @@
             border: none;
             color: white;
             font-weight: bold;
-            transition: background 0.3s ease;
+            transition: background .3s;
         }
 
             .btn-primary:hover {
@@ -67,8 +67,23 @@
 <div class="form-container">
     <h1>Tạo Tài Khoản</h1>
 
-    <form asp-action="Create">
+    @* Nếu có giảng viên được truyền sang (tạo từ form GIANGVIEN), hiển thị thông báo và thêm hidden field *@
+    @if (ViewBag.GiangVienId != null)
+    {
+        <div class="alert alert-info">
+            Tạo tài khoản cho giảng viên: <strong>@(ViewBag.SuggestedDisplayName ?? "(Không rõ tên)")</strong>
+        </div>
+    }
+
+    <form asp-action="Create" method="post">
         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+        @* hidden field để POST giangVienId về controller nếu có *@
+        @if (ViewBag.GiangVienId != null)
+        {
+            <input type="hidden" name="giangVienId" value="@ViewBag.GiangVienId" />
+        }
+
 
         <div class="form-group">
             <label asp-for="TenDangNhap"></label>
@@ -84,16 +99,17 @@
 
         <div class="form-group">
             <label asp-for="VaiTro"></label>
-            <input asp-for="VaiTro" class="form-control" />
+            <select asp-for="VaiTro" class="form-control">
+                <option value="GiangVien">Giảng viên</option>
+            </select>
             <span asp-validation-for="VaiTro" class="text-danger"></span>
         </div>
+
 
         <div class="form-group">
             <input type="submit" value="Tạo tài khoản" class="btn btn-primary" />
         </div>
     </form>
-
-    <a asp-action="Index" class="back-link">← Quay lại danh sách</a>
 </div>
 
 @section Scripts {
